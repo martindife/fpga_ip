@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="tb_axis_qick_processor_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="\$unit__qick_axi_reg_sv_3271585621 " />
+            <top_module name="axi_mst_0_pkg" />
+            <top_module name="axi_vip_pkg" />
+            <top_module name="glbl" />
+            <top_module name="std" />
+            <top_module name="tb_axis_qick_processor" />
+            <top_module name="xil_common_vip_pkg" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="1,000.000 ns"></ZoomEndTime>
+      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="199"></NameColumnWidth>
+      <ValueColumnWidth column_width="66"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="14" />
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_rst">
+      <obj_property name="ElementShortName">ctrl_t_rst</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_rst</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_freeze">
+      <obj_property name="ElementShortName">ctrl_t_freeze</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_freeze</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_step">
+      <obj_property name="ElementShortName">ctrl_t_step</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_step</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_updt">
+      <obj_property name="ElementShortName">ctrl_t_updt</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_updt</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_rst">
+      <obj_property name="ElementShortName">ctrl_p_rst</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_rst</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_stop">
+      <obj_property name="ElementShortName">ctrl_p_stop</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_stop</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_run">
+      <obj_property name="ElementShortName">ctrl_p_run</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_run</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_pause">
+      <obj_property name="ElementShortName">ctrl_p_pause</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_pause</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_step">
+      <obj_property name="ElementShortName">ctrl_p_step</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_step</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_c_step">
+      <obj_property name="ElementShortName">ctrl_c_step</obj_property>
+      <obj_property name="ObjectShortName">ctrl_c_step</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_updt_r">
+      <obj_property name="ElementShortName">ctrl_t_updt_r</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_updt_r</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_init_r">
+      <obj_property name="ElementShortName">ctrl_t_init_r</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_init_r</obj_property>
+      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/xreg_TPROC_CTRL">
+      <obj_property name="ElementShortName">xreg_TPROC_CTRL[31:0]</obj_property>
+      <obj_property name="ObjectShortName">xreg_TPROC_CTRL[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/proc_st">
+      <obj_property name="ElementShortName">proc_st[31:0]</obj_property>
+      <obj_property name="ObjectShortName">proc_st[31:0]</obj_property>
+   </wvobject>
+</wave_config>

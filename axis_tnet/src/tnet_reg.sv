@@ -1,0 +1,66 @@
+`include "_qnet_defines.svh"
+
+ 
+// TNET REG
+/////////////////////////////////////////////////
+module tnet_axi_reg(
+   input wire              ps_aclk      ,    
+   input wire              ps_aresetn   ,    
+   TYPE_IF_AXI_REG         IF_s_axireg  ,
+   output wire [31:0]      TNET_CTRL    ,
+   output wire [31:0]      TNET_CFG     ,
+   output wire [15:0]      TNET_ADDR    ,
+   output wire [15:0]      TNET_LEN     ,
+   output wire [31:0]      REG_AXI_DT1     ,
+   output wire [31:0]      REG_AXI_DT2     ,
+   output wire [31:0]      REG_AXI_DT3     ,
+   input  wire [8:0]       NN        ,
+   input  wire [8:0]       ID        ,
+   input  wire [31:0]      CDELAY        ,
+   input  wire [31:0]      RTD          ,
+   input  wire [31:0]      VERSION      ,
+   input  wire [31:0]      TNET_W_DT1   ,
+   input  wire [31:0]      TNET_W_DT2   ,
+   input  wire [31:0]      TNET_STATUS  ,
+   input  wire [31:0]      TNET_DEBUG   );
+// AXI Slave.
+axi_slv_tnet TNET_xREG (
+   .aclk        ( ps_aclk           ) , 
+   .aresetn     ( ps_aresetn        ) , 
+   .awaddr      ( IF_s_axireg.axi_awaddr [5:0] ) , 
+   .awprot      ( IF_s_axireg.axi_awprot       ) , 
+   .awvalid     ( IF_s_axireg.axi_awvalid      ) , 
+   .awready     ( IF_s_axireg.axi_awready      ) , 
+   .wdata       ( IF_s_axireg.axi_wdata        ) , 
+   .wstrb       ( IF_s_axireg.axi_wstrb        ) , 
+   .wvalid      ( IF_s_axireg.axi_wvalid       ) , 
+   .wready      ( IF_s_axireg.axi_wready       ) , 
+   .bresp       ( IF_s_axireg.axi_bresp        ) , 
+   .bvalid      ( IF_s_axireg.axi_bvalid       ) , 
+   .bready      ( IF_s_axireg.axi_bready       ) , 
+   .araddr      ( IF_s_axireg.axi_araddr       ) , 
+   .arprot      ( IF_s_axireg.axi_arprot       ) , 
+   .arvalid     ( IF_s_axireg.axi_arvalid      ) , 
+   .arready     ( IF_s_axireg.axi_arready      ) , 
+   .rdata       ( IF_s_axireg.axi_rdata        ) , 
+   .rresp       ( IF_s_axireg.axi_rresp        ) , 
+   .rvalid      ( IF_s_axireg.axi_rvalid       ) , 
+   .rready      ( IF_s_axireg.axi_rready       ) , 
+   .TNET_CTRL   ( TNET_CTRL    ) ,
+   .TNET_CFG    ( TNET_CFG     ) ,
+   .TNET_ADDR   ( TNET_ADDR    ) ,
+   .TNET_LEN    ( TNET_LEN     ) ,
+   .REG_AXI_DT1 ( REG_AXI_DT1  ) ,
+   .REG_AXI_DT2 ( REG_AXI_DT2  ) ,
+   .REG_AXI_DT3 ( REG_AXI_DT3  ) ,
+   .NN          ( NN           ) ,
+   .ID          ( ID           ) ,
+   .CDELAY      ( CDELAY       ) ,
+   .RTD         ( RTD          ) ,
+   .VERSION     ( VERSION      ) ,
+   .TNET_W_DT1  ( TNET_W_DT1   ) ,
+   .TNET_W_DT2  ( TNET_W_DT2   ) ,
+   .TNET_STATUS ( TNET_STATUS  ) ,
+   .TNET_DEBUG  ( TNET_DEBUG   ) );
+
+endmodule
