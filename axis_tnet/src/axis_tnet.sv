@@ -107,9 +107,7 @@ reg [31:0]  tx_dt_dt1, tx_dt_dt2, tx_dt_dt3 ;
 reg loc_tx_sreq, net_tx_sreq;
 reg loc_cmd_ack, ext_cmd_ack;
 reg wt_loc_inc;
-reg resp_get_net,resp_set_net ;
 reg [31:0] div_num; 
-wire [31:0] div_result;
 reg [8:0] div_den;
 reg [31:0] ext_dt_1, ext_dt_2, ext_dt_3;
 reg loc_cmd_req ;
@@ -133,6 +131,7 @@ reg [8 :0] param_NN, param_ID;
 reg [31:0] param_DT [2];
 
 
+wire div_end;
 
 // LOCAL, or EXTERNAL commands and external command
 // Core and Python COMMANDS are generated in this NET_NODE. 
@@ -223,11 +222,12 @@ sync_reg # ( .DW ( 1 ) )      sync_tcmd_ack (
    .clk_i     ( c_clk       ) ,
    .rst_ni    ( c_aresetn   ) ,
    .dt_o      ( c_cmd_ack   ) );
-sync_reg # ( .DW ( 1 ) )      sync_ps_ack (
-   .dt_i      ( ext_cmd_ack ) ,
-   .clk_i     ( ps_clk       ) ,
-   .rst_ni    ( ps_aresetn     ) ,
-   .dt_o      ( TNET_ACK    ) );
+   
+//sync_reg # ( .DW ( 1 ) )      sync_ps_ack (
+//   .dt_i      ( ext_cmd_ack ) ,
+//   .clk_i     ( ps_clk       ) ,
+//   .rst_ni    ( ps_aresetn     ) ,
+//   .dt_o      ( TNET_ACK    ) );
 
 reg [31:0]cmd_header_r;
 
@@ -263,7 +263,7 @@ always_ff @(posedge t_clk)
       if (net_cmd_ack_clr) net_cmd_ack <= 1'b0;
    end
 
-
+  
 assign cmd_id  = cmd_header_r[28:24];
 assign cmd_flg = cmd_header_r[23:18];
 assign cmd_dst = cmd_header_r[17:9];
@@ -273,10 +273,10 @@ assign net_src_hit = (cmd_src == param_ID) ;
 assign net_dst_hit = (cmd_dst == param_ID) ;
 
 // Is response if 
-// 1) For dst = 111111111 > net_src_hit & cmd_flg[4]
-// 2) For dst = DST   > net_dst_hit & & cmd_flg[0]
+// 1) For dst = 111111111 > net_src_hit & cmd_flg[4-RESP_REQ]
+// 2) For dst = DST   > net_dst_hit & & cmd_flg[0-ANS]
 
-assign is_resp = net_src_hit & cmd_flg[4] | net_dst_hit & & cmd_flg[0];
+assign is_resp = net_src_hit & cmd_flg[4] | net_dst_hit & cmd_flg[0];
 
 // NET COMMAND OPERATON DECODER
 always_comb begin
@@ -318,9 +318,9 @@ always_ff @(posedge t_clk)
    if (!t_aresetn)    
       acc_wt  <= 31'd0;
    else               
-      if      ( wt_rst  )     acc_wt  <= 31'd0;
+      if      ( wt_rst  ) acc_wt  <= 31'd0;
       else if ( wt_init ) acc_wt  <= wt_init_dt;
-      else if ( wt_inc  )     acc_wt  <= acc_wt + 1'b1;
+      else if ( wt_inc  ) acc_wt  <= acc_wt + 1'b1;
 
 // Network Information
 ///////////////////////////////////////////////////////////////////////////////
@@ -351,19 +351,14 @@ always_ff @(posedge t_clk)
       time_updt_o <=  time_inc;
       if (update_OFF) param_OFF  <= param_OFF_new;
       if (update_RTD) param_RTD  <= param_RTD_new; 
-      if (update_CD)  param_CD   <= param_CD_new; 
-      if (update_NN)  param_NN   <= param_NN_new; 
-      if (update_ID)  param_ID   <= param_ID_new; 
-      if (update_DT)  param_DT   <= param_DT_new; 
+      if (update_CD )  param_CD   <= param_CD_new; 
+      if (update_NN )  param_NN   <= param_NN_new; 
+      if (update_ID )  param_ID   <= param_ID_new; 
+      if (update_DT )  param_DT   <= param_DT_new; 
       
    end
-   
- 
-
-            
 
 reg reset_at_tx;
-reg time_reset;
 
 wire t_ready_t01;
 
@@ -454,18 +449,17 @@ always_comb begin
    endcase
 end
 
-
-
-
-
 wire t_tx_ack;
 
+// Waiting for Response
+assign wfr = (main_st == NET_RESP);
 
 // Command Execution
 ///////////////////////////////////////////////////////////////////////////////
 enum {IDLE, ST_ERROR, NET_CMD_RT, 
       LOC_GNET,               LOC_SNET, LOC_SYNC,               LOC_UPDT_OFF, LOC_SET_DT, LOC_GET_DT,  
-      NET_GNET_R, NET_GNET_P, NET_SNET, NET_SYNC_R, NET_SYNC_P, NET_UPDT_OFF, NET_SET_DT, NET_GET_DT,
+      NET_GNET_P, NET_SNET_P, NET_SYNC_P, NET_UPDT_OFF_P, NET_SET_DT_P, NET_GET_DT_P,
+      NET_GNET_R, NET_SNET_R, NET_SYNC_R, NET_UPDT_OFF_R, NET_SET_DT_R, NET_GET_DT_R,
       WAIT_TX_ACK, WAIT_TX_nACK, WAIT_CMD_nACK} cmd_st_nxt, cmd_st;
 
 always_ff @(posedge t_clk)
@@ -478,101 +472,129 @@ reg loc_tx_req_set, net_tx_req_set;
 reg [31:0] tx_cmd_header;
 reg[31:0] tx_cmd_dt [3];
 
+
+// COMMAND STATE CHANGE
 always_comb begin
    cmd_st_nxt     = cmd_st; // Default Current
-   loc_tx_req_set = 1'b0 ;
-   net_tx_req_set = 1'b0 ;
-   resp_get_net   = 1'b0;
-   resp_set_net = 1'b0;
-   cmd_end = 1'b0;
-   wt_rst      = 1'b0;
-   wt_loc_inc  = 1'b0;
-   wt_ext_inc  = 1'b0;
-   wt_init = 1'b0 ;
-   cmd_error = 1'b0;
-   
-   time_reset = 1'b0;
-   time_init  = 1'b0;
-   time_inc   = 1'b0;
-
-   update_OFF     = 1'b0 ;
-   update_ID    = 1'b0;    
    case (cmd_st)
       IDLE: begin
          // GET_NET
-         if      (get_net) begin   
-            if      (loc_cmd_ack)         cmd_st_nxt  = LOC_GNET;
-            else if (net_cmd_ack)
-               if (main_st == NET_RESP)   cmd_st_nxt  = NET_GNET_R;
-               else begin
-                  cmd_st_nxt  = NET_GNET_P;
-                  wt_init     = 1'b1 ;
-                  time_reset  = 1'b1 ;
-                  wt_init_dt  = cmd_dt_r[1] ;
-               end
-         end
+         if      (get_net & loc_cmd_ack                  )  cmd_st_nxt  = LOC_GNET;
+         else if (get_net & net_cmd_ack & !wfr           )  cmd_st_nxt  = NET_GNET_P;
+         else if (get_net & net_cmd_ack & wfr & is_resp  )  cmd_st_nxt  = NET_GNET_R;
+         else if (get_net & net_cmd_ack & wfr & !is_resp )  cmd_st_nxt  = ST_ERROR;
          // SET_NET
-          else if (set_net) begin
-            if      (loc_cmd_ack)         cmd_st_nxt = LOC_SNET;
-            else if (net_cmd_ack)
-               if (main_st == NET_RESP)   cmd_st_nxt = NET_CMD_RT;
-               else                       cmd_st_nxt = NET_SNET;
-
-         end
-         // SYNC_NET
-         else if (sync_net)  begin
-            if      (loc_cmd_ack)         cmd_st_nxt  = LOC_SYNC;
-            else if (net_cmd_ack) 
-               if (main_st == NET_RESP)   cmd_st_nxt  = NET_SYNC_R;
-               else begin
-                  cmd_st_nxt     = NET_SYNC_P;
-                  wt_init        = 1'b1 ;
-                  wt_init_dt     = cmd_dt_r[1] ;
-                  time_init      = 1'b1 ;
-                  update_OFF     = 1'b1 ;
-                  param_OFF_new  = cmd_dt_r[0] + cmd_dt_r[1] ;
-               end
-         end
-         // UPDATE_OFFSET
-         else if (updt_off) begin
-            if      (loc_cmd_ack)         cmd_st_nxt  = LOC_UPDT_OFF;
-            else if (net_cmd_ack) 
-               if (main_st == NET_RESP)   cmd_st_nxt  = ST_ERROR;
-               else begin
-                  time_inc       = 1'b1 ;
-                  cmd_st_nxt     = NET_UPDT_OFF;
-                  update_OFF     = 1'b1 ;
-                  param_OFF_new  = cmd_dt_r[0];
-               end
-         end
-         // SET_DT
-          else if (set_dt) begin
-            if      (loc_cmd_ack)         cmd_st_nxt = LOC_SET_DT;
-            else if (net_cmd_ack) 
-               if (main_st == NET_RESP)   cmd_st_nxt  = ST_ERROR;
-               else begin
-                  cmd_st_nxt       = NET_SET_DT;
-                  update_DT        = 1'b1 ;
-                  param_DT_new[0]  = cmd_dt_r[0];
-                  param_DT_new[1]  = cmd_dt_r[1];
-               end
-         end
-         // GET_DT
-         else if (get_dt) begin
-            if      (loc_cmd_ack)    cmd_st_nxt = LOC_GET_DT;
-            else if (net_cmd_ack)    cmd_st_nxt = NET_GET_DT;
-         end
-
-         //OTHER
-         else               
-         if (loc_cmd_ack | net_cmd_ack) cmd_st_nxt  = ST_ERROR;
-
+         else if (set_net & loc_cmd_ack                  )  cmd_st_nxt = LOC_SNET;
+         else if (set_net & net_cmd_ack & !wfr           )  cmd_st_nxt = NET_SNET_P;
+         else if (set_net & net_cmd_ack & wfr & is_resp  )  cmd_st_nxt = NET_SNET_R;
+         else if (set_net & net_cmd_ack & wfr & !is_resp )  cmd_st_nxt = ST_ERROR;
+         // SYNC_NET 
+         else if (sync_net & loc_cmd_ack                  ) cmd_st_nxt = LOC_SYNC;
+         else if (sync_net & net_cmd_ack & !wfr           ) cmd_st_nxt = NET_SYNC_P;
+         else if (sync_net & net_cmd_ack & wfr & is_resp  ) cmd_st_nxt = NET_SYNC_R;
+         else if (sync_net & net_cmd_ack & wfr & !is_resp ) cmd_st_nxt = ST_ERROR;
+         // UPDATE_OFFSET  
+         else if (updt_off & loc_cmd_ack                  ) cmd_st_nxt = LOC_UPDT_OFF;
+         else if (updt_off & net_cmd_ack & !wfr           ) cmd_st_nxt = NET_UPDT_OFF_P;
+         else if (updt_off & net_cmd_ack & wfr            ) cmd_st_nxt = ST_ERROR;
+         // SET_DT   
+         else if (set_dt & loc_cmd_ack                  )   cmd_st_nxt = LOC_SET_DT;
+         else if (set_dt & net_cmd_ack & !wfr           )   cmd_st_nxt = NET_SET_DT_P;
+         else if (set_dt & net_cmd_ack & wfr            )   cmd_st_nxt = ST_ERROR;
+         // GET_DT   
+         else if (get_dt & loc_cmd_ack                  )   cmd_st_nxt = LOC_GET_DT;
+         else if (get_dt & net_cmd_ack & !wfr           )   cmd_st_nxt = NET_GET_DT_P;
+         else if (get_dt & net_cmd_ack & wfr & is_resp  )   cmd_st_nxt = NET_GET_DT_R;
+         else if (get_dt & net_cmd_ack & wfr & !is_resp )   cmd_st_nxt = ST_ERROR;
+         // OTHER 
+         else if (loc_cmd_ack | net_cmd_ack) cmd_st_nxt  = ST_ERROR;
       end
+      ST_ERROR: cmd_st_nxt    = WAIT_TX_nACK;
 
-      ST_ERROR: begin
-         cmd_error     = 1'b1;
-         cmd_st_nxt    = WAIT_TX_nACK;
+// LOCAL COMMAND
+      LOC_GNET      : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      LOC_SNET      : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      LOC_SYNC      : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      LOC_UPDT_OFF  : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      LOC_SET_DT    : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      LOC_GET_DT    : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+// NET Command Process
+      NET_GNET_P    : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      NET_SNET_P    : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      NET_SYNC_P    : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+      NET_UPDT_OFF_P:                  cmd_st_nxt =  WAIT_CMD_nACK;
+      NET_SET_DT_P  :                  cmd_st_nxt =  WAIT_CMD_nACK;
+      NET_GET_DT_P  : if (t_ready_t01) cmd_st_nxt = WAIT_TX_ACK;
+// NET Response Process
+      NET_GNET_R    : if (div_end)     cmd_st_nxt =  WAIT_CMD_nACK;
+      NET_SNET_R    :                  cmd_st_nxt =  WAIT_CMD_nACK;
+      NET_SYNC_R    :                  cmd_st_nxt =  WAIT_CMD_nACK;
+      NET_GET_DT_R  :                  cmd_st_nxt =  WAIT_CMD_nACK;
+// WAIT FOR SYNC
+      WAIT_TX_ACK   : if (t_tx_ack)    cmd_st_nxt =   WAIT_TX_nACK;
+      WAIT_TX_nACK  : if (!t_tx_ack)   cmd_st_nxt =  WAIT_CMD_nACK;
+      WAIT_CMD_nACK : if (!cmd_ack)    cmd_st_nxt = IDLE;
+   endcase
+end
+
+
+reg div_start;
+//OUTPUTS
+always_comb begin
+   loc_tx_req_set = 1'b0 ;
+   net_tx_req_set = 1'b0 ;
+   cmd_end        = 1'b0;
+   wt_rst         = 1'b0;
+   wt_loc_inc     = 1'b0;
+   wt_ext_inc     = 1'b0;
+   wt_init        = 1'b0 ;
+   wt_init_dt     = 0;
+   cmd_error      = 1'b0;
+   time_reset     = 1'b0;
+   time_init      = 1'b0;
+   time_inc       = 1'b0;
+   tx_cmd_dt      = '{default:'0};
+   tx_cmd_header  = 0;
+   div_start      = 1'b0;
+   update_NN  = 1'b0 ;
+   update_ID  = 1'b0 ;
+   update_CD  = 1'b0 ;
+   update_RTD = 1'b0 ;
+   update_OFF = 1'b0 ;    
+   update_DT  = 1'b0 ;
+   param_NN_new   = 0;
+   param_ID_new   = 0;
+   param_CD_new   = 0;
+   param_RTD_new  = 0;
+   param_OFF_new  = 0;
+   param_DT_new   = '{default:'0};;
+
+   case (cmd_st)
+      IDLE: begin
+         if (cmd_st_nxt  == NET_GNET_P) begin 
+            wt_init     = 1'b1 ;
+            time_reset  = 1'b1 ;
+            wt_init_dt  = cmd_dt_r[1] ;
+         end
+         if (cmd_st_nxt  == NET_SYNC_P) begin 
+            wt_init        = 1'b1 ;
+            wt_init_dt     = cmd_dt_r[1] ;
+            time_init      = 1'b1 ;
+            update_OFF     = 1'b1 ;
+            param_OFF_new  = cmd_dt_r[0] + cmd_dt_r[1] ;
+         end
+         if (cmd_st_nxt  == NET_GNET_R) begin 
+            update_RTD     = 1'b1  ;
+            param_RTD_new  = t_time_abs[31:0];
+            update_NN      = 1'b1  ;
+            param_NN_new   = cmd_dt_r[0][8:0];
+            div_start      = 1'b1;
+            div_num        = param_RTD_new - cmd_dt_r[1];
+            div_den        = param_NN_new ;
+
+         end
       end
+      ST_ERROR:  cmd_error     = 1'b1;
 
 // COMMAND DATA      
       LOC_GNET: begin
@@ -585,8 +607,7 @@ always_comb begin
          // Command wait for answer
          if (t_ready_t01) begin
             time_reset      = 1'b1 ;
-            loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt     = WAIT_TX_ACK;
+            loc_tx_req_set  = 1'b1 ;
          end
       end
       LOC_SNET: begin
@@ -598,7 +619,6 @@ always_comb begin
          if (t_ready_t01) begin
             time_reset      = 1'b1 ;
             loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt     = WAIT_TX_ACK;
          end
       end
       LOC_SYNC: begin
@@ -609,8 +629,7 @@ always_comb begin
          // Command wait for answer
          if (t_ready_t01) begin
             time_reset      = 1'b1 ;
-            loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt     = WAIT_TX_ACK;
+            loc_tx_req_set  = 1'b1 ;
          end
       end
       LOC_UPDT_OFF: begin
@@ -620,7 +639,6 @@ always_comb begin
          tx_cmd_dt[2]  = 0;
          tx_cmd_dt     = cmd_dt_r;
          loc_tx_req_set = 1'b1 ;
-         cmd_st_nxt = WAIT_TX_ACK;
       end
       LOC_SET_DT: begin
          tx_cmd_header = cmd_header_r;
@@ -629,7 +647,6 @@ always_comb begin
          tx_cmd_dt[2]  = 0;
          if (t_ready_t01) begin
             loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt     = WAIT_TX_ACK;
          end
       end
       LOC_GET_DT: begin
@@ -637,126 +654,87 @@ always_comb begin
          tx_cmd_dt     = '{default:'0};
          if (t_ready_t01) begin
             loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt     = WAIT_TX_ACK;
          end
       end
 
-// EXTERNAL COMMANDS
-      NET_GNET_R: begin
-         // EXECUTE THE ANSWER 
-            if (is_resp) begin
-            // TODO > Check for ALL the possible mistakes, ADDR, CMD_ID, etc
-               resp_get_net   = 1'b1;
-               cmd_end        = 1'b1;
-               cmd_st_nxt     = WAIT_CMD_nACK;
-            end else begin
-               cmd_st_nxt     = ST_ERROR;
-            end
-      end
-      NET_GNET_P: begin
-      // PROCESS AND PROPAGATE COMMAND
+// PROCESS AND PROPAGATE COMMAND
+      NET_GNET_P: begin 
          wt_loc_inc    = 1'b1;
-
          tx_cmd_header = cmd_header_r;
          tx_cmd_dt[0]  = cmd_dt_r[0]+1'b1; // ID Counter;
          tx_cmd_dt[1]  = acc_wt;
          tx_cmd_dt[2]  = 0;
-         // Command wait for answer
-         if (t_ready_t01) begin
+         if (t_ready_t01) 
             loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt = WAIT_TX_ACK;
-         end
       end
-      NET_SNET: begin
-      // PROCESS AND PROPAGATE COMMAND
-         resp_set_net  = 1'b1;
+      NET_SNET_P: begin   // PROCESS AND PROPAGATE COMMAND
+         update_RTD = 1'b1  ;
+         param_RTD_new =  cmd_dt_r[0];
+         update_CD = 1'b1  ;
+         param_CD_new =  cmd_dt_r[1];
+         update_NN = 1'b1  ;
+         param_NN_new =  cmd_dt_r[2][24:16];
          update_ID     = 1'b1  ;
-
+         param_ID_new  =  cmd_dt_r[2][8:0];
          tx_cmd_header =  cmd_header_r;
          tx_cmd_dt[0]  =  cmd_dt_r[0];
          tx_cmd_dt[1]  =  cmd_dt_r[1];
          tx_cmd_dt[2]  = {cmd_dt_r[2][31:9] , cmd_dt_r[2][8:0] +1'b1 }; // ID Counter
-         // Command wait for answer
-         if (t_ready_t01) begin
+         if (t_ready_t01) 
             loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt = WAIT_TX_ACK;
-         end
-      end
-
-     NET_SYNC_R: begin
-         if (is_resp) begin
-            cmd_end        = 1'b1;
-            cmd_st_nxt     = WAIT_CMD_nACK;
-         end else begin
-            cmd_st_nxt     = ST_ERROR;
-         end
       end
       NET_SYNC_P: begin
-      // PROCESS AND PROPAGATE COMMAND
          wt_loc_inc    = 1'b1;
          tx_cmd_header = cmd_header_r;
          tx_cmd_dt[0]  = cmd_dt_r[0]+param_CD;
          tx_cmd_dt[1]  = acc_wt ;
          tx_cmd_dt[2]  = 0;
-         // Command wait for answer
-         if (t_ready_t01) begin
+         if (t_ready_t01) loc_tx_req_set = 1'b1 ;
+      end
+      NET_UPDT_OFF_P: begin
+         time_inc       = 1'b1 ;         
+         cmd_end        = 1'b1 ;
+         update_OFF     = 1'b1 ;
+         param_OFF_new  = cmd_dt_r[0];
+      end
+      NET_SET_DT_P: begin
+         cmd_end = 1'b1;
+         update_DT        = 1'b1 ;
+         param_DT_new[0]  = cmd_dt_r[0];
+         param_DT_new[1]  = cmd_dt_r[1];
+      end
+      NET_GET_DT_P: begin
+         tx_cmd_header[31:19] = cmd_header_r[31:19];
+         tx_cmd_header[18]    = 1'b1; // ANS flag ( Is RESPONSE )
+         tx_cmd_header[17:9]  = cmd_header_r[8 :0]; // Destination is CMD Source
+         tx_cmd_header[8 :0]  = param_ID; // Source is Current Node
+         tx_cmd_dt[0]         = param_DT[0];
+         tx_cmd_dt[1]         = param_DT[1];
+         tx_cmd_dt[2]         = 0;
+         if (t_ready_t01) 
             loc_tx_req_set = 1'b1 ;
-            cmd_st_nxt = WAIT_TX_ACK;
-         end
-
-      end
-      NET_UPDT_OFF: begin
-         cmd_end = 1'b1;
-         cmd_st_nxt = WAIT_CMD_nACK;
-      end
-      NET_SET_DT: begin
-         cmd_end = 1'b1;
-         cmd_st_nxt = WAIT_CMD_nACK;
-      end
-      NET_GET_DT: begin
-         if (main_st == NET_RESP) begin // Is waiting the RESPONSE
-            update_DT         = 1'b1 ;
-            param_DT_new[0]   = cmd_dt_r[0];
-            param_DT_new[1]   = cmd_dt_r[1];
-            cmd_end           = 1'b1;
-            cmd_st_nxt        = WAIT_CMD_nACK;
-         end else begin // Send Data 
-            tx_cmd_header[31:19] = cmd_header_r[31:19];
-            tx_cmd_header[18]    = 1'b1; // ANS flag ( Is RESPONSE )
-            tx_cmd_header[17:9]  = cmd_header_r[8 :0]; // Destination is CMD Source
-            tx_cmd_header[8 :0]  = param_ID; // Source is Current Node
-            tx_cmd_dt[0]         = param_DT[0];
-            tx_cmd_dt[1]         = param_DT[1];
-            tx_cmd_dt[2]         = 0;
-            if (t_ready_t01) begin
-               loc_tx_req_set = 1'b1 ;
-               cmd_st_nxt = WAIT_TX_ACK;
-            end
-         end
-      end
-      NET_CMD_RT : begin // Command Round Trip, Command to ALL, sended by US received 
-            if (is_resp) begin
-               cmd_end        = 1'b1;
-               cmd_st_nxt     = WAIT_CMD_nACK;
-            end else begin
-               cmd_st_nxt     = ST_ERROR;
-            end
       end
 
-      WAIT_TX_ACK: begin
-         if (t_tx_ack) begin
-            cmd_st_nxt          = WAIT_TX_nACK;
+// GET RESPONSE 
+      NET_GNET_R: begin
+         if (div_end) begin
+            cmd_end        = 1'b1;
+            update_CD      = 1'b1  ;
+            param_CD_new   = div_result_r;
          end
       end
-      WAIT_TX_nACK: begin
-         if (!t_tx_ack) begin
-            cmd_end = 1'b1;
-            cmd_st_nxt          = WAIT_CMD_nACK;
-         end
+      NET_SNET_R : cmd_end        = 1'b1;
+      
+      NET_SYNC_R : cmd_end        = 1'b1;
+
+      NET_GET_DT_R: begin
+         cmd_end           = 1'b1;
+         update_DT         = 1'b1 ;
+         param_DT_new[0]   = cmd_dt_r[0];
+         param_DT_new[1]   = cmd_dt_r[1];
       end
-      WAIT_CMD_nACK: begin
-         if (!cmd_ack)  cmd_st_nxt          = IDLE;
-      end
+      WAIT_TX_nACK:  if (!t_tx_ack) cmd_end = 1'b1;
+      
    endcase
 end
 assign cmd_ack = loc_cmd_ack | net_cmd_ack;
@@ -795,71 +773,13 @@ always_ff @(posedge t_clk)
    
 assign t_tx_req_t01 = t_tx_req & ~t_tx_req_r;
 
-
-
-
-
-
-
-
-
-
-//COMMAND EXECUTION Asynchronous Control
-reg net_cmd_req;
-always_ff @(posedge t_clk)
-   if (!t_aresetn) begin
-      loc_cmd_ack   <= 1'b0;
-      net_cmd_ack   <= 1'b0;
-   end else begin 
-      if      (loc_cmd_ack_set ) loc_cmd_ack <= 1'b1;
-      else if (loc_cmd_ack_clr ) loc_cmd_ack <= 1'b0;
-      if      (net_cmd_ack_set ) net_cmd_ack <= 1'b1;
-      else if (net_cmd_ack_clr ) net_cmd_ack <= 1'b0;
-   end
    
 
-// Combinational Divider
-div #(
-   .DWA (32) ,
-   .DWB (9)
-) div_inst (
-   .A_i             ( div_num ) ,
-   .B_i             ( div_den ) ,
-   .div_remainder_o (  ) ,
-   .div_quotient_o  ( div_result ) );
 
 
 
-//net_dt[72:64] > ID Counter
-//net_dt[] > Acc_WT
-always_comb begin
-      update_NN = 1'b0   ;
-      update_RTD = 1'b0  ;
-      update_CD = 1'b0   ;
-      param_NN_new =  0;
-      param_CD_new =  0;
-      param_RTD_new =  0;
-      
-   if (resp_get_net) begin
-      update_NN = 1'b1  ;
-      param_NN_new =  cmd_dt_r[0][8:0];
-      update_RTD = 1'b1  ;
-      param_RTD_new =  t_time_abs[31:0];
-      div_num = param_RTD_new - cmd_dt_r[1];
-      div_den = param_NN_new ;
-      update_CD = 1'b1  ;
-      param_CD_new =  div_result;
-   end else if (resp_set_net) begin
-      update_RTD = 1'b1  ;
-      param_RTD_new =  cmd_dt_r[0];
-      update_CD = 1'b1  ;
-      param_CD_new =  cmd_dt_r[1];
-      update_NN = 1'b1  ;
-      param_NN_new =  cmd_dt_r[2][24:16];
-      param_ID_new =  cmd_dt_r[2][8:0];
-   end
-end
-      
+
+     
 
 // Detect Rising Edge on TREADY
 always_ff @(posedge t_clk)
@@ -872,11 +792,8 @@ always_ff @(posedge t_clk)
       t_ready_B     <= ready_B_rcd;
       t_ready_B_r   <= t_ready_B;
    end
+
 assign t_ready_t01 = !t_ready_B_r & t_ready_B ;
-
-
-
-
 assign time_rst_o = time_reset;
 
 assign time_off_dt_o = param_OFF;
@@ -886,6 +803,24 @@ assign TNET_W_DT1 = 0;
 assign TNET_W_DT2 = 0;
 assign TNET_STATUS = 0;
 assign TNET_DEBUG = 0;
+
+wire [31:0] div_result_r;
+
+// Pipelined Divider
+div_r #(
+   .DW (32) ,
+   .N_PIPE (32)
+) div_r_inst (
+   .clk_i           ( t_clk      ) ,
+   .rst_ni          ( t_aresetn  ) ,
+   .start_i         ( div_start  ) ,
+   .end_o           ( div_end  ) ,
+   .A_i             ( div_num    ) ,
+   .B_i             ( {24'd0, div_den } ) ,
+   .ready_o         ( div_rdy    ) ,
+   .div_remainder_o (  ) ,
+   .div_quotient_o  ( div_result_r ) );
+
 
 // AXI Slave.
 tnet_axi_reg TNET_xREG (

@@ -68,14 +68,12 @@ reg [8:0] h_dst;
 reg net_sync;
 
 always_comb begin
-   if (net_first) begin
-      h_dst          = s_axi_rx_tdata_A[113:105] ;
-      net_dst_ones   =  &h_dst ;
-      net_dst_zeros  = ~|h_dst;
-      net_dst_own    = (h_dst == ID);
-      net_dst_other  =  ~(net_dst_own | net_dst_ones);
-      net_sync       = s_axi_rx_tdata_A[119];
-   end
+  h_dst          = s_axi_rx_tdata_A[113:105] ;
+  net_dst_ones   =  &h_dst ;
+  net_dst_zeros  = ~|h_dst;
+  net_dst_own    = (h_dst == ID);
+  net_dst_other  =  ~(net_dst_own | net_dst_ones);
+  net_sync       = s_axi_rx_tdata_A[119];
 end
 assign id_ok             = |ID;
 assign net_first         = !rx_req  &  s_axi_rx_tvalid_A ;
@@ -91,9 +89,7 @@ always_ff @(posedge user_clock)
    if (!user_aresetn)   tnet_st  <= IDLE;
    else                 tnet_st  <= tnet_st_nxt;
 
-reg tx_dt;
-
-         
+        
 //Always receive ONE PACKET
 always_comb begin
    tnet_st_nxt = tnet_st; //Stay current state

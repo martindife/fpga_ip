@@ -30,8 +30,6 @@ assign div_quotient_o  = q_temp;
 
 endmodule
 
-////////////////////////////////////////////////////////////////////////////////
-
 module div_r #(
    parameter DW      = 32 ,
    parameter N_PIPE  = 32 
@@ -42,6 +40,7 @@ module div_r #(
    input  wire [DW-1:0]    A_i             ,
    input  wire [DW-1:0]    B_i             ,
    output wire             ready_o         ,
+   output wire             end_o         ,
    output wire [DW-1:0]    div_quotient_o  ,
    output wire [DW-1:0]    div_remainder_o );
 
@@ -63,11 +62,9 @@ assign working    = |en_r;
 
 
 always_ff @ (posedge clk_i, negedge rst_ni) begin
-   if (!rst_ni) begin        
-      en_r      <= 0 ;
-      r_temp[0] <= 0 ;
-      inB       <= 0 ;
-   end else
+   if (!rst_ni)         
+      en_r  <= 0 ;
+   else
       if (start_i) begin
          en_r           <= {en_r[N_PIPE-2:0], 1'b1} ;
          r_temp   [0]   <= A_i ;
@@ -114,9 +111,8 @@ for (ind_reg_stage=1; ind_reg_stage < N_PIPE ; ind_reg_stage=ind_reg_stage+1) be
 end
 
 assign ready_o          = ~working;
+assign end_o            = en_r[N_PIPE-1];
 assign div_quotient_o   = q_temp;
 assign div_remainder_o  = r_temp_nxt[N_PIPE-1];
 
 endmodule
-
-

@@ -2,7 +2,7 @@
 <spirit:component xmlns:xilinx="http://www.xilinx.com" xmlns:spirit="http://www.spiritconsortium.org/XMLSchema/SPIRIT/1685-2009" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <spirit:vendor>Fermi</spirit:vendor>
   <spirit:library>user</spirit:library>
-  <spirit:name>axis_tnet</spirit:name>
+  <spirit:name>qick_net</spirit:name>
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
@@ -575,18 +575,41 @@
         </spirit:portMap>
       </spirit:portMaps>
     </spirit:busInterface>
+    <spirit:busInterface>
+      <spirit:name>reset_pb</spirit:name>
+      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
+      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
+      <spirit:master/>
+      <spirit:portMaps>
+        <spirit:portMap>
+          <spirit:logicalPort>
+            <spirit:name>RST</spirit:name>
+          </spirit:logicalPort>
+          <spirit:physicalPort>
+            <spirit:name>reset_pb</spirit:name>
+          </spirit:physicalPort>
+        </spirit:portMap>
+      </spirit:portMaps>
+    </spirit:busInterface>
   </spirit:busInterfaces>
   <spirit:memoryMaps>
     <spirit:memoryMap>
       <spirit:name>s_axi</spirit:name>
       <spirit:displayName>s_axi</spirit:displayName>
       <spirit:addressBlock>
-        <spirit:name>reg0</spirit:name>
-        <spirit:displayName>reg0</spirit:displayName>
-        <spirit:baseAddress spirit:format="bitString" spirit:bitStringLength="1">0x0</spirit:baseAddress>
-        <spirit:range spirit:format="bitString" spirit:bitStringLength="13" spirit:minimum="4096" spirit:rangeType="long">0x1000</spirit:range>
-        <spirit:width spirit:format="long">32</spirit:width>
+        <spirit:name>qnet_reg</spirit:name>
+        <spirit:displayName>qnet_reg</spirit:displayName>
+        <spirit:baseAddress spirit:format="long" spirit:resolve="user">0x0</spirit:baseAddress>
+        <spirit:range spirit:format="long" spirit:resolve="user" spirit:minimum="4096" spirit:rangeType="long">64</spirit:range>
+        <spirit:width spirit:format="long" spirit:resolve="user">32</spirit:width>
         <spirit:usage>register</spirit:usage>
+        <spirit:vendorExtensions>
+          <xilinx:addressBlockInfo>
+            <xilinx:enablement>
+              <xilinx:isEnabled xilinx:resolve="user" xilinx:id="ADDRBLOCK_ENABLEMENT.S_AXI.qnet_reg">true</xilinx:isEnabled>
+            </xilinx:enablement>
+          </xilinx:addressBlockInfo>
+        </spirit:vendorExtensions>
       </spirit:addressBlock>
     </spirit:memoryMap>
   </spirit:memoryMaps>
@@ -604,7 +627,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>6da3b7b0</spirit:value>
+            <spirit:value>417a739d</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -620,7 +643,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>6da3b7b0</spirit:value>
+            <spirit:value>417a739d</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -635,7 +658,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>412646f8</spirit:value>
+            <spirit:value>fcf9e653</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -1478,7 +1501,7 @@
       <spirit:file>
         <spirit:name>src/axis_tnet.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_2b93e40a</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_704a7c87</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
     <spirit:fileSet>
@@ -1538,14 +1561,14 @@
     <spirit:fileSet>
       <spirit:name>xilinx_xpgui_view_fileset</spirit:name>
       <spirit:file>
-        <spirit:name>xgui/axis_tnet_v1_0.tcl</spirit:name>
+        <spirit:name>xgui/qick_net_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
         <spirit:userFileType>CHECKSUM_f92e9879</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
   </spirit:fileSets>
-  <spirit:description>axis_tnet_v1_0</spirit:description>
+  <spirit:description>qick_net</spirit:description>
   <spirit:parameters>
     <spirit:parameter>
       <spirit:name>Component_Name</spirit:name>
@@ -1584,16 +1607,16 @@
       <xilinx:taxonomies>
         <xilinx:taxonomy>/UserIP</xilinx:taxonomy>
       </xilinx:taxonomies>
-      <xilinx:displayName>axis_tnet_v1_0</xilinx:displayName>
+      <xilinx:displayName>qick_net</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>3</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2023-04-20T14:47:29Z</xilinx:coreCreationDateTime>
+      <xilinx:coreRevision>13</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-04-21T19:24:26Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.1</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="9c66683b"/>
-      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="c930e363"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="3bec4a3b"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="14fecf05"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="922db350"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="3bc2f48e"/>
       <xilinx:checksum xilinx:scope="ports" xilinx:value="b90b528d"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="09ad661c"/>
     </xilinx:packagingInfo>
