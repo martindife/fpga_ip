@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="1,000.000 ns"></ZoomEndTime>
-      <Cursor1Time time="1,000.000 ns"></Cursor1Time>
+      <ZoomStartTime time="331.020 ns"></ZoomStartTime>
+      <ZoomEndTime time="382.271 ns"></ZoomEndTime>
+      <Cursor1Time time="343.620 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="199"></NameColumnWidth>
+      <NameColumnWidth column_width="195"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="14" />
+   <WVObjectSize size="32" />
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_rst">
       <obj_property name="ElementShortName">ctrl_t_rst</obj_property>
       <obj_property name="ObjectShortName">ctrl_t_rst</obj_property>
@@ -104,5 +104,90 @@
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/proc_st">
       <obj_property name="ElementShortName">proc_st[31:0]</obj_property>
       <obj_property name="ObjectShortName">proc_st[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /A_i">
+      <obj_property name="ElementShortName">A_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">A_i[31:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /B_i">
+      <obj_property name="ElementShortName">B_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">B_i[31:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /C_i">
+      <obj_property name="ElementShortName">C_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">C_i[31:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /D_i">
+      <obj_property name="ElementShortName">D_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">D_i[31:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /start_i">
+      <obj_property name="ElementShortName">start_i</obj_property>
+      <obj_property name="ObjectShortName">start_i</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /alu_op_i">
+      <obj_property name="ElementShortName">alu_op_i[4:0]</obj_property>
+      <obj_property name="ObjectShortName">alu_op_i[4:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /ready_o">
+      <obj_property name="ElementShortName">ready_o</obj_property>
+      <obj_property name="ObjectShortName">ready_o</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /A_dt">
+      <obj_property name="ElementShortName">A_dt[29:0]</obj_property>
+      <obj_property name="ObjectShortName">A_dt[29:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /B_dt">
+      <obj_property name="ElementShortName">B_dt[17:0]</obj_property>
+      <obj_property name="ObjectShortName">B_dt[17:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /C_dt">
+      <obj_property name="ElementShortName">C_dt[47:0]</obj_property>
+      <obj_property name="ObjectShortName">C_dt[47:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /D_dt">
+      <obj_property name="ElementShortName">D_dt[24:0]</obj_property>
+      <obj_property name="ObjectShortName">D_dt[24:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /arith_result_o">
+      <obj_property name="ElementShortName">arith_result_o[63:0]</obj_property>
+      <obj_property name="ObjectShortName">arith_result_o[63:0]</obj_property>
+      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/usr_dt_a_o">
+      <obj_property name="ElementShortName">usr_dt_a_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">usr_dt_a_o[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/usr_dt_b_o">
+      <obj_property name="ElementShortName">usr_dt_b_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">usr_dt_b_o[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/usr_dt_c_o">
+      <obj_property name="ElementShortName">usr_dt_c_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">usr_dt_c_o[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/usr_dt_d_o">
+      <obj_property name="ElementShortName">usr_dt_d_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">usr_dt_d_o[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/usr_ctrl_o">
+      <obj_property name="ElementShortName">usr_ctrl_o[9:0]</obj_property>
+      <obj_property name="ObjectShortName">usr_ctrl_o[9:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /ready_o">
+      <obj_property name="ElementShortName">ready_o</obj_property>
+      <obj_property name="ObjectShortName">ready_o</obj_property>
    </wvobject>
 </wave_config>

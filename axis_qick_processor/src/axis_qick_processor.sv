@@ -44,7 +44,7 @@ module axis_qick_proccessor # (
    input  wire                time_rst_i      ,
    input  wire                time_init_i     ,
    input  wire                time_updt_i     ,
-   input  wire  [47:0]        offset_dt_i     ,
+   input  wire  [31:0]        offset_dt_i     ,
    output wire  [47:0]        t_time_abs_o    ,
 //TNET_DT
    output wire                tnet_en_o       ,
@@ -199,8 +199,8 @@ module axis_qick_proccessor # (
    );
 
 // DATA IN INTERFACE
-reg                  port_tvalid_si  [15]  ;
-reg  [63:0]          port_tdata_si   [15] ;
+reg                  port_tvalid_si  [16]  ;
+reg  [63:0]          port_tdata_si   [16] ;
 
 // DATA OUT INTERFACE
 wire [31:0]          port_tdata_so     [8] ;
@@ -208,9 +208,9 @@ wire                 port_tvalid_so    [8] ;
 
 wire [31:0]          ext_op_r, ext_dt_r, ext_dt_i   ;
 
-wire [167:0]         m_axis_tdata_s [15] ;
-wire                 m_axis_tvalid_s[15] ; 
-wire                 m_axis_tready_s[15] ;
+wire [167:0]         m_axis_tdata_s [16] ;
+wire                 m_axis_tvalid_s[16] ; 
+wire                 m_axis_tready_s[16] ;
 
 wire [31:0] t_time_usr_ds , t_debug_ds, t_fifo_ds ;
 wire [31:0] c_debug_ds, c_time_ref_ds, c_port_ds, c_core_ds ;

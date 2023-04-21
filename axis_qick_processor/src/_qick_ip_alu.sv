@@ -223,18 +223,14 @@ module arith (
    output wire signed [63:0]  arith_result_o   );
 
 // DSP OUTPUTS
-wire [47:0] alu_result ;
+wire [45:0] arith_result ;
 // DSP INPUTS
-reg  [4:0] INMODE   ;
-reg  [6:0] OPMODE   ;
-reg  [3:0] ALUMODE  ;
-reg        CIN      ;
+reg  [2:0] ALU_OP  ;
 
-
-reg signed [29:0] A_dt ; 
+reg signed [26:0] A_dt ; 
 reg signed [17:0] B_dt ; 
-reg signed [47:0] C_dt ; 
-reg signed [24:0] D_dt ; 
+reg signed [31:0] C_dt ; 
+reg signed [26:0] D_dt ; 
 reg working, working_r ;
 
 always_ff @ (posedge clk_i, negedge rst_ni) begin
@@ -243,23 +239,17 @@ always_ff @ (posedge clk_i, negedge rst_ni) begin
          B_dt <= 0;
          C_dt <= 0;
          D_dt <= 0; 
-         INMODE   <= 0;
-         OPMODE  <= 0;
-         ALUMODE  <= 0;
-         CIN      <= 0;
+         ALU_OP   <= 0;
          working  <= 1'b0 ;
          working_r  <= 1'b0 ;
    end else begin
       working_r  <= working ;
       if (start_i) begin
-         A_dt     <= A_i[29:0] ;
-         B_dt     <= B_i[18:0] ;
-         C_dt     <= C_i ;
-         D_dt     <= D_i[24:0] ; 
-         INMODE   <= { 1'b0, alu_op_i[4:2] , alu_op_i[2]}  ;
-         OPMODE   <= { 1'b0, alu_op_i[1], alu_op_i[1] , 4'b0101} ;
-         ALUMODE  <= { 3'b000, alu_op_i[0] }   ;
-         CIN      <= alu_op_i[0]  ;
+         A_dt     <= A_i[26:0] ;
+         B_dt     <= B_i[17:0] ;
+         C_dt     <= C_i[31:0] ;
+         D_dt     <= D_i[26:0] ; 
+         ALU_OP   <= { alu_op_i[2:0]}  ;
          working  <= 1'b1 ;
       end else if (working_r) begin
          working           <= 1'b0;
@@ -268,105 +258,19 @@ always_ff @ (posedge clk_i, negedge rst_ni) begin
    end
 end
 
-//
-wire ce;
-assign ce = 1; // AL DFF DISABLES
 
-// DSP48E1: 48-bit Multi-Functional Arithmetic Block
-//          Virtex-7
-// Xilinx HDL Language Template, version 2020.2
-   DSP48E1 #(
-      // Feature Control Attributes: Data Path Selection
-      .A_INPUT    ("DIRECT"),           // Selects A input source, "DIRECT" (A port) or "CASCADE" (ACIN port)
-      .B_INPUT    ("DIRECT"),           // Selects B input source, "DIRECT" (B port) or "CASCADE" (BCIN port)
-      .USE_DPORT  ("TRUE"),             // Select D port usage (TRUE or FALSE)
-      .USE_MULT   ("MULTIPLY"),         // Select multiplier usage ("MULTIPLY", "DYNAMIC", or "NONE")
-      .USE_SIMD   ("ONE48"),            // SIMD selection ("ONE48", "TWO24", "FOUR12")
-      .AUTORESET_PATDET("RESET_MATCH"), // "NO_RESET", "RESET_MATCH", "RESET_NOT_MATCH" 
-      //.MASK(48'h3fffffffffff),        // 48-bit mask value for pattern detect (1=ignore)
-      .MASK(48'h000000000000),          // 48-bit mask value for pattern detect (1=ignore)
-      .PATTERN(48'h000000000000),       // 48-bit pattern match for pattern detect
-      .SEL_MASK("MASK"),                // "C", "MASK", "ROUNDING_MODE1", "ROUNDING_MODE2" 
-      .SEL_PATTERN("PATTERN"),          // Select pattern value ("PATTERN" or "C")
-      .USE_PATTERN_DETECT("NO_PATDET"), // Enable pattern detect ("PATDET" or "NO_PATDET")
-      .ACASCREG         (0),            // Number of pipeline stages between A/ACIN and ACOUT (0, 1 or 2)
-      .ADREG            (0),            // Number of pipeline stages for pre-adder (0 or 1)
-      .ALUMODEREG       (0),            // Number of pipeline stages for ALUMODE (0 or 1)
-      .AREG             (0),            // Number of pipeline stages for A (0, 1 or 2)
-      .BCASCREG         (0),            // Number of pipeline stages between B/BCIN and BCOUT (0, 1 or 2)
-      .BREG             (0),            // Number of pipeline stages for B (0, 1 or 2)
-      .CARRYINREG       (1),            // Number of pipeline stages for CARRYIN (0 or 1)
-      .CARRYINSELREG    (1),            // Number of pipeline stages for CARRYINSEL (0 or 1)
-      .CREG             (1),            // Number of pipeline stages for C (0 or 1)
-      .DREG             (0),            // Number of pipeline stages for D (0 or 1)
-      .INMODEREG        (1),            // Number of pipeline stages for INMODE (0 or 1)
-      .MREG             (1),            // Number of multiplier pipeline stages (0 or 1)
-      .OPMODEREG        (1),            // Number of pipeline stages for OPMODE (0 or 1)
-      .PREG             (0)             // Number of pipeline stages for P (0 or 1)
-   )
-   DSP48E1_inst (
-      // Cascade: 30-bit (each) output: Cascade Ports
-      .ACOUT                  ( ),  // 30-bit output: A port cascade output
-      .BCOUT                  ( ),  // 18-bit output: B port cascade output
-      .CARRYCASCOUT           ( ),       // 1-bit output: Cascade carry output
-      .MULTSIGNOUT            ( ),       // 1-bit output: Multiplier sign cascade output
-      .PCOUT                  ( ),       // 48-bit output: Cascade output
-      .OVERFLOW               ( ),       // 1-bit output: Overflow in add/acc output
-      .PATTERNBDETECT         ( ),       // 1-bit output: Pattern bar detect output
-      .PATTERNDETECT          ( ),       // 1-bit output: Pattern detect output
-      .UNDERFLOW              ( ),       // 1-bit output: Underflow in add/acc output
-      .CARRYOUT               ( ),       // 4-bit output: Carry output
-      .P                      (alu_result), // 48-bit output: Primary data output
-      // Cascade: 30-bit (each) input: Cascade Ports
-      .ACIN                   (30'd0),              // 30-bit input: A cascade data input
-      .BCIN                   (18'd0),              // 18-bit input: B cascade input
-      .CARRYCASCIN            (1'd0),              // 1-bit input: Cascade carry input
-      .MULTSIGNIN             (1'd0),              // 1-bit input: Multiplier sign input
-      .PCIN                   (48'd0),              // 48-bit input: P cascade input
-      // Control: 4-bit (each) input: Control Inputs/Status Bits
-      .ALUMODE                (ALUMODE),   // 4-bit input: ALU control input
-      .CARRYINSEL             (3'd0),         // 3-bit input: Carry select input
-      .CLK                    (clk_i),     // 1-bit input: Clock input
-      .INMODE                 (INMODE),    // 5-bit input: INMODE control input
-      .OPMODE                 (OPMODE),    // 7-bit input: Operation mode input
-      // Data: 30-bit (each) input: Data Ports
-      .A                      (A_dt),                           // 30-bit input: A data input
-      .B                      (B_dt),                           // 18-bit input: B data input
-      .C                      (C_dt),                           // 48-bit input: C data input
-      .CARRYIN                (CIN),               // 1-bit input: Carry input signal
-      .D                      (D_dt),                           // 25-bit input: D data input
-      // Reset/Clock Enable: 1-bit (each) input: Reset/Clock Enable Inputs
-      .CEA1                   (ce),           // 1-bit input: Clock enable input for 1st stage AREG
-      .CEA2                   (ce),           // 1-bit input: Clock enable input for 2nd stage AREG
-      .CEAD                   (ce),           // 1-bit input: Clock enable input for ADREG
-      .CEALUMODE              (ce),           // 1-bit input: Clock enable input for ALUMODE
-      .CEB1                   (ce),           // 1-bit input: Clock enable input for 1st stage BREG
-      .CEB2                   (ce),           // 1-bit input: Clock enable input for 2nd stage BREG
-      .CEC                    (ce),           // 1-bit input: Clock enable input for CREG
-      .CECARRYIN              (ce),           // 1-bit input: Clock enable input for CARRYINREG
-      .CECTRL                 (ce),           // 1-bit input: Clock enable input for OPMODEREG and CARRYINSELREG
-      .CED                    (ce),           // 1-bit input: Clock enable input for DREG
-      .CEINMODE               (ce),           // 1-bit input: Clock enable input for INMODEREG
-      .CEM                    (ce),           // 1-bit input: Clock enable input for MREG
-      .CEP                    (ce),           // 1-bit input: Clock enable input for PREG
-      .RSTA                   (~rst_ni),          // 1-bit input: Reset input for AREG
-      .RSTALLCARRYIN          (~rst_ni),          // 1-bit input: Reset input for CARRYINREG
-      .RSTALUMODE             (~rst_ni),          // 1-bit input: Reset input for ALUMODEREG
-      .RSTB                   (~rst_ni),          // 1-bit input: Reset input for BREG
-      .RSTC                   (~rst_ni),          // 1-bit input: Reset input for CREG
-      .RSTCTRL                (~rst_ni),          // 1-bit input: Reset input for OPMODEREG and CARRYINSELREG
-      .RSTD                   (~rst_ni),          // 1-bit input: Reset input for DREG and ADREG
-      .RSTINMODE              (~rst_ni),          // 1-bit input: Reset input for INMODEREG
-      .RSTM                   (~rst_ni),          // 1-bit input: Reset input for MREG
-      .RSTP                   (~rst_ni)           // 1-bit input: Reset input for PREG
-   );
+dsp_macro_0 ARITH_DSP (
+  .CLK  ( clk_i),  // input wire CLK
+  .SEL  ( ALU_OP ),  // input wire [2 : 0] SEL
+  .A    ( A_dt[26:0]   ),      // input wire [26 : 0] A
+  .B    ( B_dt[17:0]   ),      // input wire [17 : 0] B
+  .C    ( C_dt[31:0]   ),      // input wire [31 : 0] C
+  .D    ( D_dt[26:0]   ),      // input wire [26 : 0] D
+  .P    ( arith_result      )      // output wire [45 : 0] P
+);
 
-   // End of DSP48E1_inst instantiation
-
-// v <= (not add_A(7) and not add_B(7) and Y(7)) or (add_A(7) and add_B(7) and not Y(7))
-
-assign arith_result_o  = alu_result      ;
+//signed extension of 
+assign arith_result_o  = { {18{arith_result[45]}}, arith_result}      ;
 assign ready_o          = ~ (working | working_r);
 endmodule
-
 

@@ -39,7 +39,7 @@ module qick_processor # (
    input  wire                time_rst_i              ,
    input  wire                time_init_i             ,
    input  wire                time_updt_i       ,
-   input  wire  [47:0]        offset_dt_i       ,
+   input  wire  [31:0]        offset_dt_i       ,
    output wire  [47:0]        t_time_abs_o         ,
 // External PERIPHERALS 
    output wire  [31:0]        periph_a_dt_o        ,
@@ -194,7 +194,7 @@ always_ff @(posedge c_clk_i)
       ctrl_t_init_r     <= time_init_s;
       if      ( time_updt_cpu   )            offset_dt_r  <= core_usr_a_dt ;
       else if ( time_updt_s | time_init_s  ) offset_dt_r  <= offset_dt_i ;
-      else if ( xreg_TPROC_CTRL[1] )           offset_dt_r  <= tproc_w_dt[0] ;
+      else if ( xreg_TPROC_CTRL[1] )         offset_dt_r  <= tproc_w_dt[0] ;
       
    end
 
