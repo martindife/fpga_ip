@@ -9,20 +9,21 @@
             <top_module name="glbl" />
             <top_module name="std" />
             <top_module name="tb_axis_tnet" />
+            <top_module name="vcomponents" />
             <top_module name="xil_common_vip_pkg" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="840.893 ns"></ZoomStartTime>
-      <ZoomEndTime time="894.994 ns"></ZoomEndTime>
-      <Cursor1Time time="882.717 ns"></Cursor1Time>
+      <ZoomStartTime time="356,906.133000 ns"></ZoomStartTime>
+      <ZoomEndTime time="360,476.133001 ns"></ZoomEndTime>
+      <Cursor1Time time="358,696.133000 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="172"></NameColumnWidth>
-      <ValueColumnWidth column_width="96"></ValueColumnWidth>
+      <NameColumnWidth column_width="194"></NameColumnWidth>
+      <ValueColumnWidth column_width="84"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="32" />
+   <WVObjectSize size="60" />
    <wvobject type="array" fp_name="/tb_axis_tnet/t_time_abs1">
       <obj_property name="ElementShortName">t_time_abs1[47:0]</obj_property>
       <obj_property name="ObjectShortName">t_time_abs1[47:0]</obj_property>
@@ -37,6 +38,14 @@
       <obj_property name="ElementShortName">t_time_abs3[47:0]</obj_property>
       <obj_property name="ObjectShortName">t_time_abs3[47:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/init_clk">
+      <obj_property name="ElementShortName">init_clk</obj_property>
+      <obj_property name="ObjectShortName">init_clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/locked">
+      <obj_property name="ElementShortName">locked</obj_property>
+      <obj_property name="ObjectShortName">locked</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_axis_tnet/init_1">
       <obj_property name="ElementShortName">init_1</obj_property>
@@ -62,6 +71,18 @@
       <obj_property name="ElementShortName">time_updt_3</obj_property>
       <obj_property name="ObjectShortName">time_updt_3</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/AURORA_A/user_clk_out">
+      <obj_property name="ElementShortName">user_clk_out</obj_property>
+      <obj_property name="ObjectShortName">user_clk_out</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/AURORA_A/mmcm_not_locked_out">
+      <obj_property name="ElementShortName">mmcm_not_locked_out</obj_property>
+      <obj_property name="ObjectShortName">mmcm_not_locked_out</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/AURORA_A/sync_clk_out">
+      <obj_property name="ElementShortName">sync_clk_out</obj_property>
+      <obj_property name="ObjectShortName">sync_clk_out</obj_property>
+   </wvobject>
    <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/channel_up_A">
       <obj_property name="ElementShortName">channel_up_A</obj_property>
       <obj_property name="ObjectShortName">channel_up_A</obj_property>
@@ -70,153 +91,210 @@
       <obj_property name="ElementShortName">channel_up_B</obj_property>
       <obj_property name="ObjectShortName">channel_up_B</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/t_c_cmd_req">
-      <obj_property name="ElementShortName">t_c_cmd_req</obj_property>
-      <obj_property name="ObjectShortName">t_c_cmd_req</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/start_i">
+      <obj_property name="ElementShortName">start_i</obj_property>
+      <obj_property name="ObjectShortName">start_i</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/t_p_cmd_req">
-      <obj_property name="ElementShortName">t_p_cmd_req</obj_property>
-      <obj_property name="ObjectShortName">t_p_cmd_req</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/end_o">
+      <obj_property name="ElementShortName">end_o</obj_property>
+      <obj_property name="ObjectShortName">end_o</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/cmd_header_r">
-      <obj_property name="ElementShortName">cmd_header_r[31:0]</obj_property>
-      <obj_property name="ObjectShortName">cmd_header_r[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/A_i">
+      <obj_property name="ElementShortName">A_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">A_i[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/cmd_dt_r">
-      <obj_property name="ElementShortName">cmd_dt_r[0:2][31:0]</obj_property>
-      <obj_property name="ObjectShortName">cmd_dt_r[0:2][31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/B_i">
+      <obj_property name="ElementShortName">B_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">B_i[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/ready_o">
+      <obj_property name="ElementShortName">ready_o</obj_property>
+      <obj_property name="ObjectShortName">ready_o</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/end_o">
+      <obj_property name="ElementShortName">end_o</obj_property>
+      <obj_property name="ObjectShortName">end_o</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/div_quotient_o">
+      <obj_property name="ElementShortName">div_quotient_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">div_quotient_o[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/div_r_inst/div_remainder_o">
+      <obj_property name="ElementShortName">div_remainder_o[31:0]</obj_property>
+      <obj_property name="ObjectShortName">div_remainder_o[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/c_op_i">
       <obj_property name="ElementShortName">c_op_i[4:0]</obj_property>
       <obj_property name="ObjectShortName">c_op_i[4:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/main_st">
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/c_ready_o">
+      <obj_property name="ElementShortName">c_ready_o</obj_property>
+      <obj_property name="ObjectShortName">c_ready_o</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/c_cmd_i">
+      <obj_property name="ElementShortName">c_cmd_i</obj_property>
+      <obj_property name="ObjectShortName">c_cmd_i</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/c_dt1_i">
+      <obj_property name="ElementShortName">c_dt1_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">c_dt1_i[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/c_dt2_i">
+      <obj_property name="ElementShortName">c_dt2_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">c_dt2_i[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/c_dt3_i">
+      <obj_property name="ElementShortName">c_dt3_i[31:0]</obj_property>
+      <obj_property name="ObjectShortName">c_dt3_i[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/c_op_i">
+      <obj_property name="ElementShortName">c_op_i[4:0]</obj_property>
+      <obj_property name="ObjectShortName">c_op_i[4:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/channel_ok">
+      <obj_property name="ElementShortName">channel_ok</obj_property>
+      <obj_property name="ObjectShortName">channel_ok</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/main_st">
       <obj_property name="ElementShortName">main_st[31:0]</obj_property>
       <obj_property name="ObjectShortName">main_st[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/task_st">
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/task_st">
       <obj_property name="ElementShortName">task_st[31:0]</obj_property>
       <obj_property name="ObjectShortName">task_st[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/cmd_st">
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/cmd_st">
       <obj_property name="ElementShortName">cmd_st[31:0]</obj_property>
       <obj_property name="ObjectShortName">cmd_st[31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_num">
-      <obj_property name="ElementShortName">div_num[31:0]</obj_property>
-      <obj_property name="ObjectShortName">div_num[31:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/tnet_st">
+      <obj_property name="ElementShortName">tnet_st[31:0]</obj_property>
+      <obj_property name="ObjectShortName">tnet_st[31:0]</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_den">
-      <obj_property name="ElementShortName">div_den[8:0]</obj_property>
-      <obj_property name="ObjectShortName">div_den[8:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_result_r">
-      <obj_property name="ElementShortName">div_result_r[31:0]</obj_property>
-      <obj_property name="ObjectShortName">div_result_r[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/t_tx_ack">
-      <obj_property name="ElementShortName">t_tx_ack</obj_property>
-      <obj_property name="ObjectShortName">t_tx_ack</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/loc_cmd_req">
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/loc_cmd_req">
       <obj_property name="ElementShortName">loc_cmd_req</obj_property>
       <obj_property name="ObjectShortName">loc_cmd_req</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/loc_cmd_ack">
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/loc_cmd_ack">
       <obj_property name="ElementShortName">loc_cmd_ack</obj_property>
       <obj_property name="ObjectShortName">loc_cmd_ack</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/net_cmd_req">
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/net_cmd_req">
       <obj_property name="ElementShortName">net_cmd_req</obj_property>
       <obj_property name="ObjectShortName">net_cmd_req</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/net_cmd_ack">
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/net_cmd_ack">
       <obj_property name="ElementShortName">net_cmd_ack</obj_property>
       <obj_property name="ObjectShortName">net_cmd_ack</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/cmd_end">
-      <obj_property name="ElementShortName">cmd_end</obj_property>
-      <obj_property name="ObjectShortName">cmd_end</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/axi_tx_tvalid_B">
+      <obj_property name="ElementShortName">axi_tx_tvalid_B</obj_property>
+      <obj_property name="ObjectShortName">axi_tx_tvalid_B</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/cmd_ack">
-      <obj_property name="ElementShortName">cmd_ack</obj_property>
-      <obj_property name="ObjectShortName">cmd_ack</obj_property>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/axi_tx_tdata_B">
+      <obj_property name="ElementShortName">axi_tx_tdata_B[127:0]</obj_property>
+      <obj_property name="ObjectShortName">axi_tx_tdata_B[127:0]</obj_property>
+      <obj_property name="CustomSignalColor">#0000FF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/net_tx_ack">
-      <obj_property name="ElementShortName">net_tx_ack</obj_property>
-      <obj_property name="ObjectShortName">net_tx_ack</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/axi_rx_tvalid_A">
+      <obj_property name="ElementShortName">axi_rx_tvalid_A</obj_property>
+      <obj_property name="ObjectShortName">axi_rx_tvalid_A</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/t_tx_ack">
-      <obj_property name="ElementShortName">t_tx_ack</obj_property>
-      <obj_property name="ObjectShortName">t_tx_ack</obj_property>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/axi_rx_tdata_A">
+      <obj_property name="ElementShortName">axi_rx_tdata_A[127:0]</obj_property>
+      <obj_property name="ObjectShortName">axi_rx_tdata_A[127:0]</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="group" fp_name="group302">
-      <obj_property name="label">DIV_R</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/start_i">
-         <obj_property name="ElementShortName">start_i</obj_property>
-         <obj_property name="ObjectShortName">start_i</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/end_o">
-         <obj_property name="ElementShortName">end_o</obj_property>
-         <obj_property name="ObjectShortName">end_o</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/rst_ni">
-         <obj_property name="ElementShortName">rst_ni</obj_property>
-         <obj_property name="ObjectShortName">rst_ni</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/ready_o">
-         <obj_property name="ElementShortName">ready_o</obj_property>
-         <obj_property name="ObjectShortName">ready_o</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/working">
-         <obj_property name="ElementShortName">working</obj_property>
-         <obj_property name="ObjectShortName">working</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/en_r">
-         <obj_property name="ElementShortName">en_r[7:0]</obj_property>
-         <obj_property name="ObjectShortName">en_r[7:0]</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/div_remainder_o">
-         <obj_property name="ElementShortName">div_remainder_o[31:0]</obj_property>
-         <obj_property name="ObjectShortName">div_remainder_o[31:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/div_quotient_o">
-         <obj_property name="ElementShortName">div_quotient_o[31:0]</obj_property>
-         <obj_property name="ObjectShortName">div_quotient_o[31:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/clk_i">
-         <obj_property name="ElementShortName">clk_i</obj_property>
-         <obj_property name="ObjectShortName">clk_i</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/A_i">
-         <obj_property name="ElementShortName">A_i[31:0]</obj_property>
-         <obj_property name="ObjectShortName">A_i[31:0]</obj_property>
-         <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-      </wvobject>
-      <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/div_r_inst/B_i">
-         <obj_property name="ElementShortName">B_i[31:0]</obj_property>
-         <obj_property name="ObjectShortName">B_i[31:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-      </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_dst_ones">
+      <obj_property name="ElementShortName">net_dst_ones</obj_property>
+      <obj_property name="ObjectShortName">net_dst_ones</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_dst_zeros">
+      <obj_property name="ElementShortName">net_dst_zeros</obj_property>
+      <obj_property name="ObjectShortName">net_dst_zeros</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/h_dst">
+      <obj_property name="ElementShortName">h_dst[8:0]</obj_property>
+      <obj_property name="ObjectShortName">h_dst[8:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_dst_own">
+      <obj_property name="ElementShortName">net_dst_own</obj_property>
+      <obj_property name="ObjectShortName">net_dst_own</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_dst_other">
+      <obj_property name="ElementShortName">net_dst_other</obj_property>
+      <obj_property name="ObjectShortName">net_dst_other</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_first">
+      <obj_property name="ElementShortName">net_first</obj_property>
+      <obj_property name="ObjectShortName">net_first</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_process">
+      <obj_property name="ElementShortName">net_process</obj_property>
+      <obj_property name="ObjectShortName">net_process</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_propagate">
+      <obj_property name="ElementShortName">net_propagate</obj_property>
+      <obj_property name="ObjectShortName">net_propagate</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_propagate_now">
+      <obj_property name="ElementShortName">net_propagate_now</obj_property>
+      <obj_property name="ObjectShortName">net_propagate_now</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/QNET_LINK/net_sync">
+      <obj_property name="ElementShortName">net_sync</obj_property>
+      <obj_property name="ObjectShortName">net_sync</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/param_CD">
+      <obj_property name="ElementShortName">param_CD[31:0]</obj_property>
+      <obj_property name="ObjectShortName">param_CD[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/param_DT">
+      <obj_property name="ElementShortName">param_DT[0:1][31:0]</obj_property>
+      <obj_property name="ObjectShortName">param_DT[0:1][31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/param_ID">
+      <obj_property name="ElementShortName">param_ID[8:0]</obj_property>
+      <obj_property name="ObjectShortName">param_ID[8:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/param_NN">
+      <obj_property name="ElementShortName">param_NN[8:0]</obj_property>
+      <obj_property name="ObjectShortName">param_NN[8:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/param_OFF">
+      <obj_property name="ElementShortName">param_OFF[31:0]</obj_property>
+      <obj_property name="ObjectShortName">param_OFF[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_tnet/TNET_1/QICK_NET/param_RTD">
+      <obj_property name="ElementShortName">param_RTD[31:0]</obj_property>
+      <obj_property name="ObjectShortName">param_RTD[31:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>

@@ -12,7 +12,7 @@ import axi_mst_0_pkg::*;
 `define T_CCLK         1.66 // Half Clock Period for Simulation
 `define T_SCLK         5  // Half Clock Period for Simulation
 `define T_ICLK         10  // Half Clock Period for Simulation
-`define T_UCLK         15  // Half Clock Period for Simulation
+`define T_GTCLK         3.2  // Half Clock Period GT CLK 156.25
 
 
 `define LFSR             1
@@ -32,8 +32,7 @@ module tb_axis_tnet ();
 
 ///////////////////////////////////////////////////////////////////////////////
 // Signals
-reg   t_clk, c_clk, ps_clk, init_clk, user_clock, rst_ni;
-
+reg   t_clk, c_clk, ps_clk, init_clk, rst_ni, gt_clk;
 // VIP Agent
 axi_mst_0_mst_t 	axi_mst_0_agent;
 xil_axi_prot_t  prot        = 0;
@@ -93,9 +92,13 @@ initial begin
   forever # (`T_ICLK) init_clk = ~init_clk;
 end
 initial begin
-  user_clock = 1'b0;
-  forever # (`T_UCLK) user_clock = ~user_clock;
+  gt_clk = 1'b0;
+  forever # (`T_GTCLK) gt_clk = ~gt_clk;
 end
+wire gt_refclk1_p, gt_refclk1_n;
+assign gt_refclk1_p = gt_clk;
+assign gt_refclk1_n = ~gt_clk;
+
 
 reg       t_ready;
 
@@ -103,7 +106,7 @@ initial begin
    t_ready = 0;
    forever begin
       if (t_ready) # 200;
-      @ (posedge user_clock) #1; 
+      @ (posedge c_clk) #1; 
       t_ready  = ~t_ready;
    end
 end   
@@ -117,7 +120,7 @@ parameter TNET_ADDR     = 2  * 4 ;
 parameter TNET_LEN      = 3  * 4 ;
 parameter REG_AXI_DT1   = 4  * 4 ;
 parameter REG_AXI_DT2   = 5  * 4 ;
-parameter NONE          = 6  * 4 ;
+parameter REG_AXI_DT3   = 6  * 4 ;
 parameter NN            = 7  * 4 ;
 parameter ID            = 8  * 4 ;
 parameter CD            = 9  * 4 ;
@@ -194,16 +197,17 @@ always_ff @(posedge t_clk)
 wire ready_1;
 
 axis_tnet TNET_1 (
+   .gt_refclk1_p       (  gt_refclk1_p           ) ,
+   .gt_refclk1_n       (  gt_refclk1_n           ) ,
+//   .user_clk           (  user_clock           ) ,
    .t_clk              (  t_clk           ) ,
    .t_aresetn          (  rst_ni          ) ,
    .c_clk              (  c_clk           ) ,
    .c_aresetn          (  rst_ni          ) ,
    .ps_clk             (  ps_clk          ) ,
    .ps_aresetn         (  rst_ni          ) ,
-   .init_clk           (  init_clk        ) ,
-   .init_aresetn       (  rst_ni          ) ,
-   .user_clock         (  user_clock      ) ,
-   .user_aresetn       (  rst_ni          ) ,
+//   .init_clk           (  init_clk        ) ,
+//   .init_aresetn       (  rst_ni          ) ,
    .t_time_abs         (  t_time_abs1    )  ,
 
    .c_cmd_i            ( c_cmd_i        ) ,
@@ -219,15 +223,6 @@ axis_tnet TNET_1 (
    .stop_o             ( stop_1      ) ,
    .time_updt_o        ( time_updt_1 ) ,
    
-   .reset_pb           (  reset_pb            ) ,
-   .pma_init           (  pma_init            ) ,
-   .channel_up_A       (  channel_up_A        ) ,
-   .s_axi_rx_tdata_A   (  m_axi_tx_tdata_B_3    ) ,
-   .s_axi_rx_tvalid_A  (  m_axi_tx_tvalid_B_3   ) ,
-   .channel_up_B       (  channel_up_B          ) ,
-   .m_axi_tx_tdata_B   (  m_axi_tx_tdata_B_1    ) ,
-   .m_axi_tx_tvalid_B  (  m_axi_tx_tvalid_B_1   ) ,
-   .m_axi_tx_tready_B  (  t_ready   ) ,
    .s_axi_awaddr       (  s_axi_awaddr        ) ,
    .s_axi_awprot       (  s_axi_awprot        ) ,
    .s_axi_awvalid      (  s_axi_awvalid       ) ,
@@ -247,8 +242,13 @@ axis_tnet TNET_1 (
    .s_axi_rresp        (  s_axi_rresp         ) ,
    .s_axi_rvalid       (  s_axi_rvalid        ) ,
    .s_axi_rready       (  s_axi_rready        ) );
-   
+
+/*   
 axis_tnet TNET_2 (
+   .gt_refclk1_p       (  gt_refclk1_p           ) ,
+   .gt_refclk1_n       (  gt_refclk1_n           ) ,
+   .user_clk       (             ) ,
+
    .t_clk              (  t_clk           ) ,
    .t_aresetn          (  rst_ni          ) ,
    .c_clk              (  c_clk           ) ,
@@ -257,8 +257,6 @@ axis_tnet TNET_2 (
    .ps_aresetn         (  rst_ni          ) ,
    .init_clk           (  init_clk        ) ,
    .init_aresetn       (  rst_ni          ) ,
-   .user_clock         (  user_clock      ) ,
-   .user_aresetn       (  rst_ni          ) ,
    .t_time_abs         (  t_time_abs2      )  ,
    .c_cmd_i            ( 0        ) ,
    .c_op_i            ( 0        ) ,
@@ -272,15 +270,6 @@ axis_tnet TNET_2 (
    .start_o            ( start_2     ) ,
    .stop_o             ( stop_2      ) ,
    .time_updt_o        ( time_updt_2 ) ,
-   .reset_pb           (  reset_pb            ) ,
-   .pma_init           (  pma_init            ) ,
-   .channel_up_A       (  channel_up_A        ) ,
-   .s_axi_rx_tdata_A   (  m_axi_tx_tdata_B_1    ) ,
-   .s_axi_rx_tvalid_A  (  m_axi_tx_tvalid_B_1   ) ,
-   .channel_up_B       (  channel_up_B          ) ,
-   .m_axi_tx_tdata_B   (  m_axi_tx_tdata_B_2    ) ,
-   .m_axi_tx_tvalid_B  (  m_axi_tx_tvalid_B_2   ) ,
-   .m_axi_tx_tready_B  (  t_ready  ) ,
    .s_axi_awaddr       (  0      ) ,
    .s_axi_awprot       (  0      ) ,
    .s_axi_awvalid      (  0      ) ,
@@ -303,6 +292,10 @@ axis_tnet TNET_2 (
 
 
 axis_tnet TNET_3 (
+   .gt_refclk1_p       (  gt_refclk1_p           ) ,
+   .gt_refclk1_n       (  gt_refclk1_n           ) ,
+   .user_clk       (             ) ,
+
    .t_clk              (  t_clk           ) ,
    .t_aresetn          (  rst_ni          ) ,
    .c_clk              (  c_clk           ) ,
@@ -311,8 +304,6 @@ axis_tnet TNET_3 (
    .ps_aresetn         (  rst_ni          ) ,
    .init_clk           (  init_clk        ) ,
    .init_aresetn       (  rst_ni          ) ,
-   .user_clock         (  user_clock      ) ,
-   .user_aresetn       (  rst_ni          ) ,
    .t_time_abs         (  t_time_abs3      )  ,
    .c_cmd_i            ( 0        ) ,
    .c_op_i            ( 0        ) ,
@@ -326,15 +317,6 @@ axis_tnet TNET_3 (
    .start_o            ( start_3     ) ,
    .stop_o             ( stop_3      ) ,
    .time_updt_o        ( time_updt_3 ) ,
-   .reset_pb           (  reset_pb            ) ,
-   .pma_init           (  pma_init            ) ,
-   .channel_up_A       (  channel_up_A        ) ,
-   .s_axi_rx_tdata_A   (  m_axi_tx_tdata_B_2    ) ,
-   .s_axi_rx_tvalid_A  (  m_axi_tx_tvalid_B_2   ) ,
-   .channel_up_B       (  channel_up_B          ) ,
-   .m_axi_tx_tdata_B   (  m_axi_tx_tdata_B_3    ) ,
-   .m_axi_tx_tvalid_B  (  m_axi_tx_tvalid_B_3   ) ,
-   .m_axi_tx_tready_B  (  t_ready  ) ,
    .s_axi_awaddr       (  0      ) ,
    .s_axi_awprot       (  0      ) ,
    .s_axi_awvalid      (  0      ) ,
@@ -354,7 +336,7 @@ axis_tnet TNET_3 (
    .s_axi_rresp        (        ) ,
    .s_axi_rvalid       (        ) ,
    .s_axi_rready       (        ) );
-
+*/
 
 reg reset_i, start_i, stop_i, init_i;
 reg  [47:0] offset_dt_i ;
@@ -389,7 +371,6 @@ h_flags  = 5'd0 ;
 h_src    = 9'd0 ;
 h_dst    = 9'd0 ;
 
-channel_up_A       = 1'b0;
 s_axi_rx_tdata_A   = 127'd0;
 s_axi_rx_tvalid_A  = 1'b0;
 //m_axi_tx_tready_A  = 1'b0;
@@ -415,12 +396,9 @@ channel_up_B       = 1'b0;
    rst_ni            = 1'b1;
    #10 ;
 
-   @ (posedge user_clock); #0.1;
-   channel_up_A       = 1'b1;
-   #10;
 
 /*
-   @ (posedge user_clock); #0.1;
+   @ (posedge c_clk); #0.1;
    h_type   = 3'b000 ;
    h_cmd    = 6'b000000 ;
    h_flags  = 5'b00000 ;
@@ -428,16 +406,17 @@ channel_up_B       = 1'b0;
    h_dst    = 9'd3 ;
    s_axi_rx_tdata_A   = {h_type, h_cmd, h_flags, h_src, h_dst, 96'b0};
    s_axi_rx_tvalid_A  = 1'b1;
-*/
+
 
    @ (posedge user_clock); #0.1;
    s_axi_rx_tdata_A   = 127'd0;
    s_axi_rx_tvalid_A  = 1'b0;
+*/
 
 // GET_NET COMMAND
    wait (ready_1==1'b1);
    #100;
-   @ (posedge user_clock); #0.1;
+   @ (posedge c_clk); #0.1;
    #10;
    @ (posedge c_clk); #0.1;
    c_cmd_i   = 1'b1 ;
@@ -454,7 +433,7 @@ channel_up_B       = 1'b0;
 // SET_NET 
    wait (ready_1==1'b1);
    #100;
-   @ (posedge user_clock); #0.1;
+   @ (posedge c_clk); #0.1;
    #10;
    @ (posedge c_clk); #0.1;
    c_cmd_i   = 1'b1 ;
@@ -472,7 +451,7 @@ channel_up_B       = 1'b0;
 // SYNC_NET 
    wait (ready_1==1'b1);
    #100;
-   @ (posedge user_clock); #0.1;
+   @ (posedge c_clk); #0.1;
    #10;
    @ (posedge c_clk); #0.1;
    c_cmd_i   = 1'b1 ;
@@ -491,7 +470,7 @@ channel_up_B       = 1'b0;
 // OFFSET UPDATE 
    wait (ready_1==1'b1);
    #100;
-   @ (posedge user_clock); #0.1;
+   @ (posedge c_clk); #0.1;
    #10;
    @ (posedge c_clk); #0.1;
    c_cmd_i   = 1'b1 ;
@@ -511,7 +490,7 @@ channel_up_B       = 1'b0;
 // SET DT 
    wait (ready_1==1'b1);
    #100;
-   @ (posedge user_clock); #0.1;
+   @ (posedge c_clk); #0.1;
    #10;
    @ (posedge c_clk); #0.1;
    c_cmd_i   = 1'b1 ;
@@ -542,13 +521,13 @@ channel_up_B       = 1'b0;
 
    //UPDF_OFF
    WRITE_AXI( REG_AXI_DT1 , 4); // DATA
-   WRITE_AXI( TNET_CFG    , {16'd3, 16'd0}); // NODE
+   WRITE_AXI( REG_AXI_DT3    , {16'd3, 16'd0}); // NODE
    wait (ready_1==1'b1);
    WRITE_AXI( TNET_CTRL, 9); // UPDT_OFFSET (NODE - DATA)
 
 //UPDF_OFF
    WRITE_AXI( REG_AXI_DT1 , 2); // DATA
-   WRITE_AXI( TNET_CFG    , {16'd2, 16'd0}); // NODE
+   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
    wait (ready_1==1'b1);
    WRITE_AXI( TNET_CTRL, 9); // UPDT_OFFSET (NODE - DATA)
 
@@ -556,20 +535,21 @@ channel_up_B       = 1'b0;
    //SET_DT
    WRITE_AXI( REG_AXI_DT1 , 15); // DATA1
    WRITE_AXI( REG_AXI_DT2 , 255); // DATA2
-   WRITE_AXI( TNET_CFG    , {16'd3, 16'd0}); // NODE
+   //WRITE_AXI( TNET_CFG    , {16'd3, 16'd0}); // NODE
+   WRITE_AXI( REG_AXI_DT3    , {16'd1, 16'd0}); // NODE
    wait (ready_1==1'b1);
    WRITE_AXI( TNET_CTRL, 10); // UPDT_OFFSET (NODE - DATA)
 
    //SET_DT
    WRITE_AXI( REG_AXI_DT1 , 7); // DATA1
    WRITE_AXI( REG_AXI_DT2 , 127); // DATA2
-   WRITE_AXI( TNET_CFG    , {16'd2, 16'd0}); // NODE
+   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
    wait (ready_1==1'b1);
    WRITE_AXI( TNET_CTRL, 10); // UPDT_OFFSET (NODE - DATA)
 
    //GET_DT
    wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CFG    , {16'd2, 16'd0}); // NODE
+   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
    WRITE_AXI( TNET_CTRL, 11); // UPDT_OFFSET (NODE - DATA)
 
   #1000;
@@ -625,36 +605,6 @@ task TEST_AXI (); begin
    end
    $display("-----FINISHED ");
    */
-end
-endtask
-
-task TEST_QNET (); begin
-   $display("-----Sending AURORA PACKET");
-   for ( cnt = 0 ; cnt  < 16; cnt=cnt+1) begin
-      channel_up_A       = 1'b1;
-      #10;
-      @ (posedge user_clock); #0.1;
-      h_type   = 3'b000 ;
-      h_cmd    = 6'b000000 ;
-      h_flags  = 5'b00000 ;
-      h_src    = 9'd1 ;
-      h_dst    = cnt ;
-      s_axi_rx_tdata_A   = {h_type, h_cmd, h_flags, h_src, h_dst, 96'b0};
-      s_axi_rx_tvalid_A  = 1'b1;
-      @ (posedge user_clock); #0.1;
-      s_axi_rx_tdata_A   = ~cnt;
-      s_axi_rx_tvalid_A  = 1'b1;
-      @ (posedge user_clock); #0.1;
-      s_axi_rx_tdata_A   = 127'd0;
-      s_axi_rx_tvalid_A  = 1'b0;
-   end
-      @ (posedge user_clock); #0.1;
-      h_dst    = ~0 ;
-      s_axi_rx_tdata_A   = {h_type, h_cmd, h_flags, h_src, h_dst, 96'b0};
-      s_axi_rx_tvalid_A  = 1'b1;
-      @ (posedge user_clock); #0.1;
-      s_axi_rx_tdata_A   = 127'd0;
-      s_axi_rx_tvalid_A  = 1'b0;
 end
 endtask
 

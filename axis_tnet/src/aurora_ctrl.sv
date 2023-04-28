@@ -2,8 +2,8 @@
 module aurora_ctrl ( 
    input  wire             init_clk       ,
    input  wire             init_aresetn   ,
-   input  wire             user_clock     ,
-   input  wire             user_aresetn   ,
+   input  wire             user_clk_i     ,
+   input  wire             user_rst_i   ,
 // Transmittion 
    input  wire             tx_req_ti       ,
    input  wire [127:0]     tx_dt_ti     ,
@@ -13,15 +13,16 @@ module aurora_ctrl (
    output reg  [31:0]      cmd_o[4]       ,
    input  wire [7 :0]      ID       ,
 
+   input  wire             channel_ok_i        ,
+   output reg             ready_o            ,
+   
 ////////////////   LINK CHANNEL A
-   input  wire             channel_up_A        ,
    input  wire  [127:0]    s_axi_rx_tdata_A    ,
    input  wire             s_axi_rx_tvalid_A   ,
    //output wire [127:0]     m_axi_tx_tdata_A    ,
    //output wire             m_axi_tx_tvalid_A   ,
    //input  wire             m_axi_tx_tready_A   ,
 ////////////////   LINK CHANNEL B
-   input  wire             channel_up_B        ,
    //input  wire  [127:0]    s_axi_rx_tdata_B   ,
    //input  wire             s_axi_rx_tvalid_B   ,
    output reg  [127:0]     m_axi_tx_tdata_B   ,
@@ -39,8 +40,8 @@ sync_reg # (
    .DW ( 129 )
 ) sync_tx_i (
    .dt_i      ( {tx_req_ti, tx_dt_ti} ) ,
-   .clk_i     ( user_clock       ) ,
-   .rst_ni    ( user_aresetn     ) ,
+   .clk_i     ( user_clk_i       ) ,
+   .rst_ni    ( ~user_rst_i     ) ,
    .dt_o      ( {tx_req, tx_dt}    ) );
 
 
@@ -49,8 +50,8 @@ reg [127:0] rx_dt;
 reg rx_ack, rx_req;
 
 // Capture Data From Channel_A
-always_ff @ (posedge user_clock, negedge user_aresetn) begin
-   if (!user_aresetn) begin
+always_ff @ (posedge user_clk_i) begin
+   if (user_rst_i) begin
       rx_req   <= 1'b0;
       rx_dt    <= 128'd0 ;
    end else begin
@@ -82,27 +83,34 @@ assign net_propagate     = net_first & ( net_dst_other | net_dst_zeros );
 assign net_propagate_now = net_propagate & !net_sync;
 
 
-// DECODING INCOMING TRANSMISSION
-enum {IDLE, PROCESS, PROPAGATE_SYNC, PROPAGATE_NOW, SEND, WAIT_nREQ } tnet_st_nxt, tnet_st;
 
-always_ff @(posedge user_clock)
-   if (!user_aresetn)   tnet_st  <= IDLE;
+// DECODING INCOMING TRANSMISSION
+enum {NOT_READY, IDLE, PROCESS, PROPAGATE_SYNC, PROPAGATE_NOW, SEND, WAIT_nREQ } tnet_st_nxt, tnet_st;
+
+always_ff @(posedge user_clk_i)
+   if (user_rst_i)   tnet_st  <= NOT_READY;
    else                 tnet_st  <= tnet_st_nxt;
 
         
 //Always receive ONE PACKET
 always_comb begin
-   tnet_st_nxt = tnet_st; //Stay current state
-   rx_ack = 1'b0;
-   cmd_req_o     = 1'b0;
-   tx_ack_uo      = 1'b0 ;
-   m_axi_tx_tdata_B  = 0;
+   tnet_st_nxt       = tnet_st; //Stay current state
+   rx_ack            = 1'b0;
+   cmd_req_o         = 1'b0;
+   tx_ack_uo         = 1'b0 ;
+   m_axi_tx_tdata_B  = rx_dt;
    m_axi_tx_tvalid_B = 1'b0;
+   ready_o           = 1'b1;
    case (tnet_st)
+
+      NOT_READY: begin
+         ready_o = 1'b0;
+         if ( channel_ok_i       )    tnet_st_nxt = IDLE;
+      end
       IDLE: begin
             if       ( net_process       )    tnet_st_nxt = PROCESS;
-            else if  ( net_propagate     )    tnet_st_nxt = PROPAGATE_SYNC; // Data Comes from Transpor leves
-            else if  ( net_propagate_now )    tnet_st_nxt = PROPAGATE_NOW   ; // Data Comes from link level
+            else if  ( net_propagate     )    tnet_st_nxt = PROPAGATE_SYNC ; // Data Comes from Transpor level
+            else if  ( net_propagate_now )    tnet_st_nxt = PROPAGATE_NOW  ; // Data Comes from link level
             if       ( tx_req            )    tnet_st_nxt = SEND;
       end
       PROCESS: begin
@@ -152,8 +160,8 @@ end
 
 // Propagate packages to PORT-B
 reg [127:0] ZZ_CAPTURED;
-always_ff @(posedge user_clock)
-   if (!user_aresetn)   ZZ_CAPTURED  <= 1'b0;
+always_ff @(posedge user_clk_i)
+   if (user_rst_i)   ZZ_CAPTURED  <= 1'b0;
    else if (m_axi_tx_tvalid_B) ZZ_CAPTURED  <= m_axi_tx_tdata_B; 
 
 
@@ -162,7 +170,7 @@ always_ff @(posedge user_clock)
 
 
 //OUTPUTS
-always_ff @ (posedge init_clk, negedge init_aresetn) begin
+always_ff @ (posedge init_clk) begin
    if (!init_aresetn) begin         
       pma_init   <= 1'b1 ;
       reset_pb   <= 1'b1 ;

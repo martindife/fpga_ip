@@ -282,7 +282,6 @@ module sync_reg # (
    input  wire          rst_ni  ,
    output wire [DW-1:0] dt_o     );
    
-// FAST REGISTER GRAY TRANSFORM OF INPUT
 reg [DW-1:0] data_rcd, data_r ;
 always_ff @(posedge clk_i)
    if(!rst_ni) begin
@@ -295,6 +294,9 @@ always_ff @(posedge clk_i)
 assign dt_o = data_r ;
 
 endmodule
+
+
+
 
 //GRAY CODE COUNTER
 module gcc # (

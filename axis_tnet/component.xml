@@ -6,62 +6,6 @@
   <spirit:version>1.0</spirit:version>
   <spirit:busInterfaces>
     <spirit:busInterface>
-      <spirit:name>m_axi_tx_B</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
-      <spirit:master/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>TDATA</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>m_axi_tx_tdata_B</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>TVALID</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>m_axi_tx_tvalid_B</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>TREADY</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>m_axi_tx_tready_B</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
-    </spirit:busInterface>
-    <spirit:busInterface>
-      <spirit:name>s_axi_rx_A</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="axis_rtl" spirit:version="1.0"/>
-      <spirit:slave/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>TDATA</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>s_axi_rx_tdata_A</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>TVALID</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>s_axi_rx_tvalid_A</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
-    </spirit:busInterface>
-    <spirit:busInterface>
       <spirit:name>s_axi</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="aximm" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="interface" spirit:name="aximm_rtl" spirit:version="1.0"/>
@@ -246,28 +190,6 @@
       </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>init_aresetn</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
-      <spirit:slave/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>RST</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>init_aresetn</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
-      <spirit:parameters>
-        <spirit:parameter>
-          <spirit:name>POLARITY</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.INIT_ARESETN.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
-        </spirit:parameter>
-      </spirit:parameters>
-    </spirit:busInterface>
-    <spirit:busInterface>
       <spirit:name>ps_aresetn</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
@@ -312,28 +234,6 @@
       </spirit:parameters>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>user_aresetn</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
-      <spirit:slave/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>RST</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>user_aresetn</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
-      <spirit:parameters>
-        <spirit:parameter>
-          <spirit:name>POLARITY</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.USER_ARESETN.POLARITY" spirit:choiceRef="choice_list_9d8b0d81">ACTIVE_LOW</spirit:value>
-        </spirit:parameter>
-      </spirit:parameters>
-    </spirit:busInterface>
-    <spirit:busInterface>
       <spirit:name>c_clk</spirit:name>
       <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
@@ -356,28 +256,6 @@
         <spirit:parameter>
           <spirit:name>ASSOCIATED_BUSIF</spirit:name>
           <spirit:value spirit:id="BUSIFPARAM_VALUE.C_CLK.ASSOCIATED_BUSIF">QICK_CTRL:QICK_PERIPH</spirit:value>
-        </spirit:parameter>
-      </spirit:parameters>
-    </spirit:busInterface>
-    <spirit:busInterface>
-      <spirit:name>init_clk</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
-      <spirit:slave/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>CLK</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>init_clk</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
-      <spirit:parameters>
-        <spirit:parameter>
-          <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.INIT_CLK.ASSOCIATED_RESET">init_aresetn</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -426,32 +304,6 @@
         <spirit:parameter>
           <spirit:name>ASSOCIATED_RESET</spirit:name>
           <spirit:value spirit:id="BUSIFPARAM_VALUE.T_CLK.ASSOCIATED_RESET">t_aresetn</spirit:value>
-        </spirit:parameter>
-      </spirit:parameters>
-    </spirit:busInterface>
-    <spirit:busInterface>
-      <spirit:name>user_clock</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
-      <spirit:slave/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>CLK</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>user_clock</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
-      <spirit:parameters>
-        <spirit:parameter>
-          <spirit:name>ASSOCIATED_RESET</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.USER_CLOCK.ASSOCIATED_RESET">user_aresetn</spirit:value>
-        </spirit:parameter>
-        <spirit:parameter>
-          <spirit:name>ASSOCIATED_BUSIF</spirit:name>
-          <spirit:value spirit:id="BUSIFPARAM_VALUE.USER_CLOCK.ASSOCIATED_BUSIF">s_axi_rx_A:m_axi_tx_B</spirit:value>
         </spirit:parameter>
       </spirit:parameters>
     </spirit:busInterface>
@@ -520,7 +372,7 @@
       </spirit:portMaps>
     </spirit:busInterface>
     <spirit:busInterface>
-      <spirit:name>QICK_PERIPH</spirit:name>
+      <spirit:name>QICK_TNET</spirit:name>
       <spirit:busType spirit:vendor="Fermi" spirit:library="user" spirit:name="qick_peripheral" spirit:version="1.0"/>
       <spirit:abstractionType spirit:vendor="Fermi" spirit:library="user" spirit:name="qick_peripheral_rtl" spirit:version="1.0"/>
       <spirit:slave/>
@@ -575,22 +427,6 @@
         </spirit:portMap>
       </spirit:portMaps>
     </spirit:busInterface>
-    <spirit:busInterface>
-      <spirit:name>reset_pb</spirit:name>
-      <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
-      <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
-      <spirit:master/>
-      <spirit:portMaps>
-        <spirit:portMap>
-          <spirit:logicalPort>
-            <spirit:name>RST</spirit:name>
-          </spirit:logicalPort>
-          <spirit:physicalPort>
-            <spirit:name>reset_pb</spirit:name>
-          </spirit:physicalPort>
-        </spirit:portMap>
-      </spirit:portMaps>
-    </spirit:busInterface>
   </spirit:busInterfaces>
   <spirit:memoryMaps>
     <spirit:memoryMap>
@@ -599,17 +435,11 @@
       <spirit:addressBlock>
         <spirit:name>qnet_reg</spirit:name>
         <spirit:displayName>qnet_reg</spirit:displayName>
-        <spirit:baseAddress spirit:format="long" spirit:resolve="user">0x0</spirit:baseAddress>
-        <spirit:range spirit:format="long" spirit:resolve="user" spirit:minimum="4096" spirit:rangeType="long">64</spirit:range>
+        <spirit:baseAddress spirit:format="bitString" spirit:resolve="user" spirit:bitStringLength="32">0</spirit:baseAddress>
+        <spirit:range spirit:format="long" spirit:resolve="user" spirit:minimum="4096" spirit:rangeType="long">4096</spirit:range>
         <spirit:width spirit:format="long" spirit:resolve="user">32</spirit:width>
         <spirit:usage>register</spirit:usage>
-        <spirit:vendorExtensions>
-          <xilinx:addressBlockInfo>
-            <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="user" xilinx:id="ADDRBLOCK_ENABLEMENT.S_AXI.qnet_reg">true</xilinx:isEnabled>
-            </xilinx:enablement>
-          </xilinx:addressBlockInfo>
-        </spirit:vendorExtensions>
+        <spirit:access>read-write</spirit:access>
       </spirit:addressBlock>
     </spirit:memoryMap>
   </spirit:memoryMaps>
@@ -622,12 +452,18 @@
         <spirit:language>SystemVerilog</spirit:language>
         <spirit:modelName>axis_tnet</spirit:modelName>
         <spirit:fileSetRef>
+          <spirit:localName>xilinx_anylanguagesynthesis_xilinx_com_ip_aurora_64b66b_12_0__ref_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_anylanguagesynthesis_xilinx_com_ip_clk_wiz_6_0__ref_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagesynthesis_view_fileset</spirit:localName>
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>417a739d</spirit:value>
+            <spirit:value>aa48afbd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -638,12 +474,18 @@
         <spirit:language>SystemVerilog</spirit:language>
         <spirit:modelName>axis_tnet</spirit:modelName>
         <spirit:fileSetRef>
+          <spirit:localName>xilinx_anylanguagebehavioralsimulation_xilinx_com_ip_aurora_64b66b_12_0__ref_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:fileSetRef>
+          <spirit:localName>xilinx_anylanguagebehavioralsimulation_xilinx_com_ip_clk_wiz_6_0__ref_view_fileset</spirit:localName>
+        </spirit:fileSetRef>
+        <spirit:fileSetRef>
           <spirit:localName>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:localName>
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>417a739d</spirit:value>
+            <spirit:value>aa48afbd</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -658,7 +500,7 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>fcf9e653</spirit:value>
+            <spirit:value>a27a6e51</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -672,12 +514,38 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>viewChecksum</spirit:name>
-            <spirit:value>f92e9879</spirit:value>
+            <spirit:value>41c0f1c3</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
     </spirit:views>
     <spirit:ports>
+      <spirit:port>
+        <spirit:name>gt_refclk1_p</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
+      <spirit:port>
+        <spirit:name>gt_refclk1_n</spirit:name>
+        <spirit:wire>
+          <spirit:direction>in</spirit:direction>
+          <spirit:wireTypeDefs>
+            <spirit:wireTypeDef>
+              <spirit:typeName>wire</spirit:typeName>
+              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
+              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
+            </spirit:wireTypeDef>
+          </spirit:wireTypeDefs>
+        </spirit:wire>
+      </spirit:port>
       <spirit:port>
         <spirit:name>t_clk</spirit:name>
         <spirit:wire>
@@ -745,58 +613,6 @@
       </spirit:port>
       <spirit:port>
         <spirit:name>ps_aresetn</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>init_clk</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>init_aresetn</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>user_clock</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>user_aresetn</spirit:name>
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:wireTypeDefs>
@@ -1012,137 +828,6 @@
               <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
             </spirit:wireTypeDef>
           </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>reset_pb</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>reg</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>pma_init</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>reg</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>channel_up_A</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>s_axi_rx_tdata_A</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long">127</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-          <spirit:driver>
-            <spirit:defaultValue spirit:format="long">0</spirit:defaultValue>
-          </spirit:driver>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>s_axi_rx_tvalid_A</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>channel_up_B</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>m_axi_tx_tdata_B</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
-          <spirit:vector>
-            <spirit:left spirit:format="long">127</spirit:left>
-            <spirit:right spirit:format="long">0</spirit:right>
-          </spirit:vector>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>m_axi_tx_tvalid_B</spirit:name>
-        <spirit:wire>
-          <spirit:direction>out</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-        </spirit:wire>
-      </spirit:port>
-      <spirit:port>
-        <spirit:name>m_axi_tx_tready_B</spirit:name>
-        <spirit:wire>
-          <spirit:direction>in</spirit:direction>
-          <spirit:wireTypeDefs>
-            <spirit:wireTypeDef>
-              <spirit:typeName>wire</spirit:typeName>
-              <spirit:viewNameRef>xilinx_anylanguagesynthesis</spirit:viewNameRef>
-              <spirit:viewNameRef>xilinx_anylanguagebehavioralsimulation</spirit:viewNameRef>
-            </spirit:wireTypeDef>
-          </spirit:wireTypeDefs>
-          <spirit:driver>
-            <spirit:defaultValue spirit:format="long">1</spirit:defaultValue>
-          </spirit:driver>
         </spirit:wire>
       </spirit:port>
       <spirit:port>
@@ -1474,6 +1159,21 @@
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagesynthesis_view_fileset</spirit:name>
       <spirit:file>
+        <spirit:name>src/aurora_64b66b_NSL/aurora_64b66b_NSL.xci</spirit:name>
+        <spirit:userFileType>xci</spirit:userFileType>
+        <spirit:userFileType>CELL_NAME_AURORA_B</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/aurora_64b66b_SL/aurora_64b66b_SL.xci</spirit:name>
+        <spirit:userFileType>xci</spirit:userFileType>
+        <spirit:userFileType>CELL_NAME_AURORA_A</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/clk_wiz_0/clk_wiz_0.xci</spirit:name>
+        <spirit:userFileType>xci</spirit:userFileType>
+        <spirit:userFileType>CELL_NAME_CLK_AURORA</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/_qnet_defines.svh</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1491,6 +1191,10 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>src/qick_net.sv</spirit:name>
+        <spirit:fileType>systemVerilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/tnet_reg.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
@@ -1501,12 +1205,47 @@
       <spirit:file>
         <spirit:name>src/axis_tnet.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_704a7c87</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_580e1285</spirit:userFileType>
       </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_anylanguagesynthesis_xilinx_com_ip_aurora_64b66b_12_0__ref_view_fileset</spirit:name>
+      <spirit:vendorExtensions>
+        <xilinx:subCoreRef>
+          <xilinx:componentRef xsi:type="xilinx:componentRefType" xilinx:vendor="xilinx.com" xilinx:library="ip" xilinx:name="aurora_64b66b" xilinx:version="12.0">
+            <xilinx:mode xilinx:name="create_mode"/>
+          </xilinx:componentRef>
+        </xilinx:subCoreRef>
+      </spirit:vendorExtensions>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_anylanguagesynthesis_xilinx_com_ip_clk_wiz_6_0__ref_view_fileset</spirit:name>
+      <spirit:vendorExtensions>
+        <xilinx:subCoreRef>
+          <xilinx:componentRef xilinx:vendor="xilinx.com" xilinx:library="ip" xilinx:name="clk_wiz" xilinx:version="6.0">
+            <xilinx:mode xilinx:name="create_mode"/>
+          </xilinx:componentRef>
+        </xilinx:subCoreRef>
+      </spirit:vendorExtensions>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_anylanguagebehavioralsimulation_view_fileset</spirit:name>
       <spirit:file>
+        <spirit:name>src/aurora_64b66b_NSL/aurora_64b66b_NSL.xci</spirit:name>
+        <spirit:userFileType>xci</spirit:userFileType>
+        <spirit:userFileType>CELL_NAME_AURORA_B</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/aurora_64b66b_SL/aurora_64b66b_SL.xci</spirit:name>
+        <spirit:userFileType>xci</spirit:userFileType>
+        <spirit:userFileType>CELL_NAME_AURORA_A</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
+        <spirit:name>src/clk_wiz_0/clk_wiz_0.xci</spirit:name>
+        <spirit:userFileType>xci</spirit:userFileType>
+        <spirit:userFileType>CELL_NAME_CLK_AURORA</spirit:userFileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/_qnet_defines.svh</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
         <spirit:isIncludeFile>true</spirit:isIncludeFile>
@@ -1524,6 +1263,10 @@
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
       <spirit:file>
+        <spirit:name>src/qick_net.sv</spirit:name>
+        <spirit:fileType>systemVerilogSource</spirit:fileType>
+      </spirit:file>
+      <spirit:file>
         <spirit:name>src/tnet_reg.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
@@ -1535,6 +1278,26 @@
         <spirit:name>src/axis_tnet.sv</spirit:name>
         <spirit:fileType>systemVerilogSource</spirit:fileType>
       </spirit:file>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_anylanguagebehavioralsimulation_xilinx_com_ip_aurora_64b66b_12_0__ref_view_fileset</spirit:name>
+      <spirit:vendorExtensions>
+        <xilinx:subCoreRef>
+          <xilinx:componentRef xilinx:vendor="xilinx.com" xilinx:library="ip" xilinx:name="aurora_64b66b" xilinx:version="12.0">
+            <xilinx:mode xilinx:name="create_mode"/>
+          </xilinx:componentRef>
+        </xilinx:subCoreRef>
+      </spirit:vendorExtensions>
+    </spirit:fileSet>
+    <spirit:fileSet>
+      <spirit:name>xilinx_anylanguagebehavioralsimulation_xilinx_com_ip_clk_wiz_6_0__ref_view_fileset</spirit:name>
+      <spirit:vendorExtensions>
+        <xilinx:subCoreRef>
+          <xilinx:componentRef xilinx:vendor="xilinx.com" xilinx:library="ip" xilinx:name="clk_wiz" xilinx:version="6.0">
+            <xilinx:mode xilinx:name="create_mode"/>
+          </xilinx:componentRef>
+        </xilinx:subCoreRef>
+      </spirit:vendorExtensions>
     </spirit:fileSet>
     <spirit:fileSet>
       <spirit:name>xilinx_testbench_view_fileset</spirit:name>
@@ -1563,7 +1326,7 @@
       <spirit:file>
         <spirit:name>xgui/qick_net_v1_0.tcl</spirit:name>
         <spirit:fileType>tclSource</spirit:fileType>
-        <spirit:userFileType>CHECKSUM_f92e9879</spirit:userFileType>
+        <spirit:userFileType>CHECKSUM_41c0f1c3</spirit:userFileType>
         <spirit:userFileType>XGUI_VERSION_2</spirit:userFileType>
       </spirit:file>
     </spirit:fileSet>
@@ -1586,22 +1349,14 @@
         <xilinx:family xilinx:lifeCycle="Production">qkintex7</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">qkintex7l</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">akintex7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">artix7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">artix7l</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">aartix7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">qartix7</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">zynq</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">qzynq</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">azynq</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">spartan7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">aspartan7</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">virtexu</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">zynquplus</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">virtexuplus</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">virtexuplusHBM</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">virtexuplus58g</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">kintexuplus</xilinx:family>
-        <xilinx:family xilinx:lifeCycle="Production">artixuplus</xilinx:family>
         <xilinx:family xilinx:lifeCycle="Production">kintexu</xilinx:family>
       </xilinx:supportedFamilies>
       <xilinx:taxonomies>
@@ -1609,15 +1364,19 @@
       </xilinx:taxonomies>
       <xilinx:displayName>qick_net</xilinx:displayName>
       <xilinx:definitionSource>package_project</xilinx:definitionSource>
-      <xilinx:coreRevision>13</xilinx:coreRevision>
-      <xilinx:coreCreationDateTime>2023-04-21T19:24:26Z</xilinx:coreCreationDateTime>
+      <xilinx:xpmLibraries>
+        <xilinx:xpmLibrary>XPM_CDC</xilinx:xpmLibrary>
+        <xilinx:xpmLibrary>XPM_FIFO</xilinx:xpmLibrary>
+      </xilinx:xpmLibraries>
+      <xilinx:coreRevision>19</xilinx:coreRevision>
+      <xilinx:coreCreationDateTime>2023-04-26T18:26:44Z</xilinx:coreCreationDateTime>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
       <xilinx:xilinxVersion>2022.1</xilinx:xilinxVersion>
-      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="14fecf05"/>
-      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="922db350"/>
-      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="3bc2f48e"/>
-      <xilinx:checksum xilinx:scope="ports" xilinx:value="b90b528d"/>
+      <xilinx:checksum xilinx:scope="busInterfaces" xilinx:value="2f578b13"/>
+      <xilinx:checksum xilinx:scope="memoryMaps" xilinx:value="5bb79b49"/>
+      <xilinx:checksum xilinx:scope="fileGroups" xilinx:value="5173772d"/>
+      <xilinx:checksum xilinx:scope="ports" xilinx:value="99665bb4"/>
       <xilinx:checksum xilinx:scope="parameters" xilinx:value="09ad661c"/>
     </xilinx:packagingInfo>
   </spirit:vendorExtensions>
