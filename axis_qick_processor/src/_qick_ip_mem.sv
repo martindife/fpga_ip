@@ -53,71 +53,6 @@ endgenerate
 
 endmodule
 
-
-
-module FIFO # (
-   parameter FIFO_DW = 16 , 
-   parameter FIFO_AW = 8 
-) ( 
-   input  wire                   clk_i    ,
-   input  wire                   rst_ni   ,
-   input  wire                   flush_i  ,
-   input  wire                   push     ,
-   input  wire                   pop      ,
-   input  wire [FIFO_DW - 1:0]   data_i   ,
-   output wire  [FIFO_DW - 1:0]  data_o   ,
-   output wire                   empty_o  ,
-   output wire                   full_o   );
-
-localparam FIFO_SIZE = 2**FIFO_AW ;
-
-wire [FIFO_AW-1:0] rd_ptr_p1, wr_ptr_p1;
-reg [FIFO_AW-1:0] rd_ptr, wr_ptr;
-reg [FIFO_DW - 1:0] fifo_dt [FIFO_SIZE];
-
-
-assign rd_ptr_p1 = rd_ptr + 1'b1 ;
-assign wr_ptr_p1 = wr_ptr + 1'b1 ;
-
-wire [FIFO_DW - 1:0] mem_dt;
-
-// The WRITE_POINTER is on the First Empty Value
-// The READ_POINTER is on the Last Written Value
-wire empty, full;
-assign empty   = (rd_ptr == wr_ptr) ;   
-assign full    = (rd_ptr == wr_ptr_p1);
-
-wire do_pop, do_push;
-assign do_pop  = pop & !empty;
-assign do_push = push & !full;
-
-// Pointers
-always_ff @(posedge clk_i) begin
-   if (!rst_ni | flush_i) begin
-      rd_ptr <= 0;
-      wr_ptr <= 0;
-   end else  begin
-      if ( do_push ) wr_ptr <= wr_ptr_p1;
-      if ( do_pop  ) rd_ptr <= rd_ptr_p1;
-   end
-end
-
-// Register
-always_ff @(posedge clk_i) begin
-   if (!rst_ni)   
-      fifo_dt       <= '{default:'0} ;
-   else if (do_push )
-      fifo_dt[wr_ptr] <= data_i ;
-end
-
-   
-assign empty_o = empty ;
-assign full_o  = full;
-assign data_o  = fifo_dt[rd_ptr];
-
-endmodule
-
-
 module LIFO # (
    parameter WIDTH = 16 , 
    parameter DEPTH = 8    // MAX 256
@@ -160,116 +95,6 @@ endmodule
 
 
 
-
-module BRAM_FIFO_DC # (
-   parameter FIFO_DW = 16 , 
-   parameter FIFO_AW = 8 
-) ( 
-   input  wire                   wr_clk_i    ,
-   input  wire                   wr_rst_ni   ,
-   input  wire                   wr_en_i     ,
-   input  wire                   push        ,
-   input  wire [FIFO_DW - 1:0]   data_i      ,
-   input  wire                   rd_clk_i    ,
-   input  wire                   rd_rst_ni   ,
-   input  wire                   rd_en_i     ,
-   input  wire                   pop         ,
-   output wire  [FIFO_DW - 1:0]  data_o      ,
-   input  wire                   flush_i     ,
-   output wire                   empty_o     ,
-   output wire                   full_o      );
-
-// The WRITE_POINTER is on the Last Empty Value
-// The READ_POINTER is on the Last Value
-wire [FIFO_AW-1:0] rd_gptr_p1   ;
-wire [FIFO_AW-1:0] wr_gptr_p1   ;
-wire [FIFO_AW-1:0] rd_ptr, wr_ptr, rd_gptr, wr_gptr  ;
-
-// Sample Pointers
-reg [FIFO_AW-1:0] wr_gptr_rcd, wr_gptr_r, wr_gptr_p1_rcd, wr_gptr_p1_r; 
-always_ff @(posedge rd_clk_i) begin
-   wr_gptr_rcd      <= wr_gptr;
-   wr_gptr_r        <= wr_gptr_rcd;
-   wr_gptr_p1_rcd   <= wr_gptr_p1;
-   wr_gptr_p1_r     <= wr_gptr_p1_rcd;
-end
-
-wire [FIFO_DW - 1:0] mem_dt;
-
-wire empty, full;
-//assign empty_2   = (rd_gptr == wr_gptr_r) ;   
-assign empty   = ~|(rd_gptr ^ wr_gptr_r) ;   
-assign full    = (rd_gptr == wr_gptr_p1_r);
-
-// ALWAYS POP
-//wire do_pop, do_push;
-// assign do_pop_2  = pop & !empty;
-// assign do_push_2 = push & !full;
-
-
-// REG POP
-reg do_pop;
-wire do_push;
-//reg do_pop_2, do_push_2;
-always_ff @(posedge rd_clk_i) begin
-   do_pop      <= pop & !empty;
-end
-
-assign do_push    = push & !full;
-
-
-wire clr_wr, clr_rd;
-//Gray Code Counters
-gcc #(
-   .DW	( FIFO_AW )
-) gcc_wr_ptr  (
-   .clk_i            ( wr_clk_i     ) ,
-   .rst_ni           ( wr_rst_ni    ) ,
-   .async_clear_i    ( flush_i      ) ,
-   .clear_o          ( clr_wr       ) ,
-   .cnt_en_i         ( do_push      ) ,
-   .count_bin_o      ( wr_ptr       ) ,
-   .count_gray_o     ( wr_gptr      ) ,
-   .count_bin_p1_o   (     ) ,
-   .count_gray_p1_o  ( wr_gptr_p1   ) );
-
-gcc #(
-   .DW	( FIFO_AW )
-) gcc_rd_ptr (
-   .clk_i            ( rd_clk_i     ) ,
-   .rst_ni           ( rd_rst_ni    ) ,
-   .async_clear_i    ( flush_i      ) ,
-   .clear_o          ( clr_rd       ) ,
-   .cnt_en_i         ( do_pop       ) ,
-   .count_bin_o      ( rd_ptr       ) ,
-   .count_gray_o     ( rd_gptr      ) ,
-   .count_bin_p1_o   (     ) ,
-   .count_gray_p1_o  ( rd_gptr_p1   ) );
-
-// Data
-bram_dual_port_dc  # (
-   .MEM_AW  ( FIFO_AW     )  , 
-   .MEM_DW  ( FIFO_DW     )  ,
-   .RAM_OUT ( "NO_REGISTERED" ) // Select "NO_REGISTERED" or "REGISTERED" 
-) wave_mem ( 
-   .clk_a_i    ( wr_clk_i  ) ,
-   .en_a_i     ( wr_en_i   ) ,
-   .we_a_i     ( do_push   ) ,
-   .addr_a_i   ( wr_ptr    ) ,
-   .dt_a_i     ( data_i    ) ,
-   .dt_a_o     ( ) ,
-   .clk_b_i    ( rd_clk_i  ) ,
-   .en_b_i     ( rd_en_i   ) ,
-   .we_b_i     ( 1'b0      ) ,
-   .addr_b_i   ( rd_ptr    ) ,
-   .dt_b_i     (     ) ,
-   .dt_b_o     ( mem_dt    ) );
-   
-assign empty_o = empty | flush_i | clr_rd | clr_wr;
-assign full_o  = full;
-assign data_o  = mem_dt;
-
-endmodule
 
 
 
@@ -388,10 +213,11 @@ module BRAM_FIFO_DC_2 # (
 // The READ_POINTER is on the Last Value
 wire [FIFO_AW-1:0] rd_gptr_p1   ;
 wire [FIFO_AW-1:0] wr_gptr_p1   ;
-wire [FIFO_AW-1:0] rd_ptr, wr_ptr, rd_gptr, wr_gptr  ;
+wire [FIFO_AW-1:0] rd_gptr, wr_gptr  ;
 
 wire clr_wr, clr_rd;
 
+reg async_empty_r;
 
 // Sample Pointers
 reg [FIFO_AW-1:0] wr_gptr_rcd, wr_gptr_r, wr_gptr_p1_rcd, wr_gptr_p1_r; 
@@ -400,6 +226,7 @@ always_ff @(posedge rd_clk_i) begin
    wr_gptr_r        <= wr_gptr_rcd;
    wr_gptr_p1_rcd   <= wr_gptr_p1;
    wr_gptr_p1_r     <= wr_gptr_p1_rcd;
+   async_empty_r    <= async_empty;
 end
 
 reg [FIFO_AW-1:0] rd_gptr_rcd, rd_gptr_r; 
@@ -444,13 +271,11 @@ wire do_pop, do_push;
 assign do_pop  = pop_i & !async_empty;
 assign do_push = push_i & !async_full;
 
-assign async_empty_o = async_empty | busy; // While RESETTING, Shows EMPTY
+//assign async_empty_o = async_empty | busy; // While RESETTING, Shows EMPTY
+assign async_empty_o = async_empty_r | busy; // While RESETTING, Shows EMPTY
+
 assign async_full_o  = async_full  | busy;
 assign data_o  = mem_dt;
-
-//Gray Code Counters
-// CHECK TO USE THE GRAY COUNTER AS A POINTER..
-// Why to use the BINARY?????
 
 gcc #(
    .DW	( FIFO_AW )
@@ -460,7 +285,7 @@ gcc #(
    .async_clear_i    ( clr_fifo_req      ) ,
    .clear_o          ( clr_wr       ) ,
    .cnt_en_i         ( do_push      ) ,
-   .count_bin_o      ( wr_ptr       ) ,
+   .count_bin_o      (     ) ,
    .count_gray_o     ( wr_gptr      ) ,
    .count_bin_p1_o   (     ) ,
    .count_gray_p1_o  ( wr_gptr_p1   ) );
@@ -473,7 +298,7 @@ gcc #(
    .async_clear_i    ( clr_fifo_req      ) ,
    .clear_o          ( clr_rd       ) ,
    .cnt_en_i         ( do_pop       ) ,
-   .count_bin_o      ( rd_ptr       ) ,
+   .count_bin_o      (     ) ,
    .count_gray_o     ( rd_gptr      ) ,
    .count_bin_p1_o   (     ) ,
    .count_gray_p1_o  ( rd_gptr_p1   ) );
@@ -482,18 +307,19 @@ gcc #(
 bram_dual_port_dc  # (
    .MEM_AW  ( FIFO_AW     )  , 
    .MEM_DW  ( FIFO_DW     )  ,
-   .RAM_OUT ( "NO_REGISTERED" ) // Select "NO_REGISTERED" or "REGISTERED" 
+   //.RAM_OUT ( "NO_REGISTERED" ) // Select "NO_REGISTERED" or "REGISTERED" 
+   .RAM_OUT ( "REGISTERED" ) // Select "NO_REGISTERED" or "REGISTERED" 
 ) fifo_mem ( 
    .clk_a_i    ( wr_clk_i  ) ,
    .en_a_i     ( wr_en_i   ) ,
    .we_a_i     ( do_push   ) ,
-   .addr_a_i   ( wr_ptr    ) ,
+   .addr_a_i   ( wr_gptr    ) ,
    .dt_a_i     ( data_i    ) ,
    .dt_a_o     ( ) ,
    .clk_b_i    ( rd_clk_i  ) ,
    .en_b_i     ( rd_en_i   ) ,
    .we_b_i     ( 1'b0      ) ,
-   .addr_b_i   ( rd_ptr    ) ,
+   .addr_b_i   ( rd_gptr    ) ,
    .dt_b_i     (     ) ,
    .dt_b_o     ( mem_dt    ) );
    

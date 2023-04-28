@@ -670,7 +670,6 @@ assign port_o.p_data    = x2_port_w_dt       ;
 assign core_do [31:24] = {restart_i, stall, flush, id_flag_we, alu_fZ_r, alu_fS_r, x2_ctrl.port_we, x2_ctrl.port_re};
 assign core_do [23:16] = {id_type_ctrl, id_type_cfg, id_type_br, id_type_wr, id_type_wm, id_type_wp, id_dreg_we, id_dmem_we } ;
 assign core_do [15:8]  = r_x1_alu_dt[7:0]  ;
-assign core_do [7:4]   = reg_time[3:0]    ; 
-assign core_do [3:0]   = port_o.p_time[3:0] ;
+assign core_do [7:0]   = port_o.p_time[7:0] ;
 
 endmodule

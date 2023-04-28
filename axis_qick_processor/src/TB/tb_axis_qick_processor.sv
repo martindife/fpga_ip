@@ -35,8 +35,8 @@ import axi_mst_0_pkg::*;
 `define WMEM_AW          4 
 `define REG_AW           4 
 `define IN_PORT_QTY      2 
-`define OUT_DPORT_QTY    2 
-`define OUT_WPORT_QTY    2 
+`define OUT_DPORT_QTY    1 
+`define OUT_WPORT_QTY    1 
 
 
 module tb_axis_qick_processor ();
@@ -301,7 +301,8 @@ axis_qick_proccessor # (
    .tnet_c_dt_o  ( tnet_c_dt_o ) ,
    .tnet_d_dt_o  ( tnet_d_dt_o ) ,
    .tnet_rdy_i   ( tnet_rdy_i  ) ,
-   .tnet_dt_i    ( tnet_dt_i   ) ,
+   .tnet_dt1_i    ( tnet_dt_i[0]   ) ,
+   .tnet_dt2_i    ( tnet_dt_i[1]   ) ,
    .periph_en_o   ( periph_en_o   ) ,
    .periph_op_o   ( periph_op_o   ) ,
    .periph_a_dt_o ( periph_a_dt_o ) ,
@@ -309,7 +310,8 @@ axis_qick_proccessor # (
    .periph_c_dt_o ( periph_c_dt_o ) ,
    .periph_d_dt_o ( periph_d_dt_o ) ,   
    .periph_rdy_i  ( periph_rdy_i ) ,   
-   .periph_dt_i   ( periph_dt_i ) ,   
+   .periph_dt1_i   ( periph_dt_i[0] ) ,   
+   .periph_dt2_i   ( periph_dt_i[1] ) ,   
    .s_dma_axis_tdata_i   ( s_dma_axis_tdata_i  ) ,
    .s_dma_axis_tlast_i   ( s_dma_axis_tlast_i  ) ,
    .s_dma_axis_tvalid_i  ( s_dma_axis_tvalid_i ) ,
@@ -403,9 +405,9 @@ initial begin
    AXIS_QPROC.QPROC.CORE_0.CORE_MEM.D_MEM.RAM = '{default:'0} ;
    AXIS_QPROC.QPROC.CORE_0.CORE_MEM.W_MEM.RAM = '{default:'0} ;
    AXIS_QPROC.QPROC.DATA_FIFO[0].data_fifo_inst.fifo_mem.RAM = '{default:'0} ;
-   AXIS_QPROC.QPROC.DATA_FIFO[1].data_fifo_inst.fifo_mem.RAM = '{default:'0} ;
    AXIS_QPROC.QPROC.WAVE_FIFO[0].wave_fifo_inst.fifo_mem.RAM = '{default:'0} ;
-   AXIS_QPROC.QPROC.WAVE_FIFO[1].wave_fifo_inst.fifo_mem.RAM = '{default:'0} ;
+   //AXIS_QPROC.QPROC.DATA_FIFO[1].data_fifo_inst.fifo_mem.RAM = '{default:'0} ;
+   //AXIS_QPROC.QPROC.WAVE_FIFO[1].wave_fifo_inst.fifo_mem.RAM = '{default:'0} ;
    
    
    
@@ -455,11 +457,10 @@ tnet_dt_i = '{default:'0} ;
    #10;
    @ (posedge s_ps_dma_aclk); #0.1;
 
-
 // TEST_DMA_AXI ();
 //TEST_AXI ();
-
 //TEST_STATES();
+
 // RESET TIME
    #50;
    @ (posedge c_clk); #0.1;
@@ -495,30 +496,6 @@ tnet_dt_i = '{default:'0} ;
    #25;
 
 
-
-
-
-   #2000;
-   
-   WRITE_AXI( REG_TPROC_CTRL, 1); //T_RST
-   //WRITE_AXI( REG_TPROC_CTRL, 4); //P_RST
-   WRITE_AXI( REG_TPROC_CTRL, 16); //PLAY
-   
-
-
-   COND_SET;
-   COND_CLEAR;
-
-   #3500;
-
-   COND_SET;
-   COND_CLEAR;
-
-
-
-   #50000;
-
- 
 end
 
 

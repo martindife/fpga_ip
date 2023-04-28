@@ -200,7 +200,8 @@ axis_write #(
    .exec_ack_o       ( aw_end             ) ,
    .addr_i           ( MEM_ADDR           ) );
 
-assign STATUS_O[7:0]  = { mem_op, start_single, mem_we_single, ar_exec, aw_exec, end_single_o, aw_end, ar_end} ;
+//assign STATUS_O[7:0]  = { mem_op, start_single, mem_we_single, ar_exec, aw_exec, end_single_o, aw_end, ar_end} ;
+assign STATUS_O[7:0]  = { 6'b0, ar_exec, aw_exec} ;
 assign DEBUG_O[15:8]  = ext_mem_addr [7:0] ;
 assign DEBUG_O[7:0]   = ext_mem_w_dt_o[7:0] ;
 

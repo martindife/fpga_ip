@@ -54,7 +54,8 @@ module axis_qick_proccessor # (
    output wire  [31:0]        tnet_c_dt_o     ,
    output wire  [31:0]        tnet_d_dt_o     ,
    input  wire                tnet_rdy_i      , 
-   input  wire  [31 :0]       tnet_dt_i [2]   , 
+   input  wire  [31 :0]       tnet_dt1_i      , 
+   input  wire  [31 :0]       tnet_dt2_i      , 
 // CUSTOM PERIPHERALS 
    output wire                periph_en_o     ,
    output wire  [4 :0]        periph_op_o     ,
@@ -63,7 +64,9 @@ module axis_qick_proccessor # (
    output wire  [31:0]        periph_c_dt_o   ,
    output wire  [31:0]        periph_d_dt_o   ,
    input  wire                periph_rdy_i    , 
-   input  wire  [31 :0]       periph_dt_i [2] , 
+   input  wire  [31 :0]       periph_dt1_i    , 
+   input  wire  [31 :0]       periph_dt2_i    , 
+
 
 // DMA AXIS FOR READ AND WRITE MEMORY             
    input  wire  [255 :0]      s_dma_axis_tdata_i   ,
@@ -280,6 +283,7 @@ always_comb begin
 end
 
 qick_processor # (
+   .DEBUG          ( DEBUG      ),
    .DUAL_CORE      ( DUAL_CORE      ),
    .LFSR           ( LFSR           ),
    .DIVIDER        ( DIVIDER        ),
@@ -316,9 +320,9 @@ qick_processor # (
    .periph_addr_o       ( periph_addr           ) ,
    .periph_op_o         ( periph_op             ) ,
    .periph_rdy_i        ( periph_rdy_i           ) ,
-   .periph_dt_i         ( periph_dt_i           ) ,
+   .periph_dt_i         ( {periph_dt2_i, periph_dt1_i} ) ,
    .tnet_rdy_i          ( tnet_rdy_i           ) ,
-   .tnet_dt_i           ( tnet_dt_i           ) ,
+   .tnet_dt_i           ( {tnet_dt2_i, tnet_dt1_i} ) ,
 
    .s_dma_axis_tdata_i  ( s_dma_axis_tdata_i    ) ,
    .s_dma_axis_tlast_i  ( s_dma_axis_tlast_i    ) ,

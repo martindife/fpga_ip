@@ -11,6 +11,7 @@
 `include "_qick_defines.svh"
 
 module qick_processor # (
+   parameter DEBUG          =  0 ,
    parameter DUAL_CORE      =  0 ,
    parameter LFSR           =  1 ,
    parameter DIVIDER        =  1 ,
@@ -93,7 +94,6 @@ localparam DECO_OUT = DUAL_CORE + 2;
 wire                 port_we        ;
 PORT_DT              out_port_data  ;
 wire [47:0] time_abs_r, init_off;
-wire c_ref_set, c_ref_inc;
 wire [31:0] core_usr_a_dt, core_usr_b_dt, core_usr_c_dt, core_usr_d_dt ;
 // REGISTERS
 wire [ 31 : 0 ] xreg_TPROC_CTRL  , xreg_TPROC_CFG       ;
@@ -123,10 +123,8 @@ wire [31:0] reg_axi_dt [2] ;
 // IN PORT DATA REGISTER
 ///////////////////////////////////////////////////////////////////////////////
 localparam ZFP = 16 - IN_PORT_QTY; // Zero Fill for Input Port
-wire [31:0] core0_cfg, core1_cfg;
 
-wire port_clr;
-assign port_clr = core0_cfg[8];
+
 
 qproc_inport_reg # (
    .PORT_QTY    (IN_PORT_QTY) 
@@ -179,9 +177,9 @@ reg ctrl_t_updt_r, ctrl_t_init_r;
 reg [31:0] offset_dt_r;
 
 assign time_rst_cpu   = ( core_usr_addr[0] & core_usr_operation[0]) ;
-assign time_updt_cpu  = ( core_usr_addr[0] & core_usr_operation[2]) ;
-assign time_ref_set   = ( core_usr_addr[0] & core_usr_operation[3]) ;
-assign time_ref_inc   = ( core_usr_addr[0] & core_usr_operation[4]) ;
+assign time_updt_cpu  = ( core_usr_addr[0] & core_usr_operation[1]) ;
+assign time_ref_set   = ( core_usr_addr[0] & core_usr_operation[2]) ;
+assign time_ref_inc   = ( core_usr_addr[0] & core_usr_operation[3]) ;
 
 // Selec Source of Time Update Data, depending on the Source of ctrl_t_updt
 always_ff @(posedge c_clk_i)
@@ -209,8 +207,8 @@ always_ff @ (posedge c_clk_i, negedge c_rst_ni) begin
    if (!c_rst_ni)              c_time_ref_dt    <= '{default:'0} ;
    else if (c_time_rst)      c_time_ref_dt    <= '{default:'0} ;
    else if (c_time_en)
-      if       (c_ref_set )  c_time_ref_dt    <=  {16'd0, core_usr_b_dt} ;
-      else if  (c_ref_inc )  c_time_ref_dt    <=  c_time_ref_dt + {16'd0, core_usr_b_dt} ;
+      if       (time_ref_set )  c_time_ref_dt    <=  {16'd0, core_usr_b_dt} ;
+      else if  (time_ref_inc )  c_time_ref_dt    <=  c_time_ref_dt + {16'd0, core_usr_b_dt} ;
 end
    
 
@@ -265,7 +263,6 @@ always_comb begin
       RST_WAIT : begin
          if (!all_fifo_full) proc_st_nxt = STOP;
       end
-      
       T_INIT: begin
          proc_st_nxt = PLAY;
          proc_rst = 1;            
@@ -318,14 +315,20 @@ wire dfifo_full, wfifo_full, fifo_ok;
 reg arith_rdy_r, div_rdy_r, tnet_rdy_r, periph_rdy_r;
 reg arith_dt_new, div_dt_new, tnet_dt_new, periph_dt_new ;
 wire status_clr, arith_clr, div_clr, tnet_clr, periph_clr ;
+wire port_clr;
+wire [2:0]core0_src_dt, core1_src_dt;
 
+wire [31:0] core0_cfg, core1_cfg;
+assign core0_src_dt = core0_cfg[2:0];
+assign core1_src_dt = core1_cfg[2:0];
 
+assign status_clr   = core0_cfg[3] | core1_cfg[3] ; 
+assign arith_clr    = core0_cfg[4] | core1_cfg[4] ;
+assign div_clr      = core0_cfg[5] | core1_cfg[5] ;
+assign tnet_clr     = core0_cfg[6] | core1_cfg[6] ;
+assign periph_clr   = core0_cfg[7] | core1_cfg[7] ;
+assign port_clr     = core0_cfg[8] | core1_cfg[8] ;
 
-assign status_clr = core0_cfg[3] | core1_cfg[3] ; 
-assign arith_clr  = core0_cfg[4] | core1_cfg[4] ;
-assign div_clr    = core0_cfg[5] | core1_cfg[5] ;
-assign tnet_clr   = core0_cfg[6] | core1_cfg[6] ;
-assign periph_clr = core0_cfg[7] | core1_cfg[7] ;
 
 
 reg  [31 :0]        tnet_dt_r [2] ;
@@ -542,9 +545,6 @@ assign core_en = c_core_en  & fifo_ok;
 
 
 reg [31:0] core0_r_dt [2], core0_w_dt [2];
-wire [2:0]core0_src_dt;
-
-assign core0_src_dt = core0_cfg[2:0];
 
 always_comb begin
    case (core0_src_dt)
@@ -561,13 +561,13 @@ always_comb begin
 end
 
 
-wire [2:0]core0_src_flg;
-assign core0_src_flg = core0_cfg[12:9];
+wire [1:0]core0_src_flg;
+assign core0_src_flg = core0_cfg[10:9];
 reg flag_c0;
 always_comb begin
    case (core0_src_flg)
       2'b00 : flag_c0 = ext_cond_r ;
-      2'b01 : flag_c0 = port_dt_new ;
+      2'b01 : flag_c0 = |port_dt_new ;
       2'b10 : flag_c0 = 0;
       2'b11 : flag_c0 = 0;
       default : flag_c0 = 0;
@@ -619,9 +619,7 @@ generate
    if ( DUAL_CORE == 1) begin : DUAL_CORE_YES
       
       reg  [31:0] core1_r_dt [2];
-      wire [2 :0] core1_src_dt;
 
-      assign core1_src_dt = core1_cfg[2:0] ;
       always_comb begin
       case (core1_src_dt)
             3'b000 : core1_r_dt = tproc_w_dt ;
@@ -693,13 +691,6 @@ qproc_time_ctrl QTIME_CTRL (
    .t_init_off_o   ( init_off       ) );
 
 
-assign xreg_TPROC_STATUS[23 : 20]  = { c_fifo_data_empty[0], c_fifo_data_full[0], c_fifo_data_empty[1], c_fifo_data_full[1]};
-assign xreg_TPROC_STATUS[19 : 16]  = { c_fifo_wave_empty[0], c_fifo_wave_full[0], c_fifo_wave_empty[1], c_fifo_wave_full[1] };
-//assign TPROC_STATUS[15 : 12]  = { pmem_en_o, dmem_we_o, wmem_we_o, port_we};
-assign xreg_TPROC_STATUS[11 :  8]  = { 2'b000 , ext_cond_r};
-assign xreg_TPROC_STATUS[7  :  4]  = { 1'b0  , c_time_en, c_core_en, core_en};
-assign xreg_TPROC_STATUS[3  :  0]  = { 1'b0  , proc_st};
-
 reg  [31:0] tproc_r_dt [2];
 wire [ 2:0] tproc_src_dt;
 
@@ -718,6 +709,17 @@ always_comb begin
       default: tproc_r_dt = '{default:'0} ;
    endcase
 end
+
+assign xreg_TPROC_STATUS[19 : 16]  = { 1'b0 , fifo_ok, wfifo_full, dfifo_full };
+assign xreg_TPROC_STATUS[15 : 12]  = { all_wfifo_full, all_dfifo_full, all_wfifo_empty, all_dfifo_empty };
+assign xreg_TPROC_STATUS[11 :  8]  = { 1'b0  , flag_c0, port_dt_new , ext_cond_r};
+assign xreg_TPROC_STATUS[7  :  4]  = { 1'b0  , proc_rst, c_time_en, core_en};
+assign xreg_TPROC_STATUS[3  :  0]  = { 1'b0  , proc_st};
+
+assign xreg_TPROC_DEBUG[15: 8]  = { c_time_ref_dt[7:0]};
+assign xreg_TPROC_DEBUG[ 7: 4]  = { t_fifo_data_dt[0][3:0]};
+assign xreg_TPROC_DEBUG[ 3: 0]  = { t_fifo_data_time[0][3:0]};
+
 
 // AXI Slave.
 qproc_axi_reg QPROC_xREG (
@@ -832,7 +834,7 @@ end
 reg [OUT_WPORT_QTY-1:0] wave_t_eq, wave_t_gr;
 reg                     wave_pop_prev      [OUT_WPORT_QTY-1:0] ;
 reg [OUT_WPORT_QTY-1:0]  wave_pop ;
-reg [OUT_WPORT_QTY-1:0]  wave_pop_r, wave_pop_r2, wave_pop_r3;
+reg [OUT_WPORT_QTY-1:0]  wave_pop_r, wave_pop_r2, wave_pop_r3, wave_pop_r4;
 
 genvar ind_wfifo;
 generate
@@ -873,19 +875,23 @@ generate
          );
       // POP Generator
       always_comb begin : WAVE_DISPATCHER
-         wave_t_eq[ind_wfifo]  = (time_abs_r == t_fifo_wave_time[ind_wfifo]) ;
+//         wave_t_eq[ind_wfifo]  = (time_abs_r == t_fifo_wave_time[ind_wfifo]) ;
+//         wave_t_gr[ind_wfifo]  = W_RESULT[ind_wfifo][47];
+//         wave_pop[ind_wfifo]   = 0;
+//         wave_pop_prev[ind_wfifo] = wave_pop_r[ind_wfifo] | wave_pop_r2[ind_wfifo] | wave_pop_r3[ind_wfifo];
+//         if (~t_fifo_wave_empty[ind_wfifo])
+//            if ( ( wave_t_eq[ind_wfifo] | wave_t_gr[ind_wfifo] ) & ~wave_pop_prev[ind_wfifo] ) 
+//               wave_pop      [ind_wfifo] = 1'b1 ;
          wave_t_gr[ind_wfifo]  = W_RESULT[ind_wfifo][47];
          wave_pop[ind_wfifo]   = 0;
-         wave_pop_prev[ind_wfifo] = wave_pop_r[ind_wfifo] | wave_pop_r2[ind_wfifo] | wave_pop_r3[ind_wfifo];
-         if (~t_fifo_wave_empty[ind_wfifo])
-            if ( ( wave_t_eq[ind_wfifo] | wave_t_gr[ind_wfifo] ) & ~wave_pop_prev[ind_wfifo] ) 
+         wave_pop_prev[ind_wfifo] = wave_pop_r[ind_wfifo] | wave_pop_r2[ind_wfifo] | wave_pop_r3[ind_wfifo]| wave_pop_r4[ind_wfifo];
+         if (t_time_en & ~t_fifo_wave_empty[ind_wfifo])
+            if ( wave_t_gr[ind_wfifo] & ~wave_pop_prev[ind_wfifo] ) 
                wave_pop      [ind_wfifo] = 1'b1 ;
       end //ALWAYS
    end // FOR
 endgenerate
-
-
-
+               
 ///////////////////////////////////////////////////////////////////////////////
 /// DATA PORT
 ///////////////////////////////////////////////////////////////////////////////
@@ -940,7 +946,7 @@ generate
 //               data_pop      [ind_dfifo] = 1'b1 ;
          data_t_gr[ind_dfifo]  = D_RESULT[ind_dfifo][47];
          data_pop[ind_dfifo] = 0;
-         data_pop_prev[ind_dfifo] = data_pop_r[ind_dfifo] | data_pop_r2[ind_dfifo] | data_pop_r3[ind_dfifo];
+         data_pop_prev[ind_dfifo] = data_pop_r[ind_dfifo] | data_pop_r2[ind_dfifo] | data_pop_r3[ind_dfifo] | data_pop_r4[ind_dfifo];
          if (t_time_en & ~t_fifo_data_empty[ind_dfifo] )
             if ( data_t_gr[ind_dfifo] & ~data_pop_prev[ind_dfifo] ) 
                data_pop      [ind_dfifo] = 1'b1 ;
@@ -974,16 +980,20 @@ always_ff @ (posedge t_clk_i, negedge t_rst_ni) begin
       data_pop_r     <= '{default:'0} ;
       data_pop_r2    <= '{default:'0} ;
       data_pop_r3    <= '{default:'0} ;
+      data_pop_r4    <= '{default:'0} ;
       wave_pop_r     <= '{default:'0} ;
       wave_pop_r2    <= '{default:'0} ;
       wave_pop_r3    <= '{default:'0} ;
+      wave_pop_r4    <= '{default:'0} ;
    end else begin
       data_pop_r     <= data_pop;
       data_pop_r2    <= data_pop_r;
       data_pop_r3    <= data_pop_r2;
+      data_pop_r4    <= data_pop_r3;
       wave_pop_r      <= wave_pop;
       wave_pop_r2     <= wave_pop_r;
       wave_pop_r3     <= wave_pop_r2;
+      wave_pop_r4     <= wave_pop_r3;
 
    end
 end
@@ -1032,43 +1042,44 @@ endgenerate
 
 // DEBUG
 ///////////////////////////////////////////////////////////////////////////////
-
-///// T_CLOCK Debug Signals   
-
-assign t_time_usr_do          = t_time_usr ;
-
-assign t_debug_do[31 : 28]    = { t_fifo_wave_full[3], t_fifo_wave_full[2], t_fifo_wave_full[1], t_fifo_wave_full[0] };
-assign t_debug_do[27 : 24]    = { t_fifo_wave_empty[3],t_fifo_wave_empty[2],t_fifo_wave_empty[1],t_fifo_wave_empty[0]  };
-assign t_debug_do[23 : 20]    = 0 ;
-assign t_debug_do[19 : 16]    = { c_fifo_data_push_r[0], c_fifo_wave_push_r[0] } ;
-assign t_debug_do[15 : 12]    = { data_t_eq[0], data_t_gr[0], data_pop[0], data_pop_prev[0] } ;
-assign t_debug_do[11 : 8]     = { wave_t_eq[0], wave_t_gr[0], wave_pop[0], wave_pop_prev[0] } ;
-assign t_debug_do[7 : 4]      = 0;
-assign t_debug_do[3 : 0]      = {ctrl_p_rst, ctrl_p_run, ctrl_p_stop, proc_rst};
-
-assign t_fifo_do              = {t_fifo_wave_dt[0][3:0], t_fifo_wave_time[0][11:0], t_fifo_data_dt[0][3:0], t_fifo_data_time[0][11:0] } ;
-
-///// C_CLOCK Debug Signals   
-
-assign c_debug_do[15: 8]  = { c_time_ref_dt[7:0] } ;
-assign c_debug_do[7 : 4]  = { t_fifo_data_time[0][3:0]} ;
-
-assign c_time_ref_do = c_time_ref_dt[31:0];
-
-assign c_port_do     = {c_fifo_data_in_r[15:0] , c_fifo_time_in_r[15:0] } ;
-
-assign c_core_do     = core0_do ;
-
-
-//assign DEBUG_O[15:12]  = { dbg_dt_push, dbg_dt_pop, dbg_wv_push, dbg_wv_pop};
-//assign DEBUG_O[15:12]  = { time_ctrl_2r, time_en_r};
-//assign DEBUG_O[11: 8]  = { time_abs[3:0] } ;
-//assign DEBUG_O[7 : 4]  = { ext_dt_en, pmem_dt_i[68:66] } ;
-//assign DEBUG_O[3 : 0]  = { proc_rst , pmem_dt_i[71:69]};
-//assign dbg_dt_push   = |data_push;
-//assign dbg_dt_pop    = |data_pop ;
-//assign dbg_wv_push   = |wave_push;
-//assign dbg_wv_pop    = |wave_pop  ;
+generate
+   if (DEBUG == 1) begin : DEBUG_YES
+      ///// T_CLOCK Debug Signals   
+      assign t_time_usr_do          = t_time_usr ;
+      assign t_fifo_do              = {t_fifo_data_time[0][15:0], t_fifo_data_dt[0][15:0]} ;
+      assign t_debug_do[31 : 28]     = {data_pop_r2[1], data_pop_r2[0], wave_pop_r2[1], wave_pop_r2[0] } ;
+      assign t_debug_do[27 : 24]     = { 4'b0000 };
+      assign t_debug_do[23 : 20]     = { c_fifo_wave_empty[1], c_fifo_wave_empty[0], c_fifo_wave_full[1], c_fifo_wave_full[0] } ;
+      assign t_debug_do[19 : 16]     = { c_fifo_data_empty[1], c_fifo_data_empty[0], c_fifo_data_full[1], c_fifo_data_full[0] }  ;
+      assign t_debug_do[15 : 12]     = {  2'b00, fifo_ok, wfifo_full } ;
+      assign t_debug_do[11 :  8]     = {  dfifo_full, all_fifo_full, all_wfifo_full, all_dfifo_full } ;
+      assign t_debug_do[ 7 :  4]     = { 4'b0000 };
+      assign t_debug_do[ 3 :  0]     = { 1'b0  ,all_fifo_empty , all_wfifo_empty, all_dfifo_empty};
+      ///// C_CLOCK Debug Signals   
+      assign c_time_usr_do          = t_time_usr ;
+      assign c_debug_do[31 : 28]     = {  flag_c0, port_dt_new, 1'b0 , ctrl_p_step } ;
+      assign c_debug_do[27 : 24]     = {  ctrl_p_pause, ctrl_p_run, ctrl_p_stop, ctrl_p_rst } ;
+      assign c_debug_do[23 : 20]     = {  2'b00, ctrl_t_init_r, ctrl_t_updt_r } ;
+      assign c_debug_do[19 : 16]     = {  ctrl_c_step, ctrl_t_step, ctrl_t_freeze, ctrl_t_rst } ;
+      assign c_debug_do[15 : 12]     = {  2'b00, core_en, c_time_init } ;
+      assign c_debug_do[11 : 8]     = {  c_time_rst, c_time_en, proc_rst, c_core_en } ;
+      assign c_debug_do[7 : 4]      = { 1'b0  , ext_cond_r, cond_ext_clear , cond_ext_set};
+      assign c_debug_do[3 : 0]      = { 1'b0  , proc_st};
+      assign c_time_ref_do = c_time_ref_dt[31:0];
+      assign c_port_do     = {c_fifo_data_in_r[15:0] , c_fifo_time_in_r[15:0] } ;
+      assign c_core_do     = core0_do ;
+   end else begin : DEBUG_NO
+      assign t_time_usr_do  = 0 ;
+      assign t_fifo_do      = 0 ;
+      assign t_debug_do     = 0 ;
+      ///// C_CLOCK Debug Signals   
+      assign c_time_usr_do  = 0 ;
+      assign c_debug_do     = 0 ;
+      assign c_time_ref_do  = 0 ;
+      assign c_port_do      = 0 ;
+      assign c_core_do      = 0 ;
+   end
+endgenerate
 
 endmodule
 

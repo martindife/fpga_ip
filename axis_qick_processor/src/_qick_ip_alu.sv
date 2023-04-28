@@ -88,39 +88,6 @@ assign S_o = sign_flag ;
 
 endmodule
 
-
-module div #(
-   parameter DWA = 32 ,
-   parameter DWB = 32
-) (
-   input  wire [DWA-1:0]  A_i           ,
-   input  wire [DWB-1:0]  B_i           ,
-   output wire [DWB-1:0]  div_remainder_o    ,
-   output wire [DWA-1:0]  div_quotient_o  );
-
-reg [DWA-1     : 0 ] q_temp, r_temp;
-reg [DWA+DWB-1   : 0 ] sub_temp;
-
-integer ind_bit;
-always_comb begin 
-   r_temp   = A_i;
-   //sub_temp = B_i;
-   for (ind_bit=DWA-1; ind_bit >= 0 ; ind_bit=ind_bit-1) begin
-      sub_temp = B_i << ind_bit ;
-   	if (r_temp >= sub_temp)
-   	 begin
-	     q_temp[ind_bit] = 1'b1 ;
-	     r_temp = r_temp - sub_temp;
-      end else 
-	      q_temp[ind_bit] = 1'b0;
-   end
-end
-
-assign div_remainder_o = r_temp ;
-assign div_quotient_o  = q_temp;
-
-endmodule
-
 ////////////////////////////////////////////////////////////////////////////////
 
 module div_r #(
