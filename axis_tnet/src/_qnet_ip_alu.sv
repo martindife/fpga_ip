@@ -1,4 +1,4 @@
-module div #(
+module net_div #(
    parameter DWA = 32 ,
    parameter DWB = 32
 ) (
@@ -30,7 +30,7 @@ assign div_quotient_o  = q_temp;
 
 endmodule
 
-module div_r #(
+module net_div_r #(
    parameter DW      = 32 ,
    parameter N_PIPE  = 32 
 ) (

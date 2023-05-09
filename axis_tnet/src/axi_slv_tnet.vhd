@@ -533,7 +533,7 @@ TNET_ADDR        <= slv_reg2(15 downto 0);
 TNET_LEN         <= slv_reg3(15 downto 0);
 REG_AXI_DT1      <= slv_reg4(31 downto 0);
 REG_AXI_DT2      <= slv_reg5(31 downto 0);
-REG_AXI_DT3      <= slv_reg5(31 downto 0);
+REG_AXI_DT3      <= slv_reg6(31 downto 0);
 end rtl;
 
 
