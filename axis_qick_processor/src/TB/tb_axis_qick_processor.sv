@@ -462,24 +462,17 @@ tnet_dt_i = '{default:'0} ;
 //TEST_STATES();
 
 // RESET TIME
-   #50;
+   #100;
    @ (posedge c_clk); #0.1;
    time_rst_i   = 1'b1;
    @ (posedge c_clk); #0.1;
    time_rst_i   = 1'b0;
-// RESET PROCESSOR
-   #10;
-   @ (posedge c_clk); #0.1;
-   proc_rst_i   = 1'b1;
-   @ (posedge c_clk); #0.1;
-   proc_rst_i   = 1'b0;
-
 // RUN
+   #100;
    @ (posedge c_clk); #0.1;
    proc_run_i   = 1'b1;
    @ (posedge c_clk); #0.1;
    proc_run_i   = 1'b0;
-   #25;
 
 
 // PORT DATA IN

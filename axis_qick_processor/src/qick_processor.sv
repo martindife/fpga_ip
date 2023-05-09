@@ -21,9 +21,9 @@ module qick_processor # (
    parameter DMEM_AW        =  8 ,
    parameter WMEM_AW        =  8 ,
    parameter REG_AW         =  4 ,
-   parameter IN_PORT_QTY    =  2 ,
-   parameter OUT_DPORT_QTY  =  4 ,
-   parameter OUT_WPORT_QTY  =  4 
+   parameter IN_PORT_QTY    =  1 ,
+   parameter OUT_DPORT_QTY  =  1 ,
+   parameter OUT_WPORT_QTY  =  1 
 )(
 // Time, Core and AXI CLK & RST.
    input   wire               t_clk_i        ,
@@ -118,11 +118,38 @@ wire [31:0] t_time_usr, c_time_usr ;
 wire [31:0] reg_axi_dt [2] ;
 
 
+wire [167:0]        t_fifo_wave_dt      [OUT_WPORT_QTY-1:0];
+wire [47:0]         t_fifo_wave_time    [OUT_WPORT_QTY-1:0];
+wire [47 :0]        W_RESULT          [OUT_WPORT_QTY-1:0] ;
+
+reg  data_pop   [OUT_DPORT_QTY] ; 
+reg  data_pop_r [OUT_DPORT_QTY]; 
+reg  data_pop_r2   [OUT_DPORT_QTY]; 
+reg  data_pop_r3   [OUT_DPORT_QTY]; 
+reg  data_pop_r4   [OUT_DPORT_QTY]; 
+
+
+wire [31 :0]               t_fifo_data_dt      [OUT_DPORT_QTY-1:0] ;
+wire [47: 0]               t_fifo_data_time    [OUT_DPORT_QTY-1:0];
+wire [47 :0]               D_RESULT          [OUT_DPORT_QTY-1:0] ;
+
+
+reg  [OUT_WPORT_QTY-1:0]  c_fifo_wave_push, c_fifo_wave_push_r ;
+reg  [OUT_DPORT_QTY-1:0]  c_fifo_data_push, c_fifo_data_push_r ; 
+reg [47 :0]                c_fifo_time_in_r ;
+reg [167:0]         c_fifo_data_in_r ;
+reg data_pop_prev [OUT_DPORT_QTY-1:0] ;
 
 
 // IN PORT DATA REGISTER
 ///////////////////////////////////////////////////////////////////////////////
+wire port_clr;
+wire [15:0] port_dt_new ;
+
+wire [IN_PORT_QTY-1:0 ] port_new ;
 localparam ZFP = 16 - IN_PORT_QTY; // Zero Fill for Input Port
+assign port_dt_new = { {ZFP{1'b0}} , port_new };
+
 
 
 
@@ -137,8 +164,6 @@ qproc_inport_reg # (
    .port_tnew_o   ( port_new      ) ,
    .port_tdata_o  ( in_port_dt_r  ) );
 
-wire [15:0] port_dt_new ;
-assign port_dt_new = { {ZFP{1'b0}} , port_new };
 
 // T-PROCESSOR CONTROL
 ///////////////////////////////////////////////////////////////////////////////
@@ -222,10 +247,10 @@ always_ff @(posedge c_clk_i) if (!c_rst_ni) step_r <= 0; else step_r = step;
 
 
 
-enum {T_RST, P_RST,RST_WAIT,  T_INIT, STOP, PLAY, PAUSE, UPDATE, FREEZE, END_STEP} proc_st_nxt, proc_st;
+enum {T_RST,T_RST_WAIT, P_RST, P_RST_WAIT,  T_INIT, STOP, PLAY, PAUSE, UPDATE, FREEZE, END_STEP} proc_st_nxt, proc_st;
 
 always_ff @(posedge c_clk_i)
-   if (!c_rst_ni)   proc_st  <= T_RST;
+   if (!c_rst_ni)   proc_st  <= P_RST;
    else             proc_st  <= proc_st_nxt;
       
 always_comb begin
@@ -253,14 +278,19 @@ always_comb begin
    
    case (proc_st)
       T_RST : begin
-         proc_st_nxt = P_RST ;
          c_time_rst = 1;
+         proc_rst = 1;            
+         if (all_fifo_full) proc_st_nxt = T_RST_WAIT;
+      end
+      T_RST_WAIT : begin
+         if (!all_fifo_full) proc_st_nxt = PAUSE;
       end
       P_RST : begin
-         if (all_fifo_full) proc_st_nxt = RST_WAIT;
+         c_time_rst = 1;
          proc_rst = 1;            
+         if (all_fifo_full) proc_st_nxt = P_RST_WAIT;
       end
-      RST_WAIT : begin
+      P_RST_WAIT : begin
          if (!all_fifo_full) proc_st_nxt = STOP;
       end
       T_INIT: begin
@@ -315,10 +345,10 @@ wire dfifo_full, wfifo_full, fifo_ok;
 reg arith_rdy_r, div_rdy_r, tnet_rdy_r, periph_rdy_r;
 reg arith_dt_new, div_dt_new, tnet_dt_new, periph_dt_new ;
 wire status_clr, arith_clr, div_clr, tnet_clr, periph_clr ;
-wire port_clr;
+
 wire [2:0]core0_src_dt, core1_src_dt;
 
-wire [31:0] core0_cfg, core1_cfg;
+wire [10:0] core0_cfg, core1_cfg;
 assign core0_src_dt = core0_cfg[2:0];
 assign core1_src_dt = core1_cfg[2:0];
 
@@ -777,27 +807,7 @@ qproc_mem_ctrl # (
 /// FIFO 
 ///////////////////////////////////////////////////////////////////////////////
  
-wire [167:0]        t_fifo_wave_dt      [OUT_WPORT_QTY-1:0];
-wire [47:0]         t_fifo_wave_time    [OUT_WPORT_QTY-1:0];
-wire [47 :0]        W_RESULT          [OUT_WPORT_QTY-1:0] ;
 
-reg  data_pop   [OUT_DPORT_QTY] ; 
-reg  data_pop_r [OUT_DPORT_QTY]; 
-reg  data_pop_r2   [OUT_DPORT_QTY]; 
-reg  data_pop_r3   [OUT_DPORT_QTY]; 
-reg  data_pop_r4   [OUT_DPORT_QTY]; 
-
-
-wire [31 :0]               t_fifo_data_dt      [OUT_DPORT_QTY-1:0] ;
-wire [47: 0]               t_fifo_data_time    [OUT_DPORT_QTY-1:0];
-wire [47 :0]               D_RESULT          [OUT_DPORT_QTY-1:0] ;
-
-
-reg  [OUT_WPORT_QTY-1:0]  c_fifo_wave_push, c_fifo_wave_push_r ;
-reg  [OUT_DPORT_QTY-1:0]  c_fifo_data_push, c_fifo_data_push_r ; 
-reg [47 :0]                c_fifo_time_in_r ;
-reg [167:0]         c_fifo_data_in_r ;
-reg data_pop_prev [OUT_DPORT_QTY-1:0] ;
 
 /// FIFO CTRL-REG
 ///////////////////////////////////////////////////////////////////////////////

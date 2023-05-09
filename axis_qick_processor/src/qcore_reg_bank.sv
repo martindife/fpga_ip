@@ -16,7 +16,7 @@ module qcore_reg_bank # (
    input   wire [31:0]           time_dt_i      ,
    input   wire [167:0]          wave_dt_i      ,
    input   wire [31:0]           status_i       ,
-   output   wire [9:0]            reg_cfg_o          ,
+   output  wire [10:0]           reg_cfg_o          ,
    input   wire                  wave_we_i      ,
    input   wire                  we_i           ,
    input   wire [ 6 : 0 ]        w_addr_i       ,
@@ -78,7 +78,7 @@ assign wreg_32_we    = we_i & wreg_32_en;
 reg  [31:0]  sreg_32_dt [4]; // Four SFR
 wire         sreg_32_en, sreg_32_we;
 wire         sreg_cfg_en, sreg_cfg_we;
-reg  [15:0]  sreg_cfg_dt ; // Configuration Register
+reg  [10:0]  sreg_cfg_dt ; // Configuration Register
 
 assign sreg_32_en   = w_addr_i[6:2] == 5'b10011; //Register 12 to 15 selected 
 assign sreg_cfg_en  = w_addr_i      == 7'b1000110; //Register 6 Selected 
@@ -93,9 +93,11 @@ always_ff @ (posedge clk_i, negedge rst_ni) begin
       dreg_32_dt                 = '{default:'0};
       wreg_32_dt                 = '{default:'0};
       sreg_32_dt                 = '{default:'0};
+      sreg_cfg_dt                = 0;
    end else if (clear_i) begin
       dreg_32_dt                 = '{default:'0};
       wreg_32_dt                 = '{default:'0};
+      sreg_cfg_dt                = 0;
    end else begin
       if (dreg_32_we)   
          dreg_32_dt [dreg_32_addr]  = w_dt_i;
@@ -166,13 +168,13 @@ assign sreg_dt[3]  = status_i ;
 assign sreg_dt[4]  = reg_div_i[0]       ;
 assign sreg_dt[5]  = reg_div_i[1]       ;
 assign sreg_dt[6]  = reg_arith_i ;
-assign sreg_dt[7]  = tproc_ext_i [0]    ;
+assign sreg_dt[7]  = tproc_ext_i [0]    ; 
 assign sreg_dt[8]  = tproc_ext_i [1]    ;
 assign sreg_dt[9]  = reg_port_i [0]  ;
 assign sreg_dt[10] = reg_port_i [1] ;
 assign sreg_dt[11] = time_dt_i          ;
-assign sreg_dt[12] = sreg_32_dt [0]     ; // TPROC_EXT_DT_O
-assign sreg_dt[13] = sreg_32_dt [1]     ; // TPROC_EXT_OP_O
+assign sreg_dt[12] = sreg_32_dt [0]     ; // CORE_W_DT1
+assign sreg_dt[13] = sreg_32_dt [1]     ; // CORE_W_DT2
 assign sreg_dt[14] = sreg_32_dt [2]     ; // OUT TIME
 assign sreg_dt[15] = sreg_32_dt [3]     ; // PC_NXT_ADDR_REG
 

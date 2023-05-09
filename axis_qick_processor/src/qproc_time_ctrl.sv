@@ -56,7 +56,7 @@ reg [47:0] time_abs;
 enum {ST_IDLE, ST_RESET, ST_INIT, ST_LOAD_OFFSET, ST_INCREMENT, ST_UPDATE } ctrl_time_st, ctrl_time_st_nxt;
 
 ////////// Sequential Logic
-always @ (posedge t_clk_i or negedge t_rst_ni) begin : CTRL_SYNC_PROC
+always @ (posedge t_clk_i) begin : CTRL_SYNC_PROC
    if (!t_rst_ni)    ctrl_time_st <=  ST_IDLE;
    else              ctrl_time_st <=  ctrl_time_st_nxt;
 end
@@ -120,7 +120,7 @@ end
 
 // Initial OFFSET
 ///////////////////////////////////////////////////////////////////////////////
-always_ff @ (posedge t_clk_i, negedge t_rst_ni) begin
+always_ff @ (posedge t_clk_i) begin
    if (!t_rst_ni)          initial_offset       <= '{default:'0} ;
 
    else if (t_time_init_r) initial_offset       <= {16'd0,c_offset_dt_i};

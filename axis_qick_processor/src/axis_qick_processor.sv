@@ -448,7 +448,6 @@ assign m13_axis_tvalid    = m_axis_tvalid_s[13]  ;
 assign m14_axis_tdata     = m_axis_tdata_s [14]  ;
 assign m14_axis_tvalid    = m_axis_tvalid_s[14]  ;
 assign m15_axis_tdata     = m_axis_tdata_s [15]  ;
-assign m16_axis_tvalid    = m_axis_tvalid_s[16]  ;
 
 ///// DEBUG 
 generate

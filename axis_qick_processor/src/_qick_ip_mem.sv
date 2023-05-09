@@ -63,7 +63,6 @@ module LIFO # (
    input  wire                   push ,
    input  wire                   pop  ,
    output wire  [WIDTH - 1:0] data_o  ,
-   output wire empty_o                  ,
    output wire full_o                   );
    
 
@@ -218,6 +217,10 @@ wire [FIFO_AW-1:0] rd_gptr, wr_gptr  ;
 wire clr_wr, clr_rd;
 
 reg async_empty_r;
+wire busy;
+wire [FIFO_DW - 1:0] mem_dt;
+wire async_empty, async_full;
+
 
 // Sample Pointers
 reg [FIFO_AW-1:0] wr_gptr_rcd, wr_gptr_r, wr_gptr_p1_rcd, wr_gptr_p1_r; 
@@ -254,12 +257,10 @@ always_ff @(posedge wr_clk_i, negedge wr_rst_ni) begin
    end
 end
 
-wire busy;
+
 assign busy = clr_fifo_ack | clr_fifo_req ;
 
-wire [FIFO_DW - 1:0] mem_dt;
 
-wire async_empty, async_full;
 
 //SYNC with POP (RD_CLK)
 assign async_empty   = (rd_gptr == wr_gptr_r) ;   

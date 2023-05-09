@@ -17,7 +17,7 @@ module qcore_cpu # (
 // CONDITIONS       
    input   wire                  flag_i     , // External Condition
 // DATA INPUT
-   output wire [9 :0]      sreg_cfg_o           ,
+   output wire [10:0]      sreg_cfg_o           ,
    input  wire [31:0]      sreg_arith_i         ,
    input  wire [31:0]      sreg_div_i      [2]  ,
    input  wire [31:0]      sreg_status_i        , 
@@ -99,7 +99,7 @@ assign if_op_code       = pmem_dt_i [ 71 : 56 ] ;
 assign if_op_data       = pmem_dt_i [ 55 :  0 ] ;
 
 // 
-always_ff @ (posedge clk_i, negedge rst_ni) begin
+always_ff @ (posedge clk_i) begin
    if (!rst_ni) begin
       r_mem_rst      <= 1;
       r_if_op_code   <= 0;
@@ -288,7 +288,7 @@ always_comb
       2'b11: PC_nxt   = pc_stack      ;
    endcase
 
-always @(posedge clk_i, negedge rst_ni) begin
+always @(posedge clk_i) begin
    if (!rst_ni) begin
       PC_curr     <= 0;
       PC_prev     <= 0;
@@ -474,7 +474,7 @@ AB_alu alu (
    .alu_result_o ( x1_alu_dt        ) );
 
 
-
+wire pc_stack_full;
 // PC STACK 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -487,7 +487,8 @@ LIFO  # (
    .data_i  ( PC_prev  ) ,
    .push    ( id_call  ) ,
    .pop     ( id_ret   ) ,
-   .data_o  ( pc_stack ) );
+   .data_o  ( pc_stack ) ,
+   .full_o  ( pc_stack_full ) );
 
 
 
@@ -499,7 +500,7 @@ LIFO  # (
 reg [6:0] r_id_rd_addr, r_rd_rd_addr, r_x1_rd_addr, r_x2_rd_addr;
 
 // DATA & ADDRESS PIPELINE 
-always_ff @ (posedge clk_i, negedge rst_ni) begin
+always_ff @ (posedge clk_i) begin
    if (!rst_ni) begin
       // CONTROL SIGNALS
       r_id_pc_change       <= 0  ;
@@ -666,9 +667,10 @@ assign port_o.p_type    = x2_ctrl.cfg_port_type ;
 assign port_o.p_addr    = r_x1_port_w_addr     ;
 assign port_o.p_data    = x2_port_w_dt       ;
 
+
 // DEBUG
 assign core_do [31:24] = {restart_i, stall, flush, id_flag_we, alu_fZ_r, alu_fS_r, x2_ctrl.port_we, x2_ctrl.port_re};
-assign core_do [23:16] = {id_type_ctrl, id_type_cfg, id_type_br, id_type_wr, id_type_wm, id_type_wp, id_dreg_we, id_dmem_we } ;
+assign core_do [23:16] = {id_type_ctrl, id_type_cfg, id_type_br, id_type_wr, id_type_wm, id_type_wp, 1'b0, pc_stack_full } ;
 assign core_do [15:8]  = r_x1_alu_dt[7:0]  ;
 assign core_do [7:0]   = port_o.p_time[7:0] ;
 

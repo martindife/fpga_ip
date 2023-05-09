@@ -19,7 +19,7 @@ module qproc_core # (
    input  wire [63:0]      port_dt_i   [ IN_PORT_QTY ] ,
    input wire              flag_i       ,
 // Special Function Registers
-   output wire [9 :0]      sreg_cfg_o           ,
+   output wire [10 :0]      sreg_cfg_o           ,
    input  wire [31:0]      sreg_arith_i        ,
    input  wire [31:0]      sreg_div_i[2]        ,
    input  wire [31:0]      sreg_status_i        ,

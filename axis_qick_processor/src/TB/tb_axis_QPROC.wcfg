@@ -16,15 +16,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4,460.961 ns"></ZoomStartTime>
-      <ZoomEndTime time="5,391.962 ns"></ZoomEndTime>
-      <Cursor1Time time="5,171.961 ns"></Cursor1Time>
+      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
+      <ZoomEndTime time="878.001 ns"></ZoomEndTime>
+      <Cursor1Time time="244.120 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="191"></NameColumnWidth>
+      <NameColumnWidth column_width="187"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="70" />
+   <WVObjectSize size="72" />
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_rst">
       <obj_property name="ElementShortName">ctrl_t_rst</obj_property>
       <obj_property name="ObjectShortName">ctrl_t_rst</obj_property>
@@ -101,9 +101,26 @@
       <obj_property name="ElementShortName">proc_st[31:0]</obj_property>
       <obj_property name="ObjectShortName">proc_st[31:0]</obj_property>
    </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/proc_st_nxt">
+      <obj_property name="ElementShortName">proc_st_nxt[31:0]</obj_property>
+      <obj_property name="ObjectShortName">proc_st_nxt[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /async_full_o">
+      <obj_property name="ElementShortName">async_full_o</obj_property>
+      <obj_property name="ObjectShortName">async_full_o</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/all_fifo_full">
+      <obj_property name="ElementShortName">all_fifo_full</obj_property>
+      <obj_property name="ObjectShortName">all_fifo_full</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/all_fifo_empty">
+      <obj_property name="ElementShortName">all_fifo_empty</obj_property>
+      <obj_property name="ObjectShortName">all_fifo_empty</obj_property>
+   </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/QTIME_CTRL/time_abs">
       <obj_property name="ElementShortName">time_abs[47:0]</obj_property>
       <obj_property name="ObjectShortName">time_abs[47:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/time_updt_i">
       <obj_property name="ElementShortName">time_updt_i</obj_property>
@@ -364,15 +381,5 @@
       <obj_property name="ObjectShortName">async_full_o</obj_property>
       <obj_property name="CustomSignalColor">#800080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /rd_ptr">
-      <obj_property name="ElementShortName">rd_ptr[7:0]</obj_property>
-      <obj_property name="ObjectShortName">rd_ptr[7:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /wr_ptr">
-      <obj_property name="ElementShortName">wr_ptr[7:0]</obj_property>
-      <obj_property name="ObjectShortName">wr_ptr[7:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>
