@@ -222,8 +222,6 @@ axis_tnet TNET_1 (
    .time_rst_o         ( reset_1     ) ,
    .time_init_o        ( init_1      ) ,
    .time_off_dt_o      ( offset_dt_1 ) ,
-   .start_o            ( start_1     ) ,
-   .stop_o             ( stop_1      ) ,
    .time_updt_o        ( time_updt_1 ) ,
 //AXI   
    .s_axi_awaddr       (  s_axi_awaddr        ) ,
@@ -269,8 +267,6 @@ axis_tnet TNET_2 (
    .time_rst_o         ( reset_2     ) ,
    .time_init_o        ( init_2      ) ,
    .time_off_dt_o      ( offset_dt_2 ) ,
-   .start_o            ( start_2     ) ,
-   .stop_o             ( stop_2      ) ,
    .time_updt_o        ( time_updt_2 ) ,
    .s_axi_awaddr       (  0      ) ,
    .s_axi_awprot       (  0      ) ,
@@ -315,8 +311,6 @@ axis_tnet TNET_3 (
    .time_rst_o         ( reset_3     ) ,
    .time_init_o        ( init_3      ) ,
    .time_off_dt_o      ( offset_dt_3 ) ,
-   .start_o            ( start_3     ) ,
-   .stop_o             ( stop_3      ) ,
    .time_updt_o        ( time_updt_3 ) ,
    .s_axi_awaddr       (  0      ) ,
    .s_axi_awprot       (  0      ) ,
@@ -350,9 +344,6 @@ reg [8:0] h_dst  ;
 initial begin
    $display("START SIMULATION");
 
-   
-  
-  
   	// Create agents.
 	axi_mst_0_agent 	= new("axi_mst_0 VIP Agent",tb_axis_tnet.axi_mst_0_i.inst.IF);
 	// Set tag for agents.
@@ -392,77 +383,106 @@ channel_up_B       = 1'b0;
    rst_ni            = 1'b1;
    #10 ;
 
-
-
+/*
+// GET_NET COMMAND
    wait (ready_1==1'b1);
+   #100;
+   @ (posedge c_clk); #0.1;
+   #10;
+   @ (posedge c_clk); #0.1;
+   c_cmd_i   = 1'b1 ;
+   c_op_i    = 5'b00001;
+   c_dt_1_i  = 31'd0 ;
+   c_dt_2_i  = 31'd0 ;
+   @ (posedge c_clk); #0.1;
+   c_cmd_i   = 1'b0 ;
+   c_op_i    = 5'b00000 ;
+   c_dt_1_i  = 31'd0 ;
+   c_dt_2_i  = 31'd0 ;
+   #100;
+
+// SET_NET 
+   wait (ready_1==1'b1);
+   #100;
+   @ (posedge c_clk); #0.1;
+   #10;
+   @ (posedge c_clk); #0.1;
+   c_cmd_i   = 1'b1 ;
+   c_op_i    = 5'b00010 ;
+   c_dt_1_i  = 31'd0 ;
+   c_dt_2_i  = 31'd0 ;
+   @ (posedge c_clk); #0.1;
+   c_cmd_i   = 1'b0 ;
+   c_op_i    = 5'b00000 ;
+   c_dt_1_i  = 31'd0 ;
+   c_dt_2_i  = 31'd0 ;
+   #100;
+*/
    //GET NET
-   WRITE_AXI( TNET_CTRL, 1); // GET_NET (NO PARAMETER)
-
-   //SET NET
+   #100;
    wait (ready_1==1'b1);
+   WRITE_AXI( TNET_CTRL, 1); // GET_NET (NO PARAMETER)
+   //SET NET
+   #100;
+   wait (ready_1==1'b1);
+   #1000;
    WRITE_AXI( TNET_CTRL, 2); // SET_NET  (NO PARAMETER / Automatic > RTD - CD - NN - ID) 
    // SYNC_NET
+   #100;
    wait (ready_1==1'b1);
    WRITE_AXI( TNET_CTRL, 8); // SYNC_NET (NO PARAMETER / Automatic > Delay, TimeWait)
 
    //UPDF_OFF
-   WRITE_AXI( REG_AXI_DT1 , 4); // DATA
-   WRITE_AXI( REG_AXI_DT3    , {16'd3, 16'd0}); // NODE
+   #100;
    wait (ready_1==1'b1);
+   WRITE_AXI( REG_AXI_DT1 , 4); // DATA
+   WRITE_AXI( REG_AXI_DT3    , {16'd0, 16'd2}); // NODE
    WRITE_AXI( TNET_CTRL, 9); // UPDT_OFFSET (NODE - DATA)
 
 //UPDF_OFF
-   WRITE_AXI( REG_AXI_DT1 , 2); // DATA
-   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
+   #100;
    wait (ready_1==1'b1);
+   WRITE_AXI( REG_AXI_DT1 , 2); // DATA
+   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd3}); // NODE
+   WRITE_AXI( TNET_CTRL, 9); // UPDT_OFFSET (NODE - DATA)
+
+//UPDF_OFF
+   #100;
+   wait (ready_1==1'b1);
+   WRITE_AXI( REG_AXI_DT1 , -2); // DATA
+   WRITE_AXI( REG_AXI_DT3    , {16'd0, 16'd3}); // NODE
    WRITE_AXI( TNET_CTRL, 9); // UPDT_OFFSET (NODE - DATA)
 
 
    //SET_DT
+   #100;
+   wait (ready_1==1'b1);
    WRITE_AXI( REG_AXI_DT1 , 15); // DATA1
    WRITE_AXI( REG_AXI_DT2 , 255); // DATA2
-   //WRITE_AXI( TNET_CFG    , {16'd3, 16'd0}); // NODE
    WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 10); // UPDT_OFFSET (NODE - DATA)
+   WRITE_AXI( TNET_CTRL, 10); // SET_DT (NODE - DATA)
 
    //SET_DT
+   #100;
+   wait (ready_1==1'b1);
    WRITE_AXI( REG_AXI_DT1 , 15); // DATA1
    WRITE_AXI( REG_AXI_DT2 , 255); // DATA2
-   //WRITE_AXI( TNET_CFG    , {16'd3, 16'd0}); // NODE
-   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 10); // UPDT_OFFSET (NODE - DATA)
+   WRITE_AXI( TNET_CTRL, 10); // SET_DT (NODE - DATA)
 
    //SET_DT
+   #100;
+   wait (ready_1==1'b1);
    WRITE_AXI( REG_AXI_DT1 , 7); // DATA1
    WRITE_AXI( REG_AXI_DT2 , 127); // DATA2
    WRITE_AXI( REG_AXI_DT3    , {16'd3, 16'd0}); // NODE
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 10); // UPDT_OFFSET (NODE - DATA)
+   WRITE_AXI( TNET_CTRL, 10); // SET_DT (NODE - DATA)
 
    //GET_DT
    wait (ready_1==1'b1);
    WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
-   WRITE_AXI( TNET_CTRL, 11); // UPDT_OFFSET (NODE - DATA)
+   WRITE_AXI( TNET_CTRL, 11); // GET_DT (NODE - DATA)
 
 
-
-/*
-   @ (posedge c_clk); #0.1;
-   h_type   = 3'b000 ;
-   h_cmd    = 6'b000000 ;
-   h_flags  = 5'b00000 ;
-   h_src    = 9'd1 ;
-   h_dst    = 9'd3 ;
-   s_axi_rx_tdata_A   = {h_type, h_cmd, h_flags, h_src, h_dst, 96'b0};
-   s_axi_rx_tvalid_A  = 1'b1;
-
-
-   @ (posedge user_clock); #0.1;
-   s_axi_rx_tdata_A   = 127'd0;
-   s_axi_rx_tvalid_A  = 1'b0;
-*/
 
 // GET_NET COMMAND
    wait (ready_1==1'b1);
@@ -528,7 +548,7 @@ channel_up_B       = 1'b0;
    c_op_i    = 5'b01001 ;
    c_dt_1_i  = 31'd2 ;
    c_dt_2_i  = 31'd0 ;
-   c_dt_3_i  = {16'd3, 16'd1} ;
+   c_dt_3_i  = {16'd0, 16'd2} ;
    @ (posedge c_clk); #0.1;
    c_cmd_i   = 1'b0 ;
    c_op_i    = 5'b00000 ;
@@ -559,50 +579,6 @@ channel_up_B       = 1'b0;
          
    // TEST_QNET ();
    // TEST_AXI ();
-   wait (ready_1==1'b1);
-   //GET NET
-   WRITE_AXI( TNET_CTRL, 1); // GET_NET (NO PARAMETER)
-
-   //SET NET
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 2); // SET_NET  (NO PARAMETER / Automatic > RTD - CD - NN - ID) 
-   // SYNC_NET
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 8); // SYNC_NET (NO PARAMETER / Automatic > Delay, TimeWait)
-
-   //UPDF_OFF
-   WRITE_AXI( REG_AXI_DT1 , 4); // DATA
-   WRITE_AXI( REG_AXI_DT3    , {16'd3, 16'd0}); // NODE
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 9); // UPDT_OFFSET (NODE - DATA)
-
-//UPDF_OFF
-   WRITE_AXI( REG_AXI_DT1 , 2); // DATA
-   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 9); // UPDT_OFFSET (NODE - DATA)
-
-
-   //SET_DT
-   WRITE_AXI( REG_AXI_DT1 , 15); // DATA1
-   WRITE_AXI( REG_AXI_DT2 , 255); // DATA2
-   //WRITE_AXI( TNET_CFG    , {16'd3, 16'd0}); // NODE
-   WRITE_AXI( REG_AXI_DT3    , {16'd1, 16'd0}); // NODE
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 10); // UPDT_OFFSET (NODE - DATA)
-
-   //SET_DT
-   WRITE_AXI( REG_AXI_DT1 , 7); // DATA1
-   WRITE_AXI( REG_AXI_DT2 , 127); // DATA2
-   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
-   wait (ready_1==1'b1);
-   WRITE_AXI( TNET_CTRL, 10); // UPDT_OFFSET (NODE - DATA)
-
-   //GET_DT
-   wait (ready_1==1'b1);
-   WRITE_AXI( REG_AXI_DT3    , {16'd2, 16'd0}); // NODE
-   WRITE_AXI( TNET_CTRL, 11); // UPDT_OFFSET (NODE - DATA)
-
   #1000;
 
 

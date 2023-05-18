@@ -33,15 +33,15 @@ module qick_processor # (
    input   wire               ps_clk_i       ,
    input   wire               ps_rst_ni      ,
 // External Control
-   input  wire                proc_rst_i            ,
-   input  wire                proc_run_i            ,
-   input  wire                proc_stop_i              ,
-   input  wire                proc_pause_i             ,
-   input  wire                time_rst_i              ,
-   input  wire                time_init_i             ,
+   input  wire                proc_start_i      ,
+   input  wire                proc_stop_i       ,
+   input  wire                core_start_i      ,
+   input  wire                core_stop_i       ,
+   input  wire                time_rst_i        ,
+   input  wire                time_init_i       ,
    input  wire                time_updt_i       ,
-   input  wire  [31:0]        offset_dt_i       ,
-   output wire  [47:0]        t_time_abs_o         ,
+   input  wire  [31:0]        time_updt_dt_i       ,
+   output wire  [47:0]        time_abs_o         ,
 // External PERIPHERALS 
    output wire  [31:0]        periph_a_dt_o        ,
    output wire  [31:0]        periph_b_dt_o        ,
@@ -85,7 +85,7 @@ module qick_processor # (
    output  wire [31:0]        c_port_do      ,
    output  wire [31:0]        c_core_do      );
 
-localparam DECO_OUT = DUAL_CORE + 2;
+localparam DECO_OUT = 2 + DUAL_CORE;
 
 // SIGNALS
 ///////////////////////////////////////////////////////////////////////////////
@@ -93,53 +93,36 @@ localparam DECO_OUT = DUAL_CORE + 2;
 // PORTS
 wire                 port_we        ;
 PORT_DT              out_port_data  ;
-wire [47:0] time_abs_r, init_off;
+wire [47:0] time_abs_r;
 wire [31:0] core_usr_a_dt, core_usr_b_dt, core_usr_c_dt, core_usr_d_dt ;
 // REGISTERS
 wire [ 31 : 0 ] xreg_TPROC_CTRL  , xreg_TPROC_CFG       ;
 wire [ 15 : 0 ] xreg_MEM_ADDR    , xreg_MEM_LEN         ;
 wire [ 31 : 0 ] xreg_MEM_DT_I    , xreg_MEM_DT_O        ;
 wire [ 31 : 0 ] xreg_TPROC_STATUS, xreg_TPROC_DEBUG     ;
-
-
-
 reg [63:0]           in_port_dt_r [ IN_PORT_QTY ];
-
-
 reg [31:0] tproc_w_dt [2];
-
 wire [4:0] core_usr_addr, core_usr_operation;
-
-
 wire        t_time_en ;
-reg         c_time_en ;
+
 wire [31:0] t_time_usr, c_time_usr ;
-
 wire [31:0] reg_axi_dt [2] ;
-
-
 wire [167:0]        t_fifo_wave_dt      [OUT_WPORT_QTY-1:0];
 wire [47:0]         t_fifo_wave_time    [OUT_WPORT_QTY-1:0];
 wire [47 :0]        W_RESULT          [OUT_WPORT_QTY-1:0] ;
-
 reg  data_pop   [OUT_DPORT_QTY] ; 
 reg  data_pop_r [OUT_DPORT_QTY]; 
 reg  data_pop_r2   [OUT_DPORT_QTY]; 
 reg  data_pop_r3   [OUT_DPORT_QTY]; 
 reg  data_pop_r4   [OUT_DPORT_QTY]; 
-
-
 wire [31 :0]               t_fifo_data_dt      [OUT_DPORT_QTY-1:0] ;
 wire [47: 0]               t_fifo_data_time    [OUT_DPORT_QTY-1:0];
 wire [47 :0]               D_RESULT          [OUT_DPORT_QTY-1:0] ;
-
-
 reg  [OUT_WPORT_QTY-1:0]  c_fifo_wave_push, c_fifo_wave_push_r ;
 reg  [OUT_DPORT_QTY-1:0]  c_fifo_data_push, c_fifo_data_push_r ; 
 reg [47 :0]                c_fifo_time_in_r ;
 reg [167:0]         c_fifo_data_in_r ;
 reg data_pop_prev [OUT_DPORT_QTY-1:0] ;
-
 
 // IN PORT DATA REGISTER
 ///////////////////////////////////////////////////////////////////////////////
@@ -149,9 +132,6 @@ wire [15:0] port_dt_new ;
 wire [IN_PORT_QTY-1:0 ] port_new ;
 localparam ZFP = 16 - IN_PORT_QTY; // Zero Fill for Input Port
 assign port_dt_new = { {ZFP{1'b0}} , port_new };
-
-
-
 
 qproc_inport_reg # (
    .PORT_QTY    (IN_PORT_QTY) 
@@ -165,169 +145,231 @@ qproc_inport_reg # (
    .port_tdata_o  ( in_port_dt_r  ) );
 
 
-// T-PROCESSOR CONTROL
+
+
+// PROCESSOR CONTROL
 ///////////////////////////////////////////////////////////////////////////////
 
+/// EXTERNAL INPUT 
+assign proc_start_s  = proc_start_i & ~xreg_TPROC_CFG[10] ;
+assign proc_stop_s   = proc_stop_i  & ~xreg_TPROC_CFG[10] ;
+   
+/// PYTHON 
+wire ctrl_p_rst, ctrl_p_stop, ctrl_p_run, ctrl_p_pause ;
+wire ctrl_p_step, ctrl_t_step, ctrl_c_step ;
 
 
-wire ctrl_t_rst, ctrl_t_freeze, ctrl_t_step, ctrl_t_updt;
-wire ctrl_p_rst, ctrl_p_stop, ctrl_p_run, ctrl_p_pause, ctrl_p_step ;
-wire ctrl_c_step ;
-wire time_updt_cpu;
-
-// In case of Inputs are in U...
-assign time_rst_s   = time_rst_i   & ~xreg_TPROC_CFG[10] ;
-assign time_updt_s  = time_updt_i  & ~xreg_TPROC_CFG[10] ;
-assign proc_rst_s   = proc_rst_i   & ~xreg_TPROC_CFG[10] ;
-assign proc_stop_s  = proc_stop_i  & ~xreg_TPROC_CFG[10] ;
-assign proc_run_s   = proc_run_i   & ~xreg_TPROC_CFG[10] ;
-assign proc_pause_s = proc_pause_i & ~xreg_TPROC_CFG[10] ;
-assign time_init_s  = time_init_i  & ~xreg_TPROC_CFG[10] ;
-
-// Processor Control [ Python | External Input | CPU ]
-assign ctrl_t_rst     = xreg_TPROC_CTRL[0]  | time_rst_s   | time_rst_cpu;
-assign ctrl_t_updt    = xreg_TPROC_CTRL[1]  | time_updt_s  | time_updt_cpu;
-assign ctrl_p_rst     = xreg_TPROC_CTRL[2]  | proc_rst_s   ;
+// Processor Control
+assign ctrl_p_rst     = xreg_TPROC_CTRL[2]  | proc_start_s ;
 assign ctrl_p_stop    = xreg_TPROC_CTRL[3]  | proc_stop_s  ;
-assign ctrl_p_run     = xreg_TPROC_CTRL[4]  | proc_run_s   ;
-assign ctrl_p_pause   = xreg_TPROC_CTRL[5]  | proc_pause_s ;
-assign ctrl_p_step    = xreg_TPROC_CTRL[6]  ;
-assign ctrl_t_freeze  = xreg_TPROC_CTRL[7]  ;
-assign ctrl_t_step    = xreg_TPROC_CTRL[8]  ;
-assign ctrl_c_step    = xreg_TPROC_CTRL[9]  ;
+assign ctrl_p_run     = xreg_TPROC_CTRL[4]   ;
+assign ctrl_p_pause   = xreg_TPROC_CTRL[5]  ;
+//DEBUG
+assign ctrl_p_step   = xreg_TPROC_CTRL[6]  ;
+assign ctrl_p_freeze = xreg_TPROC_CTRL[7]  ;
 
+// CORE CONTROL
+///////////////////////////////////////////////////////////////////////////////
+assign core_start_s  = core_start_i & ~xreg_TPROC_CFG[10] ;
+assign core_stop_s   = core_stop_i  & ~xreg_TPROC_CFG[10] ;
+
+assign ctrl_c_rst_run  = core_start_s | proc_start_s | xreg_TPROC_CTRL[12] ;
+assign ctrl_c_rst_stop = ctrl_p_rst  ;
+assign ctrl_c_rst_cnt  = core_rst_net |  time_rst_cpu | time_updt_cpu;
+assign ctrl_c_stop     = core_stop_s  | ctrl_p_stop | ctrl_p_pause | xreg_TPROC_CTRL[13];
+assign ctrl_c_run      = ctrl_p_run   | ctrl_p_freeze ;
+assign ctrl_c_step     = ctrl_p_step  | xreg_TPROC_CTRL[9] ;
+
+/// NET
+sync_reg # (.DW ( 1 ) )       sync_core (
+   .dt_i      ( core_rst_net_req ) ,
+   .clk_i     ( c_clk_i      ) ,
+   .rst_ni    ( c_rst_ni  ) ,
+   .dt_o      ( core_rst_net ) );
+   
+enum {C_RST_STOP, C_RST_STOP_WAIT, C_RST_RUN, C_RST_RUN_WAIT, C_STOP, C_RUN, C_STEP, C_END_STEP} core_st_nxt, core_st;
+
+always_ff @(posedge c_clk_i)
+   if (!c_rst_ni)   core_st  <= C_RST_STOP;
+   else             core_st  <= core_st_nxt;
+     
+reg c_core_en, core_rst;
+always_comb begin
+   c_core_en      = 0;
+   core_rst       = 0;
+   core_st_nxt = core_st;
+   //COMMON TRANSITIONS
+   if       ( ctrl_c_stop    )  core_st_nxt = C_STOP;
+   else if  ( ctrl_c_run     )  core_st_nxt = C_RUN;
+   else if  ( ctrl_c_rst_run )  core_st_nxt = C_RST_RUN;
+   // Debugging
+   else if  ( ctrl_c_step   )  core_st_nxt = C_STEP;
+   
+   case (core_st)
+      C_RST_RUN : begin
+         core_rst = 1;            
+         if (~ctrl_c_rst_cnt & all_fifo_full) core_st_nxt = C_RST_RUN_WAIT; //Keep RST until ACK
+      end
+      C_RST_RUN_WAIT :  
+         if (!all_fifo_full) core_st_nxt = C_RUN;
+      C_RST_STOP : begin
+         core_rst = 1;            
+         if (all_fifo_full) core_st_nxt = C_RST_STOP_WAIT;
+      end
+      C_RST_STOP_WAIT : 
+         if (!all_fifo_full) core_st_nxt = C_STOP;
+      C_RUN: begin
+         c_core_en = 1;
+         if ( ctrl_c_rst_cnt )  core_st_nxt = C_RST_RUN;
+      end
+      C_STOP: begin
+         if ( ctrl_c_rst_cnt ) core_st_nxt = C_RST_STOP;
+        end
+      C_STEP: begin
+         c_core_en = 1;
+         core_st_nxt = C_END_STEP;
+      end
+      C_END_STEP: begin
+         if  (!ctrl_c_step)  core_st_nxt = C_STOP;
+      end
+   endcase
+end
+
+///////////////////////////////////////////////////////////////////////////////
 // TIME CONTROL
 ///////////////////////////////////////////////////////////////////////////////
-reg ctrl_t_updt_r, ctrl_t_init_r;
-reg [31:0] offset_dt_r;
+
+/// CPU 
+wire time_rst_cpu, time_updt_cpu ;
+wire time_ref_set, time_ref_inc;
 
 assign time_rst_cpu   = ( core_usr_addr[0] & core_usr_operation[0]) ;
 assign time_updt_cpu  = ( core_usr_addr[0] & core_usr_operation[1]) ;
 assign time_ref_set   = ( core_usr_addr[0] & core_usr_operation[2]) ;
 assign time_ref_inc   = ( core_usr_addr[0] & core_usr_operation[3]) ;
 
-// Selec Source of Time Update Data, depending on the Source of ctrl_t_updt
+wire ctrl_t_rst, ctrl_t_updt, ctrl_t_stop, ctrl_t_step;
+assign ctrl_t_rst    = ctrl_p_rst | time_rst_cpu | xreg_TPROC_CTRL[0]  ;
+assign ctrl_t_updt   = time_updt_cpu | xreg_TPROC_CTRL[1]  ;
+assign ctrl_t_stop   = ctrl_p_stop | ctrl_p_freeze ;
+assign ctrl_t_step   = ctrl_p_step | xreg_TPROC_CTRL[8]  ;
+assign ctrl_t_run    = ctrl_p_run | ctrl_p_pause;
+
+// Store Time_Update_Data from PROCESSOR and PYTHON
+reg [31:0] offset_dt_r;
 always_ff @(posedge c_clk_i)
    if (!c_rst_ni) begin
-      ctrl_t_updt_r   <= 0;
-      ctrl_t_init_r   <= 0;
       offset_dt_r     <= 0;
    end else begin
-      ctrl_t_updt_r     <= ctrl_t_updt;
-      ctrl_t_init_r     <= time_init_s;
-      if      ( time_updt_cpu   )            offset_dt_r  <= core_usr_a_dt ;
-      else if ( time_updt_s | time_init_s  ) offset_dt_r  <= offset_dt_i ;
-      else if ( xreg_TPROC_CTRL[1] )         offset_dt_r  <= tproc_w_dt[0] ;
-      
+      if      ( time_updt_cpu      ) offset_dt_r  <= core_usr_a_dt ; //Update from CPU
+      else if ( xreg_TPROC_CTRL[1] ) offset_dt_r  <= tproc_w_dt[0] ; // Update from PYTHON
    end
 
 
-reg c_core_en, proc_rst, c_time_rst, c_time_init;
+// Commands from _NET execute directly and RESET the PROCESSOR
+// Commands from _CPU are sincronized and executed.
+reg core_rst_net_req; // Makes the TPROC to reset.
+reg [31:0] time_updt_dt;
+
+sync_reg # (.DW ( 6 ) )       sync_time_req (
+   .dt_i      ( {core_rst, ctrl_t_rst, ctrl_t_updt, ctrl_t_stop, ctrl_t_step, ctrl_t_run} ) ,
+   .clk_i     ( t_clk_i      ) ,
+   .rst_ni    ( t_rst_ni  ) ,
+   .dt_o      ( {core_rst_ack, time_rst_proc, time_updt_proc, time_stop_proc, time_step_proc, time_run_proc}  ) );
+
+// NET _ EXTERNAL
+assign core_rst_net_req_set  = (time_rst_i | time_init_i | time_updt_i) & ~xreg_TPROC_CFG[10] ;
+
    
-// Time REF
-///////////////////////////////////////////////////////////////////////////////
-reg [47:0] c_time_ref_dt;
-
-always_ff @ (posedge c_clk_i, negedge c_rst_ni) begin
-   if (!c_rst_ni)              c_time_ref_dt    <= '{default:'0} ;
-   else if (c_time_rst)      c_time_ref_dt    <= '{default:'0} ;
-   else if (c_time_en)
-      if       (time_ref_set )  c_time_ref_dt    <=  {16'd0, core_usr_b_dt} ;
-      else if  (time_ref_inc )  c_time_ref_dt    <=  c_time_ref_dt + {16'd0, core_usr_b_dt} ;
-end
-   
-
-// DEBUG - STEP CONTROL
-///////////////////////////////////////////////////////////////////////////////
-wire step;
-reg step_r;
-assign step = ctrl_p_step | ctrl_c_step | ctrl_t_step;
-always_ff @(posedge c_clk_i) if (!c_rst_ni) step_r <= 0; else step_r = step;
+reg [31:0] time_updt_dt;
+always_ff @(posedge t_clk_i)
+   if (!t_rst_ni) begin
+      core_rst_net_req  <= 1'b0; // Request to RESET the Processor
+      time_updt_dt      <= 32'd0; // Signal to TIME_CTRL
+   end else begin 
+      if ( time_rst_proc ) 
+         time_updt_dt <= offset_dt_r;
+      else
+         time_updt_dt <= time_updt_dt_i;
+      if      ( core_rst_net_req_set )  core_rst_net_req   <= 1'b1;
+      else if ( core_rst_ack         )  core_rst_net_req   <= 1'b0;
+   end
 
 
+enum {T_RST, T_UPDT,  T_INIT, T_RUN, T_STOP, T_STEP} time_st_nxt, time_st;
 
-
-enum {T_RST,T_RST_WAIT, P_RST, P_RST_WAIT,  T_INIT, STOP, PLAY, PAUSE, UPDATE, FREEZE, END_STEP} proc_st_nxt, proc_st;
-
-always_ff @(posedge c_clk_i)
-   if (!c_rst_ni)   proc_st  <= P_RST;
-   else             proc_st  <= proc_st_nxt;
-      
+always_ff @(posedge t_clk_i)
+   if (!t_rst_ni)   time_st  <= T_RST;
+   else             time_st  <= time_st_nxt;
+reg time_rst, time_updt, time_en, time_init ;
 always_comb begin
-   c_core_en      = 0;
-   proc_rst       = 0;
-   c_time_en      = 0;
-   c_time_rst     = 0;
-   c_time_init    = 0;
-   proc_st_nxt = proc_st;
+   time_en     = 0;
+   time_rst    = 0;
+   time_init    = 0;
+   time_updt    = 0;
+   time_st_nxt = time_st;
    //COMMON TRANSITIONS
-   if       ( ctrl_p_rst    )  proc_st_nxt = P_RST;
-   else if  ( ctrl_t_rst    )  proc_st_nxt = T_RST;
-   else if  ( ctrl_t_init_r )  proc_st_nxt = T_INIT;
-   else if  ( ctrl_p_stop   )  proc_st_nxt = STOP;
-   else if  ( ctrl_p_run    )  proc_st_nxt = PLAY;
-   else if  ( ctrl_t_updt_r )  proc_st_nxt = UPDATE;
-
+   if       ( time_rst_i  | time_rst_proc  ) time_st_nxt = T_RST  ;
+   else if  ( time_init_i )                  time_st_nxt = T_INIT ;
+   else if  ( time_updt_i | time_updt_proc ) time_st_nxt = T_UPDT ;
+   else if  ( time_run_proc  )               time_st_nxt = T_RUN ;
    
-// Just for Debugging
-   else if  ( ctrl_t_freeze )  proc_st_nxt = FREEZE;
-   else if  ( ctrl_p_pause  )  proc_st_nxt = PAUSE;
-   else if  ( ctrl_p_step   )  proc_st_nxt = PLAY;
-   else if  ( ctrl_t_step   )  proc_st_nxt = PAUSE;
-   else if  ( ctrl_c_step   )  proc_st_nxt = FREEZE;
-   
-   case (proc_st)
+// Debugging
+   else if  ( time_stop_proc )                   time_st_nxt = T_STOP ;
+   else if  ( time_step_proc )                   time_st_nxt = T_STEP ;
+   case (time_st)
       T_RST : begin
-         c_time_rst = 1;
-         proc_rst = 1;            
-         if (all_fifo_full) proc_st_nxt = T_RST_WAIT;
+         time_en = 1;
+         time_rst = 1;
+         time_st_nxt = T_RUN ;
       end
-      T_RST_WAIT : begin
-         if (!all_fifo_full) proc_st_nxt = PAUSE;
+      T_INIT : begin
+         time_en = 1;
+         time_init = 1;
+         time_st_nxt = T_RUN ;
       end
-      P_RST : begin
-         c_time_rst = 1;
-         proc_rst = 1;            
-         if (all_fifo_full) proc_st_nxt = P_RST_WAIT;
+      T_UPDT : begin
+         time_en = 1;
+         time_updt = 1;
+         time_st_nxt = T_RUN ;
       end
-      P_RST_WAIT : begin
-         if (!all_fifo_full) proc_st_nxt = STOP;
+      T_RUN: begin
+         time_en = 1;
       end
-      T_INIT: begin
-         proc_st_nxt = PLAY;
-         proc_rst = 1;            
+      T_STEP: begin
+         time_en = 1;
+         time_st_nxt = T_STOP ;
       end
-      PLAY: begin
-         if    ( step_r )      proc_st_nxt = END_STEP;
-         c_time_en = 1;
-         c_core_en = 1;
-      end
-      PAUSE: begin
-         if    ( step_r )      proc_st_nxt = END_STEP;
-         c_time_en = 1;
-      end
-      UPDATE: begin
-         proc_st_nxt = PLAY;
-         c_core_en = 1;
-         c_time_en = 1;
-      end
-      FREEZE: begin
-         if    ( step_r )      proc_st_nxt = END_STEP;
-         c_core_en = 1;
-      end
-      END_STEP: begin
-         if  (!step_r)       proc_st_nxt = STOP;
-         else                proc_st_nxt = END_STEP;
-      end
-
    endcase
 end
 
-///////////////////////////////////////////////////////////////////////////////
-// Timing Control    // CHECK CLOCK BOUNDARY CROSSING //
-///////////////////////////////////////////////////////////////////////////////
+// Time ABS
+qproc_time_ctrl QTIME_CTRL ( 
+   .t_clk_i       ( t_clk_i      ) ,
+   .t_rst_ni      ( t_rst_ni     ) ,
+   .time_en_i     ( time_en    ) ,
+   .time_rst_i    ( time_rst     ) ,
+   .time_init_i   ( time_init    ) ,
+   .time_updt_i   ( time_updt    ) ,
+   .updt_dt_i     ( time_updt_dt ) ,
+   .time_abs_o  ( time_abs_r   ) );
+
+// Time REF
+reg [47:0] c_time_ref_dt;
+
+always_ff @ (posedge c_clk_i, negedge c_rst_ni) begin
+   if (!c_rst_ni)            c_time_ref_dt    <= '{default:'0} ;
+   else if  (core_rst)       c_time_ref_dt    <= '{default:'0} ;
+   else if  (time_ref_set )  c_time_ref_dt    <=  {16'd0, core_usr_b_dt} ;
+   else if  (time_ref_inc )  c_time_ref_dt    <=  c_time_ref_dt + {16'd0, core_usr_b_dt} ;
+end
 
 
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 reg [OUT_DPORT_QTY-1:0]  c_fifo_data_empty, t_fifo_data_full ;
 wire [OUT_DPORT_QTY-1:0]  t_fifo_data_empty, c_fifo_data_full ;
@@ -366,11 +408,11 @@ reg  [31 :0]        periph_dt_r [2] ;
 
 // With rising edge of RDY detect new values
 always_ff @(posedge c_clk_i) begin
-   if (proc_rst) begin
-      arith_rdy_r  <= 1'b0 ;
-      div_rdy_r    <= 1'b0 ;
-      tnet_rdy_r   <= 1'b0 ;
-      periph_rdy_r <= 1'b0 ;
+   if (core_rst) begin
+      arith_rdy_r   <= 1'b0 ;
+      div_rdy_r     <= 1'b0 ;
+      tnet_rdy_r    <= 1'b0 ;
+      periph_rdy_r  <= 1'b0 ;
       arith_dt_new  <= 1'b0 ;
       div_dt_new    <= 1'b0 ;
       tnet_dt_new   <= 1'b0 ;
@@ -437,7 +479,7 @@ assign cond_ext_clear = xreg_TPROC_CTRL[11] | (core_usr_addr[1] & core_usr_opera
 
 
 always_ff @(posedge c_clk_i) begin
-   if (proc_rst) begin
+   if (core_rst) begin
       ext_cond_r        <= 0;
    end else begin 
       // Condition 
@@ -525,16 +567,11 @@ wire [15:0]      ext_mem_addr;
 wire [167:0]     ext_mem_w_dt     ;
 wire [167:0]     ext_mem_r_dt, ext_mem_r_0_dt, ext_mem_r_1_dt     ;
 
-
 assign ext_mem_r_dt = ext_core_sel[0] ?  ext_mem_r_1_dt : ext_mem_r_0_dt ;
-
 
 // T PROCESSOR CORE
 ///////////////////////////////////////////////////////////////////////////////
 wire [31:0] core_do;
-
-
-
 
 // CLOCK DOMAIN CHANGE
 reg [OUT_WPORT_QTY-1:0] fifo_data_empty_rcd, fifo_wave_empty_rcd;
@@ -556,40 +593,27 @@ end
 
 
 
+assign reg_axi_dt = '{default:'0} ;
 
-assign all_dfifo_empty = &c_fifo_data_empty ;
-assign all_wfifo_empty = &c_fifo_wave_empty ;
-assign all_fifo_empty = all_dfifo_empty & all_wfifo_empty ;   
-
-assign all_dfifo_full = &c_fifo_data_full ;
-assign all_wfifo_full = &c_fifo_wave_full ;
-assign all_fifo_full = all_dfifo_full & all_wfifo_full ;   
-
-assign dfifo_full = |c_fifo_data_full & xreg_TPROC_CFG[10]; // With 1 BLOCK
-assign wfifo_full = |c_fifo_wave_full & xreg_TPROC_CFG[11]; // With 1 BLOCK
-assign fifo_ok    = ~wfifo_full & ~dfifo_full ;
 
 wire core_en;
 assign core_en = c_core_en  & fifo_ok; 
-
-
 
 reg [31:0] core0_r_dt [2], core0_w_dt [2];
 
 always_comb begin
    case (core0_src_dt)
-      3'b000 : core0_r_dt = tproc_w_dt ;
-      3'b001 : core0_r_dt = core0_w_dt;
-      3'b010 : core0_r_dt = '{default:'0} ;
-      3'b011 : core0_r_dt = '{default:'0} ;
-      3'b100 : core0_r_dt = periph_dt_i;
-      3'b101 : core0_r_dt = reg_axi_dt;
-      3'b110 : core0_r_dt = '{default:'0} ;
-      3'b111 : core0_r_dt = tnet_dt_i ;
+      3'b000 : core0_r_dt = '{default:'0} ;
+      3'b001 : core0_r_dt = '{arith_result[31:0], arith_result[63:32]};
+      3'b010 : core0_r_dt = tnet_dt_i ;
+      3'b011 : core0_r_dt = periph_dt_i;
+      3'b100 : core0_r_dt = tproc_w_dt ;
+      3'b101 : core0_r_dt = core0_w_dt ;
+      3'b110 : core0_r_dt = core1_w_dt ;
+      3'b111 : core0_r_dt = '{default:'0} ;
       default: core0_r_dt = '{default:'0} ;
    endcase
 end
-
 
 wire [1:0]core0_src_flg;
 assign core0_src_flg = core0_cfg[10:9];
@@ -618,7 +642,7 @@ qproc_core # (
    .ps_clk_i         ( ps_clk_i          ) ,
    .ps_rst_ni        ( ps_rst_ni         ) ,
    .en_i             ( core_en           ) ,    
-   .restart_i        ( proc_rst          ) ,    
+   .restart_i        ( core_rst          ) ,    
    .IF_s_axireg      ( s_axireg_01       ) ,
    .port_dt_i        ( in_port_dt_r      ) , //ALL The port Values
    .flag_i           ( flag_c0          ) ,
@@ -643,13 +667,12 @@ qproc_core # (
    .port_o           ( out_port_data     ) ,
    .core_do          ( core0_do           ) );
 
-reg [31:0] core1_w_dt [2];
 
+///// DUAL CORE
+reg [31:0] core1_w_dt [2];
 generate
    if ( DUAL_CORE == 1) begin : DUAL_CORE_YES
-      
       reg  [31:0] core1_r_dt [2];
-
       always_comb begin
       case (core1_src_dt)
             3'b000 : core1_r_dt = tproc_w_dt ;
@@ -663,7 +686,6 @@ generate
             default: core1_r_dt = '{default:'0} ;
          endcase
          end
-   
       qproc_core # (
          .LFSR        (  LFSR  ),
          .IN_PORT_QTY (  IN_PORT_QTY  ),
@@ -677,7 +699,7 @@ generate
          .ps_clk_i         ( ps_clk_i          ) ,
          .ps_rst_ni        ( ps_rst_ni         ) ,
          .en_i             ( core_en           ) ,    
-         .restart_i        ( proc_rst          ) ,    
+         .restart_i        ( core_rst          ) ,    
          .IF_s_axireg      ( s_axireg_10       ) , // AXI REG 10
          .port_dt_i        ( in_port_dt_r      ) , 
          .sreg_arith_i     ( {arith_result[63:32],arith_result[31:0]}  ) ,
@@ -708,17 +730,6 @@ generate
 endgenerate
 
 
-qproc_time_ctrl QTIME_CTRL ( 
-   .t_clk_i        ( t_clk_i        ) ,
-   .t_rst_ni       ( t_rst_ni       ) ,
-   .c_time_en_i    ( c_time_en      ) ,
-   .c_time_rst_i   ( c_time_rst     ) ,
-   .c_time_init_i  ( ctrl_t_init_r    ) ,
-   .c_time_updt_i  ( ctrl_t_updt_r  ) ,
-   .c_offset_dt_i  ( offset_dt_r    ) ,
-   .t_time_en_o    ( t_time_en      ) ,
-   .t_time_abs_o   ( time_abs_r     ) ,
-   .t_init_off_o   ( init_off       ) );
 
 
 reg  [31:0] tproc_r_dt [2];
@@ -743,14 +754,28 @@ end
 assign xreg_TPROC_STATUS[19 : 16]  = { 1'b0 , fifo_ok, wfifo_full, dfifo_full };
 assign xreg_TPROC_STATUS[15 : 12]  = { all_wfifo_full, all_dfifo_full, all_wfifo_empty, all_dfifo_empty };
 assign xreg_TPROC_STATUS[11 :  8]  = { 1'b0  , flag_c0, port_dt_new , ext_cond_r};
-assign xreg_TPROC_STATUS[7  :  4]  = { 1'b0  , proc_rst, c_time_en, core_en};
-assign xreg_TPROC_STATUS[3  :  0]  = { 1'b0  , proc_st};
+assign xreg_TPROC_STATUS[7  :  4]  = { 1'b0  , core_rst, time_en, core_en};
+assign xreg_TPROC_STATUS[3  :  0]  = { 1'b0  , core_st};
 
 assign xreg_TPROC_DEBUG[15: 8]  = { c_time_ref_dt[7:0]};
 assign xreg_TPROC_DEBUG[ 7: 4]  = { t_fifo_data_dt[0][3:0]};
 assign xreg_TPROC_DEBUG[ 3: 0]  = { t_fifo_data_time[0][3:0]};
 
 
+
+ 
+axi_lite_deco_4 #(
+   .OUTS ( DECO_OUT ) 
+) AXI_DECO (
+// AXI-Lite DATA Slave I/F.   
+   .ps_aclk       ( ps_clk_i           ) , 
+   .ps_aresetn    ( ps_rst_ni         ) , 
+   .s_axi_lite    ( IF_s_axireg ) ,
+   .m00_axi_lite  ( s_axireg_00 ) ,
+   .m01_axi_lite  ( s_axireg_01 ) ,
+   .m10_axi_lite  ( s_axireg_10 ) ,
+   .m11_axi_lite  ( s_axireg_11 ) );
+   
 // AXI Slave.
 qproc_axi_reg QPROC_xREG (
    .ps_aclk          ( ps_clk_i         ) , 
@@ -763,8 +788,8 @@ qproc_axi_reg QPROC_xREG (
    .MEM_ADDR         ( xreg_MEM_ADDR         ) ,
    .MEM_LEN          ( xreg_MEM_LEN          ) ,
    .INIT_TIME        ( offset_dt_r[31:0]     ) ,
-   .TPROC_R_DT1      ( 0        ) ,
-   .TPROC_R_DT2      ( 0        ) ,
+   .TPROC_R_DT1      ( reg_axi_dt[0]        ) ,
+   .TPROC_R_DT2      ( reg_axi_dt[1]        ) ,
    .MEM_DT_I         ( xreg_MEM_DT_I         ) ,
    .MEM_DT_O         ( xreg_MEM_DT_O         ) ,
    .TIME_USR         ( c_time_usr      ) ,
@@ -803,14 +828,31 @@ qproc_mem_ctrl # (
    .DEBUG_O          ( xreg_TPROC_DEBUG[31:16]    ) );
    
 
-///////////////////////////////////////////////////////////////////////////////
-/// FIFO 
-///////////////////////////////////////////////////////////////////////////////
- 
 
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+/// FIFO & DISPATCHER
+///////////////////////////////////////////////////////////////////////////////
+assign all_dfifo_empty = &c_fifo_data_empty ;
+assign all_wfifo_empty = &c_fifo_wave_empty ;
+assign all_fifo_empty = all_dfifo_empty & all_wfifo_empty ;   
+
+assign all_dfifo_full = &c_fifo_data_full ;
+assign all_wfifo_full = &c_fifo_wave_full ;
+assign all_fifo_full = all_dfifo_full & all_wfifo_full ;   
+
+assign dfifo_full = |c_fifo_data_full & xreg_TPROC_CFG[10]; // With 1 BLOCK
+assign wfifo_full = |c_fifo_wave_full & xreg_TPROC_CFG[11]; // With 1 BLOCK
+assign fifo_ok    = ~wfifo_full & ~dfifo_full ;
 
 /// FIFO CTRL-REG
-///////////////////////////////////////////////////////////////////////////////
 wire fifo_we;
 assign fifo_we = port_we & core_en ;
 
@@ -838,6 +880,29 @@ always_comb begin
          c_fifo_wave_push [out_port_data.p_addr] = 1'b1 ;
 end   
 
+
+always_ff @ (posedge t_clk_i, negedge t_rst_ni) begin
+   if (!t_rst_ni) begin
+      data_pop_r     <= '{default:'0} ;
+      data_pop_r2    <= '{default:'0} ;
+      data_pop_r3    <= '{default:'0} ;
+      data_pop_r4    <= '{default:'0} ;
+      wave_pop_r     <= '{default:'0} ;
+      wave_pop_r2    <= '{default:'0} ;
+      wave_pop_r3    <= '{default:'0} ;
+      wave_pop_r4    <= '{default:'0} ;
+   end else begin
+      data_pop_r     <= data_pop;
+      data_pop_r2    <= data_pop_r;
+      data_pop_r3    <= data_pop_r2;
+      data_pop_r4    <= data_pop_r3;
+      wave_pop_r     <= wave_pop;
+      wave_pop_r2    <= wave_pop_r;
+      wave_pop_r3    <= wave_pop_r2;
+      wave_pop_r4    <= wave_pop_r3;
+   end
+end
+
  ///////////////////////////////////////////////////////////////////////////////
 /// WAVE PORT
 ///////////////////////////////////////////////////////////////////////////////
@@ -864,7 +929,7 @@ generate
          .rd_en_i    ( t_time_en ) ,
          .pop_i      ( wave_pop         [ind_wfifo] ) ,
          .data_o     ( {t_fifo_wave_dt[ind_wfifo],t_fifo_wave_time[ind_wfifo]} ) ,
-         .flush_i    ( proc_rst ),
+         .flush_i    ( core_rst ),
          .async_empty_o ( t_fifo_wave_empty [ind_wfifo] ) , // SYNC with RD_CLK
          .async_full_o  ( c_fifo_wave_full  [ind_wfifo] ) ); // SYNC with WR_CLK
       // Time Comparator
@@ -885,13 +950,6 @@ generate
          );
       // POP Generator
       always_comb begin : WAVE_DISPATCHER
-//         wave_t_eq[ind_wfifo]  = (time_abs_r == t_fifo_wave_time[ind_wfifo]) ;
-//         wave_t_gr[ind_wfifo]  = W_RESULT[ind_wfifo][47];
-//         wave_pop[ind_wfifo]   = 0;
-//         wave_pop_prev[ind_wfifo] = wave_pop_r[ind_wfifo] | wave_pop_r2[ind_wfifo] | wave_pop_r3[ind_wfifo];
-//         if (~t_fifo_wave_empty[ind_wfifo])
-//            if ( ( wave_t_eq[ind_wfifo] | wave_t_gr[ind_wfifo] ) & ~wave_pop_prev[ind_wfifo] ) 
-//               wave_pop      [ind_wfifo] = 1'b1 ;
          wave_t_gr[ind_wfifo]  = W_RESULT[ind_wfifo][47];
          wave_pop[ind_wfifo]   = 0;
          wave_pop_prev[ind_wfifo] = wave_pop_r[ind_wfifo] | wave_pop_r2[ind_wfifo] | wave_pop_r3[ind_wfifo]| wave_pop_r4[ind_wfifo];
@@ -925,7 +983,7 @@ generate
          .rd_en_i    ( t_time_en    ) ,
          .pop_i      ( data_pop        [ind_dfifo] ) ,
          .data_o     ( {t_fifo_data_dt[ind_dfifo], t_fifo_data_time[ind_dfifo]} ) ,
-         .flush_i    ( proc_rst     ),
+         .flush_i    ( core_rst     ),
          .async_empty_o ( t_fifo_data_empty [ind_dfifo] ) , // SYNC with RD_CLK
          .async_full_o  ( c_fifo_data_full  [ind_dfifo] ) ); // SYNC with WR_CLK
       // Time Comparator
@@ -947,76 +1005,32 @@ generate
 
       // POP Generator
       always_comb begin : DATA_DISPATCHER
-//         data_t_eq[ind_dfifo]  = (time_abs_r == t_fifo_data_time[ind_dfifo]) ;
-//         data_t_gr[ind_dfifo]  = D_RESULT[ind_dfifo][47];
-//         data_pop[ind_dfifo] = 0;
-//         data_pop_prev[ind_dfifo] = data_pop_r[ind_dfifo] | data_pop_r2[ind_dfifo] | data_pop_r3[ind_dfifo];
-//         if (~t_fifo_data_empty[ind_dfifo] )
-//            if ( ( data_t_eq[ind_dfifo] | data_t_gr[ind_dfifo] ) & ~data_pop_prev[ind_dfifo] ) 
-//               data_pop      [ind_dfifo] = 1'b1 ;
          data_t_gr[ind_dfifo]  = D_RESULT[ind_dfifo][47];
          data_pop[ind_dfifo] = 0;
          data_pop_prev[ind_dfifo] = data_pop_r[ind_dfifo] | data_pop_r2[ind_dfifo] | data_pop_r3[ind_dfifo] | data_pop_r4[ind_dfifo];
          if (t_time_en & ~t_fifo_data_empty[ind_dfifo] )
             if ( data_t_gr[ind_dfifo] & ~data_pop_prev[ind_dfifo] ) 
                data_pop      [ind_dfifo] = 1'b1 ;
-
-
       end //ALWAYS
    end //FOR      
 endgenerate      
 
 
-
-
-axi_lite_deco_4 #(
-   .OUTS ( DECO_OUT ) 
-) AXI_DECO (
-// AXI-Lite DATA Slave I/F.   
-   .ps_aclk       ( ps_clk_i           ) , 
-   .ps_aresetn    ( ps_rst_ni         ) , 
-   .s_axi_lite    ( IF_s_axireg ) ,
-   .m00_axi_lite  ( s_axireg_00 ) ,
-   .m01_axi_lite  ( s_axireg_01 ) ,
-   .m10_axi_lite  ( s_axireg_10 ) ,
-   .m11_axi_lite  ( s_axireg_11 ) );
-
-
-   
-// OUT DATA
-///////////////////////////////////////////////////////////////////////////////
-always_ff @ (posedge t_clk_i, negedge t_rst_ni) begin
-   if (!t_rst_ni) begin
-      data_pop_r     <= '{default:'0} ;
-      data_pop_r2    <= '{default:'0} ;
-      data_pop_r3    <= '{default:'0} ;
-      data_pop_r4    <= '{default:'0} ;
-      wave_pop_r     <= '{default:'0} ;
-      wave_pop_r2    <= '{default:'0} ;
-      wave_pop_r3    <= '{default:'0} ;
-      wave_pop_r4    <= '{default:'0} ;
-   end else begin
-      data_pop_r     <= data_pop;
-      data_pop_r2    <= data_pop_r;
-      data_pop_r3    <= data_pop_r2;
-      data_pop_r4    <= data_pop_r3;
-      wave_pop_r      <= wave_pop;
-      wave_pop_r2     <= wave_pop_r;
-      wave_pop_r3     <= wave_pop_r2;
-      wave_pop_r4     <= wave_pop_r3;
-
-   end
-end
-
-reg [31:0]  port_dt_r [OUT_DPORT_QTY];
-integer ind_dport;
-
 // OUTPUTS
 ///////////////////////////////////////////////////////////////////////////////
 
+// OUT WAVES
+genvar ind_wport ;
+generate
+   for (ind_wport=0; ind_wport < OUT_WPORT_QTY; ind_wport=ind_wport+1) begin: OUT_WAVE_PORT
+      assign m_axis_tvalid[ind_wport]  = wave_pop_r      [ind_wport] ;
+      assign m_axis_tdata [ind_wport]  = t_fifo_wave_dt [ind_wport] ;
+   end
+endgenerate
 
 // OUT DATA
-///////////////////////////////////////////////////////////////////////////////
+reg [31:0]  port_dt_r [OUT_DPORT_QTY];
+integer ind_dport;
 always_ff @ (posedge t_clk_i, negedge t_rst_ni) begin
    for (ind_dport=0; ind_dport < OUT_DPORT_QTY; ind_dport=ind_dport+1) begin: OUT_DATA_PORT
       if (!t_rst_ni) 
@@ -1025,10 +1039,10 @@ always_ff @ (posedge t_clk_i, negedge t_rst_ni) begin
         if (data_pop_r[ind_dport]) port_dt_r[ind_dport] <= t_fifo_data_dt[ind_dport] ;
    end
 end
-  
 assign port_tvalid_o = data_pop_r;
 assign port_tdata_o  = port_dt_r;
 
+// OUT PERIPHERLAS (PERIPH AND TNET)
 assign periph_a_dt_o = core_usr_a_dt;
 assign periph_b_dt_o = core_usr_b_dt;
 assign periph_c_dt_o = core_usr_c_dt;
@@ -1037,18 +1051,8 @@ assign periph_addr_o = core_usr_addr;
 assign periph_op_o   = core_usr_operation;
 
 ///// External Control
-assign t_time_abs_o = time_abs_r ;
+assign time_abs_o = time_abs_r ;
 
-
-// OUT WAVES
-///////////////////////////////////////////////////////////////////////////////
-genvar ind_wport ;
-generate
-   for (ind_wport=0; ind_wport < OUT_WPORT_QTY; ind_wport=ind_wport+1) begin: OUT_WAVE_PORT
-      assign m_axis_tvalid[ind_wport]  = wave_pop_r      [ind_wport] ;
-      assign m_axis_tdata [ind_wport]  = t_fifo_wave_dt [ind_wport] ;
-   end
-endgenerate
 
 // DEBUG
 ///////////////////////////////////////////////////////////////////////////////
@@ -1065,16 +1069,16 @@ generate
       assign t_debug_do[11 :  8]     = {  dfifo_full, all_fifo_full, all_wfifo_full, all_dfifo_full } ;
       assign t_debug_do[ 7 :  4]     = { 4'b0000 };
       assign t_debug_do[ 3 :  0]     = { 1'b0  ,all_fifo_empty , all_wfifo_empty, all_dfifo_empty};
-      ///// C_CLOCK Debug Signals   
+      ///// C_CLOCK Debug Signals
       assign c_time_usr_do          = t_time_usr ;
       assign c_debug_do[31 : 28]     = {  flag_c0, port_dt_new, 1'b0 , ctrl_p_step } ;
       assign c_debug_do[27 : 24]     = {  ctrl_p_pause, ctrl_p_run, ctrl_p_stop, ctrl_p_rst } ;
-      assign c_debug_do[23 : 20]     = {  2'b00, ctrl_t_init_r, ctrl_t_updt_r } ;
-      assign c_debug_do[19 : 16]     = {  ctrl_c_step, ctrl_t_step, ctrl_t_freeze, ctrl_t_rst } ;
-      assign c_debug_do[15 : 12]     = {  2'b00, core_en, c_time_init } ;
-      assign c_debug_do[11 : 8]     = {  c_time_rst, c_time_en, proc_rst, c_core_en } ;
+      assign c_debug_do[23 : 20]     = {  2'b00, ctrl_t_updt } ;
+      assign c_debug_do[19 : 16]     = {  ctrl_c_step, ctrl_t_step, ctrl_t_rst } ;
+      assign c_debug_do[15 : 12]     = {  2'b00, core_en } ;
+      assign c_debug_do[11 : 8]     = {  time_rst, time_en, core_rst, c_core_en } ;
       assign c_debug_do[7 : 4]      = { 1'b0  , ext_cond_r, cond_ext_clear , cond_ext_set};
-      assign c_debug_do[3 : 0]      = { 1'b0  , proc_st};
+      assign c_debug_do[3 : 0]      = { 1'b0  , core_st};
       assign c_time_ref_do = c_time_ref_dt[31:0];
       assign c_port_do     = {c_fifo_data_in_r[15:0] , c_fifo_time_in_r[15:0] } ;
       assign c_core_do     = core0_do ;
@@ -1082,7 +1086,7 @@ generate
       assign t_time_usr_do  = 0 ;
       assign t_fifo_do      = 0 ;
       assign t_debug_do     = 0 ;
-      ///// C_CLOCK Debug Signals   
+      ///// C_CLOCK Debug Signals
       assign c_time_usr_do  = 0 ;
       assign c_debug_do     = 0 ;
       assign c_time_ref_do  = 0 ;

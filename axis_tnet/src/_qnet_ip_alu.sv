@@ -62,9 +62,11 @@ assign working    = |en_r;
 
 
 always_ff @ (posedge clk_i, negedge rst_ni) begin
-   if (!rst_ni)         
-      en_r  <= 0 ;
-   else
+   if (!rst_ni) begin         
+      en_r       <= 0 ;
+      r_temp [0] <= 0 ;
+      inB        <= 0 ;
+   end else
       if (start_i) begin
          en_r           <= {en_r[N_PIPE-2:0], 1'b1} ;
          r_temp   [0]   <= A_i ;

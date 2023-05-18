@@ -16,24 +16,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="878.001 ns"></ZoomEndTime>
-      <Cursor1Time time="244.120 ns"></Cursor1Time>
+      <ZoomStartTime time="2,516.929 ns"></ZoomStartTime>
+      <ZoomEndTime time="3,062.430 ns"></ZoomEndTime>
+      <Cursor1Time time="2,771.429 ns"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="187"></NameColumnWidth>
+      <NameColumnWidth column_width="179"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="72" />
+   <WVObjectSize size="98" />
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_rst">
       <obj_property name="ElementShortName">ctrl_t_rst</obj_property>
       <obj_property name="ObjectShortName">ctrl_t_rst</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_freeze">
-      <obj_property name="ElementShortName">ctrl_t_freeze</obj_property>
-      <obj_property name="ObjectShortName">ctrl_t_freeze</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
@@ -85,25 +79,160 @@
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_updt_r">
-      <obj_property name="ElementShortName">ctrl_t_updt_r</obj_property>
-      <obj_property name="ObjectShortName">ctrl_t_updt_r</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_rst">
+      <obj_property name="ElementShortName">ctrl_p_rst</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_stop">
+      <obj_property name="ElementShortName">ctrl_p_stop</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_stop</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_run">
+      <obj_property name="ElementShortName">ctrl_p_run</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_run</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_pause">
+      <obj_property name="ElementShortName">ctrl_p_pause</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_pause</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_step">
+      <obj_property name="ElementShortName">ctrl_p_step</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_step</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_step">
+      <obj_property name="ElementShortName">ctrl_t_step</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_step</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_c_step">
+      <obj_property name="ElementShortName">ctrl_c_step</obj_property>
+      <obj_property name="ObjectShortName">ctrl_c_step</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_rst">
+      <obj_property name="ElementShortName">ctrl_t_rst</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_updt">
+      <obj_property name="ElementShortName">ctrl_t_updt</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_updt</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_stop">
+      <obj_property name="ElementShortName">ctrl_t_stop</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_stop</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_p_freeze">
+      <obj_property name="ElementShortName">ctrl_p_freeze</obj_property>
+      <obj_property name="ObjectShortName">ctrl_p_freeze</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_c_rst_run">
+      <obj_property name="ElementShortName">ctrl_c_rst_run</obj_property>
+      <obj_property name="ObjectShortName">ctrl_c_rst_run</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_c_rst_stop">
+      <obj_property name="ElementShortName">ctrl_c_rst_stop</obj_property>
+      <obj_property name="ObjectShortName">ctrl_c_rst_stop</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_c_rst_cnt">
+      <obj_property name="ElementShortName">ctrl_c_rst_cnt</obj_property>
+      <obj_property name="ObjectShortName">ctrl_c_rst_cnt</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_c_stop">
+      <obj_property name="ElementShortName">ctrl_c_stop</obj_property>
+      <obj_property name="ObjectShortName">ctrl_c_stop</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_c_run">
+      <obj_property name="ElementShortName">ctrl_c_run</obj_property>
+      <obj_property name="ObjectShortName">ctrl_c_run</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_run">
+      <obj_property name="ElementShortName">ctrl_t_run</obj_property>
+      <obj_property name="ObjectShortName">ctrl_t_run</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/t_clk_i">
+      <obj_property name="ElementShortName">t_clk_i</obj_property>
+      <obj_property name="ObjectShortName">t_clk_i</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/c_clk">
+      <obj_property name="ElementShortName">c_clk</obj_property>
+      <obj_property name="ObjectShortName">c_clk</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/proc_start_i">
+      <obj_property name="ElementShortName">proc_start_i</obj_property>
+      <obj_property name="ObjectShortName">proc_start_i</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/ctrl_t_init_r">
-      <obj_property name="ElementShortName">ctrl_t_init_r</obj_property>
-      <obj_property name="ObjectShortName">ctrl_t_init_r</obj_property>
-      <obj_property name="CustomSignalColor">#FF00FF</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/proc_stop_i">
+      <obj_property name="ElementShortName">proc_stop_i</obj_property>
+      <obj_property name="ObjectShortName">proc_stop_i</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/proc_st">
-      <obj_property name="ElementShortName">proc_st[31:0]</obj_property>
-      <obj_property name="ObjectShortName">proc_st[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/core_start_i">
+      <obj_property name="ElementShortName">core_start_i</obj_property>
+      <obj_property name="ObjectShortName">core_start_i</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/proc_st_nxt">
-      <obj_property name="ElementShortName">proc_st_nxt[31:0]</obj_property>
-      <obj_property name="ObjectShortName">proc_st_nxt[31:0]</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/core_stop_i">
+      <obj_property name="ElementShortName">core_stop_i</obj_property>
+      <obj_property name="ObjectShortName">core_stop_i</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/time_rst_i">
+      <obj_property name="ElementShortName">time_rst_i</obj_property>
+      <obj_property name="ObjectShortName">time_rst_i</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/time_init_i">
+      <obj_property name="ElementShortName">time_init_i</obj_property>
+      <obj_property name="ObjectShortName">time_init_i</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/time_updt_i">
+      <obj_property name="ElementShortName">time_updt_i</obj_property>
+      <obj_property name="ObjectShortName">time_updt_i</obj_property>
+      <obj_property name="CustomSignalColor">#00FFFF</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core_rst_net_req">
+      <obj_property name="ElementShortName">core_rst_net_req</obj_property>
+      <obj_property name="ObjectShortName">core_rst_net_req</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core_rst_net_req_set">
+      <obj_property name="ElementShortName">core_rst_net_req_set</obj_property>
+      <obj_property name="ObjectShortName">core_rst_net_req_set</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core_rst">
+      <obj_property name="ElementShortName">core_rst</obj_property>
+      <obj_property name="ObjectShortName">core_rst</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core_rst_ack">
+      <obj_property name="ElementShortName">core_rst_ack</obj_property>
+      <obj_property name="ObjectShortName">core_rst_ack</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core_st">
+      <obj_property name="ElementShortName">core_st[31:0]</obj_property>
+      <obj_property name="ObjectShortName">core_st[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/time_st">
+      <obj_property name="ElementShortName">time_st[31:0]</obj_property>
+      <obj_property name="ObjectShortName">time_st[31:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/QTIME_CTRL/time_abs">
+      <obj_property name="ElementShortName">time_abs[47:0]</obj_property>
+      <obj_property name="ObjectShortName">time_abs[47:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/pmem_addr_o">
+      <obj_property name="ElementShortName">pmem_addr_o[7:0]</obj_property>
+      <obj_property name="ObjectShortName">pmem_addr_o[7:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/time_rst_proc">
+      <obj_property name="ElementShortName">time_rst_proc</obj_property>
+      <obj_property name="ObjectShortName">time_rst_proc</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /async_full_o">
       <obj_property name="ElementShortName">async_full_o</obj_property>
@@ -117,11 +246,6 @@
       <obj_property name="ElementShortName">all_fifo_empty</obj_property>
       <obj_property name="ObjectShortName">all_fifo_empty</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/QTIME_CTRL/time_abs">
-      <obj_property name="ElementShortName">time_abs[47:0]</obj_property>
-      <obj_property name="ObjectShortName">time_abs[47:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/time_updt_i">
       <obj_property name="ElementShortName">time_updt_i</obj_property>
       <obj_property name="ObjectShortName">time_updt_i</obj_property>
@@ -133,10 +257,6 @@
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/time_ref_inc">
       <obj_property name="ElementShortName">time_ref_inc</obj_property>
       <obj_property name="ObjectShortName">time_ref_inc</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/offset_dt_i">
-      <obj_property name="ElementShortName">offset_dt_i[31:0]</obj_property>
-      <obj_property name="ObjectShortName">offset_dt_i[31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/QTIME_CTRL/time_inc">
       <obj_property name="ElementShortName">time_inc[47:0]</obj_property>
@@ -156,10 +276,6 @@
       <obj_property name="ElementShortName">c_time_ref_dt[47:0]</obj_property>
       <obj_property name="ObjectShortName">c_time_ref_dt[47:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/QTIME_CTRL/t_clk_i">
-      <obj_property name="ElementShortName">t_clk_i</obj_property>
-      <obj_property name="ObjectShortName">t_clk_i</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/m0_axis_tdata">
       <obj_property name="ElementShortName">m0_axis_tdata[167:0]</obj_property>
@@ -250,10 +366,6 @@
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/xreg_TPROC_CTRL">
       <obj_property name="ElementShortName">xreg_TPROC_CTRL[31:0]</obj_property>
       <obj_property name="ObjectShortName">xreg_TPROC_CTRL[31:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/proc_st">
-      <obj_property name="ElementShortName">proc_st[31:0]</obj_property>
-      <obj_property name="ObjectShortName">proc_st[31:0]</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /A_i">
       <obj_property name="ElementShortName">A_i[31:0]</obj_property>

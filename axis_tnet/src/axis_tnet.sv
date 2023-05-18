@@ -11,10 +11,10 @@ module axis_tnet (
    input  wire             ps_aresetn        ,
    input  wire  [47:0]     t_time_abs        ,
 // SIMULATION    
-   input  wire             rxn           ,
-   input  wire             rxp           ,
-   output wire             txn           ,
-   output  wire            txp           ,
+//   input  wire             rxn           ,
+//   input  wire             rxp           ,
+//   output wire             txn           ,
+//   output  wire            txp           ,
 // TPROC CONTROL
    input  wire             c_cmd_i           ,
    input  wire  [4:0]      c_op_i            ,
@@ -22,13 +22,12 @@ module axis_tnet (
    input  wire  [31:0]     c_dt2_i           ,
    input  wire  [31:0]     c_dt3_i           ,
    output wire             c_ready_o         ,
+   output reg              core_start_o     ,
+   output reg              core_stop_o      ,
    output reg              time_rst_o        ,
    output reg              time_init_o       ,
    output reg              time_updt_o       ,
-   output reg  [31:0]      time_off_dt_o     ,
-   output reg              start_o           ,
-   output reg              pause_o           ,
-   output reg              stop_o            ,
+   output reg  [31:0]      time_dt_o     ,
    output reg  [31:0]      tnet_dt1_o       ,
    output reg  [31:0]      tnet_dt2_o       ,
 // AXI-Lite DATA Slave I/F.   
@@ -62,6 +61,8 @@ wire             axi_tx_tready_TX, axi_tx_tvalid_TX, axi_tx_tlast_TX ;
 wire  [63:0]     axi_tx_tdata_TX    ;
 wire  [7 :0]     axi_tx_tkeep_TX , axi_rx_tkeep_RX;
 
+wire [4:0] aurora_dbg;
+wire user_clk;
 wire init_clk;
 
 clk_wiz_0 CLK_AURORA (
@@ -92,10 +93,7 @@ qick_net QICK_NET (
    .time_rst_o        ( time_rst_o        ) ,
    .time_init_o       ( time_init_o       ) ,
    .time_updt_o       ( time_updt_o       ) ,
-   .time_off_dt_o     ( time_off_dt_o     ) ,
-   .start_o           ( start_o           ) ,
-   .pause_o           ( pause_o           ) ,
-   .stop_o            ( stop_o            ) ,
+   .time_off_dt_o     ( time_dt_o     ) ,
    .tnet_dt1_o        ( tnet_dt1_o        ) ,
    .tnet_dt2_o        ( tnet_dt2_o        ) ,
    .aurora_dbg        ( aurora_dbg        ) ,
@@ -170,7 +168,7 @@ aurora_64b66b_SL AURORA_RX  (
   .gt_powergood         (                    )  // output wire [1 : 0] gt_powergood
 );
 
-wire [4:0] aurora_dbg;
+
 
 assign aurora_dbg[0] = ~mmcm_not_locked;
 assign aurora_dbg[1] = gt_pll_lock ;
@@ -179,7 +177,7 @@ assign aurora_dbg[3] = channel_up_RX ;
 assign aurora_dbg[4] = channel_up_TX ;
 
 
-wire user_clk;
+
 assign axi_tx_tkeep_TX = {8{axi_tx_tlast_TX}};
 // TX PORT
 aurora_64b66b_NSL AURORA_TX  (
@@ -220,6 +218,11 @@ aurora_64b66b_NSL AURORA_TX  (
    .sys_reset_out       (  ), 
    .gt_powergood        (  )
    );
+
+assign proc_start_o = 1'b0;
+assign proc_pause_o = 1'b0;
+assign proc_stop_o  = 1'b0;
+assign proc_rst_o   = 1'b0;
 
 
 endmodule

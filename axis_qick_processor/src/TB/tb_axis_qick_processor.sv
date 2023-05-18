@@ -42,8 +42,6 @@ import axi_mst_0_pkg::*;
 module tb_axis_qick_processor ();
 
 ///////////////////////////////////////////////////////////////////////////////
-// Signals
-reg   t_clk, c_clk, s_ps_dma_aclk, rst_ni;
 
   
    
@@ -82,14 +80,19 @@ wire                   s_axi_rready     ;
 
 //////////////////////////////////////////////////////////////////////////
 //  CLK Generation
+reg   t_clk, s_ps_dma_aclk, rst_ni;
+wire  c_clk ;
+
 initial begin
   t_clk = 1'b0;
   forever # (`T_TCLK) t_clk = ~t_clk;
 end
-initial begin
-  c_clk = 1'b0;
-  forever # (`T_CCLK) c_clk = ~c_clk;
-end
+
+//initial begin
+//  c_clk = 1'b0;
+//  forever # (`T_CCLK) c_clk = ~c_clk;
+//end
+assign c_clk = t_clk ;
 initial begin
   s_ps_dma_aclk = 1'b0;
   #0.5
@@ -252,7 +255,8 @@ axi_mst_0 axi_mst_0_i
 	);
    
 
-reg proc_rst_i, proc_run_i, proc_stop_i, proc_pause_i;
+reg proc_start_i, proc_stop_i ;
+reg core_start_i, core_stop_i ;
 reg time_rst_i, time_init_i, time_updt_i;
 
 reg  [47:0] offset_dt_i ;
@@ -284,14 +288,14 @@ axis_qick_proccessor # (
    .c_resetn            ( rst_ni              ) ,
    .ps_clk_i            ( s_ps_dma_aclk       ) ,
    .ps_resetn           ( s_ps_dma_aresetn    ) ,
-   .proc_rst_i          ( proc_rst_i               ) ,
-   .proc_run_i          ( proc_run_i               ) ,
+   .proc_start_i        ( proc_start_i               ) ,
    .proc_stop_i         ( proc_stop_i                ) ,
-   .proc_pause_i        ( proc_pause_i                ) ,
+   .core_start_i        ( core_start_i               ) ,
+   .core_stop_i         ( core_stop_i                ) ,
    .time_rst_i          ( time_rst_i               ) ,
    .time_init_i         ( time_init_i               ) ,
    .time_updt_i         ( time_updt_i                ) ,
-   .offset_dt_i         ( offset_dt_i                ) ,
+   .time_dt_i         ( offset_dt_i                ) ,
    .t_time_abs_o        ( t_time_abs_o                ) ,
 
    .tnet_en_o    ( tnet_en_o   ) ,
@@ -439,11 +443,10 @@ tnet_dt_i = '{default:'0} ;
    tnet_dt_i [2]   = {0,0} ;
 
 
-
-   proc_rst_i   = 1'b0;
-   proc_run_i   = 1'b0;
-   proc_stop_i  = 1'b0;
-   proc_pause_i = 1'b0;
+   proc_start_i   = 1'b0;
+   proc_stop_i   = 1'b0;
+   core_start_i  = 1'b0;
+   core_stop_i  = 1'b0;
    time_rst_i   = 1'b0;
    time_init_i  = 1'b0;
    time_updt_i  = 1'b0;
@@ -458,22 +461,79 @@ tnet_dt_i = '{default:'0} ;
    @ (posedge s_ps_dma_aclk); #0.1;
 
 // TEST_DMA_AXI ();
-//TEST_AXI ();
 //TEST_STATES();
 
-// RESET TIME
+// PROCESSOR START
    #100;
    @ (posedge c_clk); #0.1;
-   time_rst_i   = 1'b1;
+   proc_start_i   = 1'b1;
    @ (posedge c_clk); #0.1;
-   time_rst_i   = 1'b0;
-// RUN
+   proc_start_i   = 1'b0;
+// PROCESSOR STOP
    #100;
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b1;
+   proc_stop_i   = 1'b1;
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b0;
+   proc_stop_i   = 1'b0;
+// PROCESSOR START
+   #100;
+   @ (posedge c_clk); #0.1;
+   proc_start_i   = 1'b1;
+   @ (posedge c_clk); #0.1;
+   proc_start_i   = 1'b0;
 
+// CORE STOP
+   #100;
+   @ (posedge c_clk); #0.1;
+   core_stop_i   = 1'b1;
+   @ (posedge c_clk); #0.1;
+   core_stop_i   = 1'b0;
+// CORE START
+   #100;
+   @ (posedge c_clk); #0.1;
+   core_start_i   = 1'b1;
+   @ (posedge c_clk); #0.1;
+   core_start_i   = 1'b0;
+
+// PROCESSOR START
+   #100;
+   @ (posedge c_clk); #0.1;
+   proc_start_i   = 1'b1;
+   @ (posedge c_clk); #0.1;
+   proc_start_i   = 1'b0;
+
+// CORE START
+   #100;
+   @ (posedge c_clk); #0.1;
+   core_start_i   = 1'b1;
+   @ (posedge c_clk); #0.1;
+   core_start_i   = 1'b0;
+
+// TIME RESET
+   #100;
+   @ (posedge t_clk); #0.1;
+   time_rst_i   = 1'b1;
+   @ (posedge t_clk); #0.1;
+   time_rst_i   = 1'b0;
+// TIME INIT
+   #100;
+   @ (posedge t_clk); #0.1;
+   time_init_i  = 1'b1;
+   offset_dt_i   = 100;
+   @ (posedge t_clk); #0.1;
+   time_init_i   = 1'b0;
+// TIME UPDATE
+   #100;
+   @ (posedge t_clk); #0.1;
+   time_updt_i  = 1'b1;
+   offset_dt_i   = 50;
+   @ (posedge t_clk); #0.1;
+   time_updt_i   = 1'b0;
+
+TEST_AXI ();
+
+  
+   
 
 // PORT DATA IN
    @ (posedge c_clk); #0.1;
@@ -683,23 +743,12 @@ task TEST_STATES; begin
    time_rst_i   = 1'b1;
    @ (posedge c_clk); #0.1;
    time_rst_i   = 1'b0;
-// RESET PROCESSOR
-   #10;
-   @ (posedge c_clk); #0.1;
-   proc_rst_i   = 1'b1;
-   @ (posedge c_clk); #0.1;
-   proc_rst_i   = 1'b0;
 // RUN
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b1;
+   proc_start_i   = 1'b1;
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b0;
+   proc_start_i   = 1'b0;
    #25;
-// PAUSE
-   @ (posedge c_clk); #0.1;
-   proc_pause_i = 1'b1;
-   @ (posedge c_clk); #0.1;
-   proc_pause_i = 1'b0;
 // STOP   
    @ (posedge c_clk); #0.1;
    proc_stop_i  = 1'b1;
@@ -718,16 +767,6 @@ task TEST_STATES; begin
    @ (posedge c_clk); #0.1;
    time_rst_i   = 1'b0;
    #10;
-   @ (posedge c_clk); #0.1;
-   proc_rst_i   = 1'b1;
-   @ (posedge c_clk); #0.1;
-   proc_rst_i   = 1'b0;
-   #10;
-   @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b1;
-   @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b0;
-   #50;
 // RESET TIME
    @ (posedge c_clk); #0.1;
    time_rst_i   = 1'b1;
@@ -736,9 +775,9 @@ task TEST_STATES; begin
 
    #10;
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b1;
+   proc_start_i   = 1'b1;
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b0;
+   proc_start_i   = 1'b0;
    #50;
 // STOP   
    @ (posedge c_clk); #0.1;
@@ -754,9 +793,9 @@ task TEST_STATES; begin
    #10;
 // PLAY
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b1;
+   proc_start_i   = 1'b1;
    @ (posedge c_clk); #0.1;
-   proc_run_i   = 1'b0;
+   proc_start_i   = 1'b0;
    #50;
 
 // UPDATE TIME
@@ -793,18 +832,22 @@ endtask
 task TEST_AXI (); begin
    $display("-----Writting AXI ");
    WRITE_AXI( REG_TPROC_CTRL, 1); //T_RST
-   WRITE_AXI( REG_TPROC_CTRL, 2); //P_RST
-   WRITE_AXI( REG_TPROC_CTRL, 4); //STOP
-   WRITE_AXI( REG_TPROC_CTRL, 8); //PLAY
-   WRITE_AXI( REG_TPROC_CTRL, 16); //PAUSE CORE
-   WRITE_AXI( REG_TPROC_CTRL, 32); //FREEZE TIME
-   WRITE_AXI( REG_TPROC_CTRL, 32); //FREEZE TIME
+   WRITE_AXI( REG_TPROC_CTRL, 2); //T_UPDATE
+   WRITE_AXI( REG_TPROC_CTRL, 8); //PROC STOP
+   WRITE_AXI( REG_TPROC_CTRL, 4); //P_RST
+   WRITE_AXI( REG_TPROC_CTRL, 16); //PROC_RUN
+   WRITE_AXI( REG_TPROC_CTRL, 32); //PROC PAUSE
    WRITE_AXI( REG_TPROC_CTRL, 64); //PROC_STEP
-   WRITE_AXI( REG_TPROC_CTRL, 128);
-   WRITE_AXI( REG_TPROC_CTRL, 256);
-   WRITE_AXI( REG_TPROC_CTRL, 512);
-   WRITE_AXI( REG_TPROC_CTRL, 1024);
-   WRITE_AXI( REG_TPROC_CTRL, 2048);
+   WRITE_AXI( REG_TPROC_CTRL, 128);//PROC_FREEZE
+   WRITE_AXI( REG_TPROC_CTRL, 256);//TIME_STEP
+   WRITE_AXI( REG_TPROC_CTRL, 256);//TIME_STEP
+   WRITE_AXI( REG_TPROC_CTRL, 512); // CORE_STEP
+   WRITE_AXI( REG_TPROC_CTRL, 512); // CORE_STEP
+   WRITE_AXI( REG_TPROC_CTRL, 32); //PROC PAUSE
+   WRITE_AXI( REG_TPROC_CTRL, 1024); //SET_COND
+   WRITE_AXI( REG_TPROC_CTRL, 2048); //CLEAR COND
+   WRITE_AXI( REG_TPROC_CTRL, 4096); //CORE_START
+   WRITE_AXI( REG_TPROC_CTRL, 8192); //CORE_STOP
    $display("-----Writting RANDOM AXI Address");
    for ( cnt = 0 ; cnt  < 128; cnt=cnt+1) begin
       axi_addr = cnt*4;

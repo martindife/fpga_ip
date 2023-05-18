@@ -50,8 +50,8 @@ entity axi_slv_tnet is
         REG_AXI_DT1     : out std_logic_vector (31 downto 0) ;
         REG_AXI_DT2     : out std_logic_vector (31 downto 0) ;
         REG_AXI_DT3     : out std_logic_vector (31 downto 0) ;
-        NN              : in  std_logic_vector (8 downto 0) ;
-        ID              : in  std_logic_vector (8 downto 0) ;
+        NN              : in  std_logic_vector (9 downto 0) ;
+        ID              : in  std_logic_vector (9 downto 0) ;
         CDELAY          : in  std_logic_vector (31 downto 0) ;
         RTD             : in  std_logic_vector (31 downto 0) ;
         VERSION         : in  std_logic_vector (31 downto 0) ;
@@ -485,9 +485,9 @@ begin
 	      when b"0110" =>
 	        reg_data_out <= slv_reg6;
 	      when b"0111" =>
-	        reg_data_out <= "00000000000000000000000" & NN;
+	        reg_data_out <= "0000000000000000000000" & NN;
 	      when b"1000" =>
-	        reg_data_out <= "00000000000000000000000" & ID;
+	        reg_data_out <= "0000000000000000000000" & ID;
 	      when b"1001" =>
 	        reg_data_out <= CDELAY;
 	      when b"1010" =>

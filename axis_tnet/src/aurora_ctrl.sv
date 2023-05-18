@@ -14,7 +14,9 @@ module aurora_ctrl (
    output reg  [63:0]      cmd_o[2]       ,
    input  wire             channel_ok_i       ,
    output reg              ready_o            ,
-   output reg  [2:0]       debug_do    ,
+   output reg  [4:0]       pack_cnt_do    ,
+   output reg  [3:0]       last_op_do    ,
+   output reg  [2:0]       state_do    ,
    
 ////////////////   LINK CHANNEL A
    input  wire  [63:0]     s_axi_rx_tdata_RX  ,
@@ -33,31 +35,32 @@ reg idle_ing;
 reg            rx_req, rx_ack;
 reg  [63:0]    rx_h_buff;
 reg  [63:0]    rx_dt_buff;
+reg [4:0] rx_cnt;
 
-reg net_id_ok, net_dst_ones, net_dst_zeros, net_dst_own,net_dst_other; 
-reg net_sync, net_process, net_propagate ;
-reg [9:0] h_dst, h_src, h_step, h_step_new;
-reg [5:0] h_flags;
-reg tvalid_r;
 // Capture Data From Channel_RX
-always_ff @ (posedge user_clk_i) begin
+always_ff @ (posedge user_clk_i, posedge user_rst_i) begin
    if (user_rst_i) begin
-//      rx_req      <= 1'b0;
+      rx_cnt      <= 0;
       rx_h_buff   <= 63'd0 ;
       rx_dt_buff  <= 63'd0 ;
-      tvalid_r    <= 1'b0;
    end else begin
       if (s_axi_rx_tvalid_RX) begin
          if (idle_ing) begin
-//            rx_req      <= 1'b1;
             rx_h_buff   <= s_axi_rx_tdata_RX ;
+            rx_cnt      <= rx_cnt + 1'b1;
          end else
             rx_dt_buff  <= s_axi_rx_tdata_RX ;
       end
-//      if (rx_ack) rx_req   <= 1'b0;
    end
 end
 
+reg [9:0] h_dst, h_src, h_step, h_step_new;
+reg [5:0] h_flags;
+
+reg msg_ok;
+reg net_id_ok, net_dst_ones, net_dst_own, net_src_own; 
+reg net_sync, net_process, net_propagate ;
+  
 // DECODING INCOMING TRANSMISSION
 always_comb begin
   h_flags        = rx_h_buff[55:50] ;
@@ -65,21 +68,21 @@ always_comb begin
   h_src          = rx_h_buff[39:30] ;
   h_step         = rx_h_buff[29:20] ;
   h_step_new     = h_step + 1'b1;
-  net_id_ok          = |ID ;
-  net_dst_ones       =  &h_dst ; //Send to ALL
-  net_dst_zeros      = ~|h_dst ; //Send to NO_ONE
-  net_dst_own        = net_id_ok & (h_dst == ID);
-  net_dst_other      =  ~(net_dst_own | net_dst_ones);
-  net_sync           = h_flags[5];
-  net_process        = net_dst_own   | net_dst_ones  ;
-  net_propagate      = msg_ok & (net_dst_other | net_dst_zeros) ;
+  net_sync       = h_flags[5];
+  net_id_ok      = |ID ;
+  net_dst_ones   = &h_dst ; //Send to ALL
+  net_dst_own    = net_id_ok & (h_dst == ID);
+  net_src_own    =             (h_src == ID);
+  // net_dst_other  =  ~(net_dst_own | net_dst_ones);
+  net_process        = net_dst_own | net_src_own | net_dst_ones ;
+  net_propagate      = msg_ok & ( ~net_process ) ;
 end
 /////////////////////////////////////////////////
 // CHECK TRANSMIT
-reg msg_ok;
+
 always_comb begin
    msg_ok = 1'b1;
-   if (NN != 0 & (h_step > NN) ) msg_ok = 1'b0;
+   if (|NN & &h_step) msg_ok = 1'b0;
 end
 
 /////////////////////////////////////////////////
@@ -110,7 +113,20 @@ always_comb begin
    end
 end
 
-
+// TIMEOUT
+reg [9:0] time_cnt;
+reg time_cnt_msb;
+always_ff @ (posedge user_clk_i, posedge user_rst_i) begin
+   if (user_rst_i) begin
+      time_cnt      <= 1 ;
+      time_cnt_msb  <= 0 ;
+   end else begin
+      if (idle_ing | ~ready_o)   time_cnt  <= 0;
+      else            time_cnt      <= time_cnt + 1'b1;
+      time_cnt_msb  <= time_cnt[9];
+   end
+end
+assign time_out = time_cnt[9] & ~time_cnt_msb;
 
 enum {NOT_READY, IDLE, RX, PROCESS, PROPAGATE, TX_H, TX_D, WAIT_nREQ } tnet_st_nxt, tnet_st;
 
@@ -120,17 +136,15 @@ always_ff @(posedge user_clk_i)
    else              tnet_st  <= tnet_st_nxt;
 
 always_comb begin
-   tnet_st_nxt        = tnet_st; //Stay current state
-   rx_ack             = 1'b0;
-   tx_ack_uo          = 1'b0 ;
-
-   m_axi_tx_tdata_TX  = tx_h_buff;
-   m_axi_tx_tvalid_TX = 1'b0;
-   m_axi_tx_tlast_TX  = 1'b0;
-
-   idle_ing        = 1'b0;
-   cmd_req_o          = 1'b0;
-   ready_o            = 1'b1;
+   tnet_st_nxt          = tnet_st; //Stay current state
+   rx_ack               = 1'b0;
+   tx_ack_uo            = 1'b0 ;
+   m_axi_tx_tdata_TX    = tx_h_buff;
+   m_axi_tx_tvalid_TX   = 1'b0;
+   m_axi_tx_tlast_TX    = 1'b0;
+   idle_ing             = 1'b0;
+   cmd_req_o            = 1'b0;
+   ready_o              = 1'b1;
    case (tnet_st)
       NOT_READY: begin
          ready_o = 1'b0;
@@ -138,13 +152,13 @@ always_comb begin
       end
       IDLE: begin
          idle_ing  = 1;
-         if       ( s_axi_rx_tvalid_RX    )     tnet_st_nxt = RX;
-         else if  ( tx_req                )     tnet_st_nxt = TX_H;
+         if       ( s_axi_rx_tvalid_RX    )  tnet_st_nxt = RX;
+         else if  ( tx_req                )  tnet_st_nxt = TX_H;
       end
       RX: begin
          if ( s_axi_rx_tlast_RX )
-            if       ( net_process        )     tnet_st_nxt = PROCESS   ;
-            else if  ( net_propagate      )     tnet_st_nxt = PROPAGATE ;
+            if       ( net_process        )  tnet_st_nxt = PROCESS   ;
+            else if  ( net_propagate      )  tnet_st_nxt = PROPAGATE ;
       end
       PROCESS: begin
          rx_ack         = 1'b1;
@@ -159,7 +173,7 @@ always_comb begin
          if  ( m_axi_tx_tready_TX ) begin
             m_axi_tx_tvalid_TX   = 1'b1;
             m_axi_tx_tdata_TX    = tx_h_buff;
-            tnet_st_nxt          = TX_D;
+            tnet_st_nxt            = TX_D;
          end
       end
       TX_D: begin
@@ -168,7 +182,7 @@ always_comb begin
             m_axi_tx_tvalid_TX   = 1'b1;
             m_axi_tx_tlast_TX    = 1'b1;
             m_axi_tx_tdata_TX    = tx_dt_buff;
-            tnet_st_nxt          = WAIT_nREQ;
+            tnet_st_nxt            = WAIT_nREQ;
          end
       end
       WAIT_nREQ: begin
@@ -176,18 +190,17 @@ always_comb begin
          if  ( !tx_req )  tnet_st_nxt = IDLE;
       end
    endcase
+   // IF TIMEOUT OR CHANNEL NOT READY
+   if ( !channel_ok_i | time_out )     tnet_st_nxt = NOT_READY;
 end
 
-// Propagate packages to PORT-B
-reg [127:0] ZZ_CAPTURED;
-always_ff @(posedge user_clk_i)
-   if (user_rst_i)   ZZ_CAPTURED  <= 1'b0;
-   else if (m_axi_tx_tvalid_TX) ZZ_CAPTURED  <= m_axi_tx_tdata_TX; 
-
 // OUTPUS
+
+   
 assign cmd_o = {rx_h_buff, rx_dt_buff};
-
-assign debug_do = tnet_st[2:0] ;
-
+   
+assign pack_cnt_do = rx_cnt ;
+assign last_op_do = rx_h_buff[59:56] ;
+assign state_do = tnet_st[2:0] ;
  
 endmodule

@@ -1,10 +1,10 @@
 -- Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2022.1 (lin64) Build 3526262 Mon Apr 18 15:47:01 MDT 2022
--- Date        : Wed May  3 11:42:33 2023
+-- Date        : Wed May 17 12:10:21 2023
 -- Host        : teddy01.dhcp.fnal.gov running 64-bit Scientific Linux release 7.9 (Nitrogen)
--- Command     : write_vhdl -force -mode synth_stub -rename_top aurora_64b66b_SL -prefix
---               aurora_64b66b_SL_ aurora_64b66b_SL_stub.vhdl
+-- Command     : write_vhdl -force -mode synth_stub
+--               /home/mdifeder/repos/fpga_ip/axis_tnet/src/aurora_64b66b_SL/aurora_64b66b_SL_stub.vhdl
 -- Design      : aurora_64b66b_SL
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xczu49dr-ffvf1760-2-e
