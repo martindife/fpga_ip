@@ -14,13 +14,18 @@ module qproc_core # (
    input wire              ps_rst_ni       ,
    input wire              en_i            ,
    input wire              restart_i       ,
+// CORE CTRL
+   input wire [1:0]        lfsr_cfg_i       ,
+   output wire [31:0]      core_status_o    ,
+   output wire [31:0]      core_debug_o     ,
+   output wire [31:0]      lfsr_o           ,
+
 // AXI Registers
-   TYPE_IF_AXI_REG         IF_s_axireg     ,
    input  wire [63:0]      port_dt_i   [ IN_PORT_QTY ] ,
    input wire              flag_i       ,
 // Special Function Registers
-   output wire [10 :0]      sreg_cfg_o           ,
-   input  wire [31:0]      sreg_arith_i        ,
+   output wire [10 :0]     sreg_cfg_o           ,
+   input  wire [31:0]      sreg_arith_i         ,
    input  wire [31:0]      sreg_div_i[2]        ,
    input  wire [31:0]      sreg_status_i        ,
    input  wire [31:0]      sreg_core_r_dt_i[2]  ,
@@ -43,9 +48,7 @@ module qproc_core # (
    output wire             port_we_o       ,
    output PORT_DT          port_o          ,
 //Debug
-   output wire [31:0]         core_do         );
-
-
+   output wire [31:0]      core_do         );
 
 
 wire [PMEM_AW-1:0]    pmem_addr         ;
@@ -60,9 +63,10 @@ wire [WMEM_AW-1:0]    wmem_addr         ;
 wire [167:0]          wmem_w_dt         ;
 wire [167:0]          wmem_r_dt         ;
 
-wire [31:0]           lfsr              ;
-
 wire port_re;
+
+
+
 
 qcore_cpu # (
    .LFSR                ( LFSR    ) ,
@@ -75,7 +79,8 @@ qcore_cpu # (
    .rst_ni              ( c_rst_ni               ) ,
    .restart_i           ( restart_i              ) ,
    .en_i                ( en_i                   ) ,
-   .cfg_i               ( xreg_CORE_CFG[1:0]     ) , // CONFIGURATION (LFSR)
+   .lfsr_cfg_i          ( lfsr_cfg_i             ) , 
+   .lfsr_o              ( lfsr_o             ) , 
    .flag_i              ( flag_i                 ) , // External Condition
    .sreg_cfg_o          ( sreg_cfg_o             ) ,
    .sreg_arith_i        ( sreg_arith_i           ) , // Arith Input
@@ -104,8 +109,7 @@ qcore_cpu # (
    .port_we_o           ( port_we_o              ) ,
    .port_re_o           ( port_re                ) ,
    .port_o              ( port_o          ) ,
-   .core_do             ( core_do                ) ,
-   .lfsr_o              ( lfsr                 ) );
+   .core_do             ( core_do                ) );
 
 
 reg [63:0 ] in_port_dt_r;
@@ -143,23 +147,7 @@ qcore_mem # (
     .c_wmem_w_dt_i   ( wmem_w_dt ) ,
     .c_wmem_r_dt_o   ( wmem_r_dt ) );
 
-wire [31:0] xreg_CORE_CTRL      ;
-wire [31:0] xreg_CORE_CFG       ;
+assign core_status_o = 0; 
+assign core_debug_o  =0;
 
-qcore_axi_reg CORE_xREG (
-   .ps_aclk          ( ps_clk_i         ) , 
-   .ps_aresetn       ( ps_rst_ni        ) , 
-   .IF_s_axireg      ( IF_s_axireg      ) ,
-   .CORE_CTRL        ( xreg_CORE_CTRL   ) ,
-   .CORE_CFG         ( xreg_CORE_CFG    ) ,
-   .CORE_R_DT1       ( sreg_core_r_dt_i[0]  ) ,
-   .CORE_R_DT2       ( sreg_core_r_dt_i[1] ) ,
-   .PORT_LSB         ( in_port_dt_r[31:0]    ) ,
-   .PORT_MSB         ( in_port_dt_r[63:32]    ) ,
-   .RAND             ( lfsr        ) ,
-   .CORE_W_DT1       ( sreg_core_w_dt_o[0]  ) ,
-   .CORE_W_DT2       ( sreg_core_w_dt_o[1]  ) ,
-   .CORE_STATUS      ( 0 ) ,
-   .CORE_DEBUG       ( 0  ) );
-   
 endmodule

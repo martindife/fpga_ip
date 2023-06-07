@@ -44,12 +44,10 @@ entity axi_slv_qcore is
 		-- Registers.
         CORE_CTRL       : out std_logic_vector (31 downto 0) ;
         CORE_CFG        : out std_logic_vector (31 downto 0) ;
-        RAXI_DT1        : out std_logic_vector (31 downto 0) ;
-        RAXI_DT2        : out std_logic_vector (31 downto 0) ;
         CORE_R_DT1      : in  std_logic_vector (31 downto 0) ;
         CORE_R_DT2      : in  std_logic_vector (31 downto 0) ;
-        PORT_LSB        : in  std_logic_vector (31 downto 0) ;
-        PORT_MSB        : in  std_logic_vector (31 downto 0) ;
+        PORT_LSW        : in  std_logic_vector (31 downto 0) ;
+        PORT_MSW        : in  std_logic_vector (31 downto 0) ;
         RAND            : in  std_logic_vector (31 downto 0) ;
         CORE_W_DT1      : in  std_logic_vector (31 downto 0) ;
         CORE_W_DT2      : in  std_logic_vector (31 downto 0) ;
@@ -464,27 +462,27 @@ begin
 	    loc_addr := axi_araddr(ADDR_LSB + OPT_MEM_ADDR_BITS downto ADDR_LSB);
 	    case loc_addr is
 	      when b"0000" =>
-	        reg_data_out <= slv_reg0;
+	        reg_data_out <= (others => '0');
 	      when b"0001" =>
 	        reg_data_out <= slv_reg1;
 	      when b"0010" =>
-	        reg_data_out <= slv_reg2;
+	        reg_data_out <= (others => '0');
 	      when b"0011" =>
-	        reg_data_out <= slv_reg3;
+	        reg_data_out <= (others => '0');
 	      when b"0100" =>
-	        reg_data_out <= slv_reg4;
+	        reg_data_out <= (others => '0');
 	      when b"0101" =>
-	        reg_data_out <= slv_reg5;
+	        reg_data_out <= (others => '0');
 	      when b"0110" =>
-	        reg_data_out <= slv_reg6;
+	        reg_data_out <= (others => '0');
 	      when b"0111" =>
 	        reg_data_out <= CORE_R_DT1;
 	      when b"1000" =>
 	        reg_data_out <= CORE_R_DT2;
 	      when b"1001" =>
-	        reg_data_out <= PORT_LSB;
+	        reg_data_out <= PORT_LSW;
 	      when b"1010" =>
-	        reg_data_out <= PORT_MSB;
+	        reg_data_out <= PORT_MSW;
 	      when b"1011" =>
 	        reg_data_out <= RAND;
 	      when b"1100" =>
@@ -522,9 +520,6 @@ begin
 -- Output Registers.
 CORE_CTRL       <= slv_reg0(31 downto 0);
 CORE_CFG        <= slv_reg1(31 downto 0);
-RAXI_DT1        <= slv_reg4(31 downto 0);
-RAXI_DT2        <= slv_reg5(31 downto 0);
-
 end rtl;
 
 

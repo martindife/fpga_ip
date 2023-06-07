@@ -6,6 +6,7 @@ module qcore_reg_bank # (
    parameter REG_AW         =  4 
 )(
    input   wire                  clk_i          ,
+   input   wire                  halt_i          ,
    input   wire                  rst_ni         ,
    input   wire                  clear_i        ,
    input   wire [1:0]            lfsr_cfg_i     ,
@@ -80,10 +81,10 @@ wire         sreg_32_en, sreg_32_we;
 wire         sreg_cfg_en, sreg_cfg_we;
 reg  [10:0]  sreg_cfg_dt ; // Configuration Register
 
-assign sreg_32_en   = w_addr_i[6:2] == 5'b10011; //Register 12 to 15 selected 
-assign sreg_cfg_en  = w_addr_i      == 7'b1000110; //Register 6 Selected 
-assign sreg_32_we   = we_i & sreg_32_en;
-assign sreg_cfg_we   = we_i & sreg_32_en;
+assign sreg_32_en   = w_addr_i[6:2] == 5'b10011 ; //Register 12 to 15 selected 
+assign sreg_32_we   = we_i & sreg_32_en ;
+assign sreg_cfg_en  = w_addr_i      == 7'b1000010 ; //Register 2 Selected 
+assign sreg_cfg_we  = we_i & sreg_cfg_en;
 
    
 // DATA, WAVE and SFR REGISTER BANK
@@ -99,28 +100,28 @@ always_ff @ (posedge clk_i, negedge rst_ni) begin
       wreg_32_dt                 = '{default:'0};
       sreg_cfg_dt                = 0;
    end else begin
-      if (dreg_32_we)   
-         dreg_32_dt [dreg_32_addr]  = w_dt_i;
-      if (wreg_32_we)
-         wreg_32_dt [wreg_32_addr]  = w_dt_i;
-      else if (wave_we_i) begin
-         wreg_32_dt [5]  = wave_dt_i[167:152];
-         wreg_32_dt [4]  = wave_dt_i[151:120];
-         wreg_32_dt [3]  = wave_dt_i[119: 88];
-         wreg_32_dt [2]  = wave_dt_i[ 87: 64];
-         wreg_32_dt [1]  = wave_dt_i[ 63: 32];
-         wreg_32_dt [0]  = wave_dt_i[ 31:  0];
+      if (~halt_i) begin
+         if (dreg_32_we)   
+            dreg_32_dt [dreg_32_addr]  = w_dt_i;
+         if (wave_we_i) begin
+            wreg_32_dt [5]  = wave_dt_i[167:152];
+            wreg_32_dt [4]  = wave_dt_i[151:120];
+            wreg_32_dt [3]  = wave_dt_i[119: 88];
+            wreg_32_dt [2]  = wave_dt_i[ 87: 64];
+            wreg_32_dt [1]  = wave_dt_i[ 63: 32];
+            wreg_32_dt [0]  = wave_dt_i[ 31:  0];
+         end
+         if (wreg_32_we)
+            wreg_32_dt [wreg_32_addr]  = w_dt_i;
+         if (sreg_32_we)   
+           sreg_32_dt [w_addr_i[1:0]]  = w_dt_i;
+         if (sreg_cfg_we)   
+           sreg_cfg_dt                 = w_dt_i;
+       // Not Used Register to GND
+           sreg_32_dt [3][31:16] = '{default:'0};
       end
-      if (sreg_32_we)   
-        sreg_32_dt [w_addr_i[1:0]]  = w_dt_i;
-      if (sreg_cfg_we)   
-        sreg_cfg_dt                 = w_dt_i;
-
-    // Not Used Register to GND
-        sreg_32_dt [3][31:16] = '{default:'0};
    end
 end
-
 // LFSR 
 ///////////////////////////////////////////////////////////////////////////////
 // cfg_i 00_FreeRunning 10_Change WHen Read 11_Change when writes to 0
@@ -180,18 +181,15 @@ assign sreg_dt[15] = sreg_32_dt [3]     ; // PC_NXT_ADDR_REG
 
 
 wire [15:0] data_16 [2];
-reg  [15:0] data_16_r [2];
+wire  [15:0] data_16_r [2];
 
 genvar ind_A;
 generate
    for (ind_A=0; ind_A <2 ; ind_A=ind_A+1) begin
-      assign data_16[ind_A] = dreg_32_dt[ rs_A_addr_i[ind_A][REG_AW-1:0] ][15:0];
-      always_ff @ (posedge clk_i, negedge rst_ni) 
-         if (!rst_ni) 
-            data_16_r[ind_A]       <= 0;
-         else 
-            data_16_r[ind_A]       <= data_16[ind_A];
+      assign data_16[ind_A]    = dreg_32_dt[ rs_A_addr_i[ind_A][REG_AW-1:0] ][15:0];
+      assign data_16_r[ind_A]  = data_16[ind_A];
    end
+
 endgenerate
 
 reg [31:0] data_32 [2] ;
@@ -200,18 +198,15 @@ reg [31:0] data_32_r [2];
 genvar ind_D;
 generate
    for (ind_D=0; ind_D <2 ; ind_D=ind_D+1) begin
-      always_comb
+      always_comb begin
          case (rs_D_addr_i[ind_D][6:5])
             2'b00 : data_32[ind_D] = dreg_32_dt[ rs_D_addr_i[ind_D][REG_AW-1:0] ];
             2'b01 : data_32[ind_D] = wreg_32_dt[ rs_D_addr_i[ind_D][2:0] ]; // 6 Registers
             2'b10 : data_32[ind_D] = sreg_dt   [ rs_D_addr_i[ind_D][3:0] ]; // 16 Registers
             2'b11 : data_32[ind_D] = 0 ;
          endcase
-      always_ff @ (posedge clk_i, negedge rst_ni) 
-         if (!rst_ni) 
-            data_32_r[ind_D]       <= 0;
-          else 
-            data_32_r[ind_D]       <= data_32[ind_D];
+         data_32_r[ind_D] = data_32[ind_D];
+      end
    end //for
 endgenerate
 
@@ -219,7 +214,7 @@ endgenerate
 always_ff @ (posedge clk_i, negedge rst_ni) 
    if (!rst_ni) 
       w_dt_o               <= 0;
-   else
+   else if (~halt_i)
       w_dt_o               <= w_dt_i;
 
 
@@ -238,7 +233,7 @@ assign out_addr_o    =  sreg_dt[15] [PMEM_AW-1:0];
 assign out_wreg_o[167:152] = wreg_32_dt[5][15:0];
 assign out_wreg_o[151:120] = wreg_32_dt[4]  ;
 assign out_wreg_o[119: 88] = wreg_32_dt[3]  ;
-assign out_wreg_o[ 87: 64] = wreg_32_dt[2][24:0] ;
+assign out_wreg_o[ 87: 64] = wreg_32_dt[2][23:0] ;
 assign out_wreg_o[ 63: 32] = wreg_32_dt[1]  ;
 assign out_wreg_o[ 31:  0] = wreg_32_dt[0]  ;
    

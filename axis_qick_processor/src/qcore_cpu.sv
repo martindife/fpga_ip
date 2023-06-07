@@ -11,7 +11,8 @@ module qcore_cpu # (
    input   wire                  rst_ni         ,
    input   wire                  restart_i      ,
    input   wire                  en_i           ,
-   input   wire [1:0]            cfg_i          , // CONFIGURATION (LFSR)
+   input   wire [1:0]            lfsr_cfg_i          , // CONFIGURATION (LFSR)
+   output  wire [31:0]           lfsr_o   ,
 // DEBUG       
    output  wire [31:0]           core_do        , // Core Signal Debug
 // CONDITIONS       
@@ -47,8 +48,8 @@ module qcore_cpu # (
 //OUTPUT PORTS
    output  wire                  port_we_o      ,
    output  wire                  port_re_o      ,
-   output PORT_DT                port_o         ,            
-   output  wire [31:0]           lfsr_o         );
+   output PORT_DT                port_o               
+         );
 
 ///////////////////////////////////////////////////////////////////////////////
 // Signal Declaration
@@ -98,7 +99,7 @@ reg r_mem_rst;
 assign if_op_code       = pmem_dt_i [ 71 : 56 ] ;
 assign if_op_data       = pmem_dt_i [ 55 :  0 ] ;
 
-// 
+// empty memory Pipeline
 always_ff @ (posedge clk_i) begin
    if (!rst_ni) begin
       r_mem_rst      <= 1;
@@ -151,14 +152,14 @@ reg id_type_wr, id_type_wrd, id_type_wrw, id_type_wra ;
 reg id_type_wp, id_type_wpd, id_type_wpw ;
 reg id_type_wm, id_type_wmd, id_type_wmw;
 
-reg id_cfg_wave_src, id_cfg_alu_src, id_cfg_dt_imm          ;
+reg id_cfg_port_src, id_cfg_alu_src, id_cfg_dt_imm          ;
 reg [3:0] id_cfg_alu_op ; 
 reg [1:0] id_cfg_reg_src ;
 reg cfg_dual_regs_en, cfg_flag_en, cfg_dual_port_en, cfg_dual_wmem_en      ;
 reg cfg_dual_regs_we, cfg_dual_port_we, cfg_dual_wmem_we                   ;
 reg id_flag_we; 
 reg id_dmem_we , id_wmem_we ;
-reg id_dreg_we , id_wreg_we ;
+reg id_dreg_we , id_r_wave_we ;
 reg id_dport_re, id_dport_we, id_wport_we ;
 
 reg id_call, id_ret                                                        ;
@@ -167,6 +168,7 @@ reg [9:0] id_usr_ctrl;
 reg id_cond_ok, id_exec_ok, id_branch_cond_ok;
 reg alu_fZ_r, alu_fS_r;
 
+reg id_r_wave_used;
 
 always_comb begin : DECODER
    id_type_cfg       = ( id_HEADER == CFG    ) ;
@@ -184,8 +186,8 @@ always_comb begin : DECODER
    id_type_wpw       = id_type_wp &  id_SO             ; // Write Wave Port
 
 
-   id_cfg_dt_imm     =  &id_DF | ( (id_type_wm | id_type_wpd | id_type_cfg) & id_TO )        ; // Immediate input to Register Bank
-   id_cfg_wave_src   =  r_if_op_code[8] ;
+   id_cfg_port_src   =  r_if_op_code[8] ;
+   id_cfg_dt_imm     =  &id_DF | ( (id_type_wm | id_type_cfg) & id_TO ) | (id_type_wpd & id_cfg_port_src) ; // Immediate input Data
    id_cfg_alu_src    = ( id_DF == 2'b10)                   ; //With DI=10 Source =1 
    id_cfg_alu_op     =   id_type_wra         ? r_if_op_code[3:0] : {1'b0, r_if_op_code[1:0], 1'b0 } ;
    id_cfg_reg_src    =   id_type_wrd         ? r_if_op_code[6:5] : {2{r_if_op_code [2]}}     ; // When Writing WAVE Second OPTION
@@ -196,26 +198,32 @@ always_comb begin : DECODER
    cfg_dual_regs_we  = cfg_dual_regs_en   & r_if_op_code[3]                                  ; // Dual REGISTER WRITE ENABLE
    cfg_dual_port_we  = cfg_dual_port_en   & r_if_op_code[7]                                  ; // Dual PORT     WRITE ENABLE
    cfg_dual_wmem_we  = cfg_dual_wmem_en   & r_if_op_code[9]                                  ; // Dual WMEM     WRITE ENABLE
-   id_flag_we        = cfg_flag_en        & r_if_op_code[4]                                  ; // Flag      WRITE ENABLE
-   id_dreg_we        = id_exec_ok         & ( id_type_wr   | cfg_dual_regs_we )              ; // DREG      WRITE ENABLE
+   id_flag_we        = id_exec_ok & cfg_flag_en   & r_if_op_code[4]                                  ; // Flag      WRITE ENABLE
+   id_dreg_we        = id_exec_ok         & ( id_type_wrd   | cfg_dual_regs_we )              ; // DREG      WRITE ENABLE
+   id_r_wave_we      = id_type_wrw                                                           ; // WREG      WRITE ENABLE (The 167 Bits)
    id_dmem_we        = id_exec_ok         & ( id_type_wmd )                                  ; // DMEM      WRITE ENABLE
-   id_dport_we       = id_type_wpd        & ~r_if_op_code[7]                                 ; // DPORT     WRITE ENABLE
-   id_dport_re       = id_type_wpd        & r_if_op_code[7]                                  ; // DPORT     READ  ENABLE
-   id_wreg_we        = id_type_wrw                                                           ; // WREG      WRITE ENABLE (The 167 Bits)
    id_wmem_we        = id_type_wmw  | cfg_dual_wmem_we   & r_if_op_code[9]                   ; // WMEM      WRITE ENABLE
+   id_dport_we       = id_type_wpd        & r_if_op_code[7]                                  ; // DPORT     WRITE ENABLE
+   id_dport_re       = id_type_wpd        & ~r_if_op_code[7]                                 ; // DPORT     READ  ENABLE
    id_wport_we       = id_type_wpw | cfg_dual_port_we                                        ; // WPORT     WRITE ENABLE
    id_call           = id_branch_cond_ok  & id_SO & ~id_TO                                   ; // Execute CALL Instruction (Push)
    id_ret            = id_type_br         & id_SO &  id_TO                                   ; // Execute RET  Instruction (Pull)
-   id_usr_ctrl       =  id_type_ctrl ? {r_if_op_code [9:0]}         :
-                        10'b0000000000  ;
+   id_usr_ctrl       = id_type_ctrl ? {r_if_op_code [9:0]} : 10'b0000000000  ;
 end
  
+reg [ 31 : 0 ]  id_imm_dt   ;
+reg [15:0] id_imm_addr     ;
+reg [5 :0] id_rs_A_addr [2];
+reg [6 :0] id_rs_D_addr [2];
+reg [6 :0] id_rd_addr      ;
+wire [PMEM_AW-1:0] pc_stack;
+reg id_rd_wreg;
+
 ///////////////////////////////////////////////////////////////////////////////
 // DATA
-reg [ 31 : 0 ]  id_imm_dt   ;
 always_comb
    unique case (id_DF)
-      2'b00 : id_imm_dt = { {16{r_if_op_data[22]}} , r_if_op_data [22:7]}  ; // Data Immediate is 16 Bits
+      2'b00 : id_imm_dt = id_imm_addr  ; // Data Immediate is 16 Bits Address Space
       2'b01 : id_imm_dt = { {16{r_if_op_data[22]}} , r_if_op_data [22:7]}  ; // Data Immediate is 16 Bits
       2'b10 : id_imm_dt = { { 8{r_if_op_data[30]}} , r_if_op_data [30:7]}  ; // Data Immediate is 24 Bits
       2'b11 : id_imm_dt = r_if_op_data [38:7]                  ; // Data Immediate is 32 Bits
@@ -223,12 +231,6 @@ always_comb
 
 ///////////////////////////////////////////////////////////////////////////////
 // ADDRESS
-reg [15:0] id_imm_addr     ;
-reg [5 :0] id_rs_A_addr [2];
-reg [6 :0] id_rs_D_addr [2];
-reg [6 :0] id_rd_addr      ;
-wire [PMEM_AW-1:0] pc_stack;
-
 always_comb begin
    id_imm_addr     = r_if_op_data [ 55 : 45 ] ;
    id_rs_A_addr[0] = r_if_op_data [ 50 : 45 ] ;
@@ -236,11 +238,27 @@ always_comb begin
    id_rs_D_addr[0] = r_if_op_data [ 37 : 31 ] ;
    id_rs_D_addr[1] = r_if_op_data [ 29 : 23 ] ;
    id_rd_addr      = r_if_op_data [  6 :  0 ] ;
+   id_rd_wreg      = r_if_op_data[6:5] == 2'b01 ; //RD is wreg
 end
 assign id_reg.we      = id_dreg_we      ;
-assign id_reg.wreg_we = id_wreg_we  ;
+assign id_reg.r_wave_we = id_r_wave_we  ;
 assign id_reg.addr    = id_rd_addr      ;
 assign id_reg.src     = id_cfg_reg_src  ;
+
+assign id_ctrl.cfg_addr_imm  = id_AI            ;
+assign id_ctrl.cfg_dt_imm    = id_cfg_dt_imm    ;
+assign id_ctrl.cfg_port_src  = id_cfg_port_src  ;
+assign id_ctrl.cfg_port_type = id_type_wpd      ;
+assign id_ctrl.cfg_port_time = id_type_wp & id_TO ;
+assign id_ctrl.cfg_cond      = id_COND          ;
+assign id_ctrl.cfg_alu_src   = id_cfg_alu_src   ;
+assign id_ctrl.cfg_alu_op    = id_cfg_alu_op    ;
+assign id_ctrl.usr_ctrl      = id_usr_ctrl      ;
+assign id_ctrl.flag_we       = id_flag_we       ;
+assign id_ctrl.dmem_we       = id_dmem_we       ;
+assign id_ctrl.wmem_we       = id_wmem_we       ;
+assign id_ctrl.port_we       = id_wport_we | id_dport_we ;
+assign id_ctrl.port_re       = id_dport_re      ;
 
 
 // CONDITION  
@@ -258,7 +276,7 @@ always_comb begin
       3'b110: id_cond_ok = ~flag_i  ; // NOT External Flag
       3'b111: id_cond_ok =  0       ; // RFU
    endcase
-   id_cond_used      = id_type_wrd | id_type_wmd | id_type_br                              ; // Conditional Instruction
+   id_cond_used      = id_type_wrd | id_type_wmd | id_type_br  |id_type_cfg           ; // Conditional Instruction
    id_flag_used      = id_cond_used & |id_COND                                            ; // Condition should be checked
    id_exec_ok        = id_cond_ok | ~id_cond_used                                         ; // Execute Instruction
    id_branch_cond_ok = id_type_br & id_exec_ok                                            ; // Execute BRANCH
@@ -369,15 +387,17 @@ end
 // WAVE  
 /////////////////////////////////////////////////
 wire [167:0] x2_wave_w_dt;
-assign x2_wave_w_dt = x2_ctrl.cfg_wave_src ? reg_wave_dt : wmem_r_dt_i ;
+assign x2_wave_w_dt = x2_ctrl.cfg_port_src ? reg_wave_dt : wmem_r_dt_i ;
 
 // PORT
 /////////////////////////////////////////////////
 wire [167:0] x2_port_w_dt  ;
 reg [3:0] r_x1_port_w_addr;
-reg [31:0] r_x1_data_w_dt;
 
-assign x2_port_w_dt  = x2_ctrl.cfg_port_type ? r_x1_data_w_dt : x2_wave_w_dt ;
+
+reg [31:0] r_x1_port_dt;
+
+assign x2_port_w_dt  = x2_ctrl.cfg_port_type ? r_x1_port_dt : x2_wave_w_dt ;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -386,26 +406,28 @@ assign x2_port_w_dt  = x2_ctrl.cfg_port_type ? r_x1_data_w_dt : x2_wave_w_dt ;
 ///////////////////////////////////////////////////////////////////////////////
 
 CTRL_REG    id_reg, rd_reg, x1_reg, x2_reg, wr_reg  ;
-CTRL_FLOW   rd_ctrl, x1_ctrl, x2_ctrl   ;
+CTRL_FLOW   id_ctrl, rd_ctrl, x1_ctrl, x2_ctrl   ;
 
 wire [31 : 0] wr_reg_dt;
 
 qcore_ctrl_hazard ctrl_hzrd (
    .clk_i            ( clk_i           ) ,
    .rst_ni           ( rst_ni          ) ,
+   .halt_i           ( halt            ) ,
    .rs_A_addr_i      ( r_id_rs_A_addr      ) ,
    .rs_A_dt_i        ( rs_A_dt    ) ,
    .rs_D_addr_i      ( r_id_rs_D_addr      ) ,
    .rs_D_dt_i        ( rs_D_dt    ) ,
    // Register Write Enable 
+   .id_reg_i         ( id_reg          ) ,
    .rd_reg_i         ( rd_reg          ) ,
    .x1_reg_i         ( x1_reg          ) ,
    .x2_reg_i         ( x2_reg          ) ,
    .wr_reg_i         ( wr_reg          ) ,
    .wr_reg_dt_i      ( wr_reg_dt       ) ,
    // Wave Register 
-   .id_wreg_used     ( id_wmem_we       ) ,
-   // TIme Condition or Flag will be Updated 
+   .id_wmem_we   ( id_wmem_we       ) , //r_wave will be READ
+   // FLAG 
    .id_flag_used     ( id_flag_used        ) , // SELECCIONAR CORRECTAMENTE WR/MEM_WR and JUMPD
    .flag_we          ( rd_ctrl.flag_we | x1_ctrl.flag_we       ) ,
    // PC JUMP 
@@ -425,8 +447,6 @@ qcore_ctrl_hazard ctrl_hzrd (
    .bubble_id_o      ( bubble_id     ) ,
    .bubble_rd_o      ( bubble_rd       ) );
 
-
-
 // REG BANK
 /////////////////////////////////////////////////
 qcore_reg_bank # (
@@ -435,9 +455,10 @@ qcore_reg_bank # (
    .REG_AW          (REG_AW)
 ) reg_bank (
    .clk_i            ( clk_i          ) ,
+   .halt_i           ( halt           ) ,
    .rst_ni           ( rst_ni         ) ,
    .clear_i          ( restart_i      ) ,
-   .lfsr_cfg_i       ( cfg_i[1:0]     ) ,
+   .lfsr_cfg_i       ( lfsr_cfg_i     ) ,
    .reg_arith_i      ( sreg_arith_i   ) ,
    .reg_div_i        ( sreg_div_i     ) ,
    .reg_port_i       ( sreg_port_dt_i ) ,
@@ -445,13 +466,13 @@ qcore_reg_bank # (
    .status_i         ( sreg_status_i       ) ,
    .reg_cfg_o        ( sreg_cfg_o       ) ,
    .time_dt_i        ( sreg_time_dt_i      ) ,
-   .wave_we_i        ( x2_reg.wreg_we ) ,
+   .wave_we_i        ( x2_reg.r_wave_we ) ,
    .we_i             ( x2_reg.we      ) ,
    .w_addr_i         ( x2_reg.addr    ) ,
    .w_dt_i           ( x2_reg_w_dt    ) ,
    .wave_dt_i        ( x2_wave_w_dt      ) ,
-   .rs_A_addr_i      ( id_rs_A_addr   ) ,
-   .rs_D_addr_i      ( id_rs_D_addr   ) ,
+   .rs_A_addr_i      ( r_id_rs_A_addr   ) ,
+   .rs_D_addr_i      ( r_id_rs_D_addr   ) ,
    .w_dt_o           ( wr_reg_dt      ) ,
    .rs_A_dt_o        ( rs_A_dt        ) ,
    .rs_D_dt_o        ( rs_D_dt        ) ,
@@ -529,7 +550,7 @@ always_ff @ (posedge clk_i) begin
       r_x1_alu_dt          <= 0  ;
       r_x2_alu_dt          <= 0  ;
       r_x2_dmem_w_dt       <= 0  ;
-      r_x1_data_w_dt       <= 0  ;
+      r_x1_port_dt       <= 0  ;
       alu_fZ_r             <= 0  ;
       alu_fS_r             <= 0  ;
    end else if (restart_i ) begin
@@ -557,34 +578,27 @@ always_ff @ (posedge clk_i) begin
       r_x1_alu_dt          <= 0  ;
       r_x2_alu_dt          <= 0  ;
       r_x2_dmem_w_dt       <= 0  ;
-      r_x1_data_w_dt       <= 0  ;
+      r_x1_port_dt       <= 0  ;
       alu_fZ_r             <= 0  ;
       alu_fS_r             <= 0  ;
       r_x1_port_w_addr     <= 0  ;
    end else begin
       if (~halt) begin
+
 /////////////////////////////////////////////////////////
 // READING
-         if (bubble_id | bubble_rd) begin    // Insert Bubble
-            rd_ctrl                 <= '{default:'0}     ;
-            rd_reg                  <= '{default:'0}     ;
+         if (bubble_id ) begin    // Insert Bubble
+            if (bubble_rd) begin    // Insert Bubble
+               rd_ctrl                 <= rd_ctrl;
+               rd_reg                  <= rd_reg;
+            end else begin 
+               rd_ctrl                 <= '{default:'0}     ;
+               rd_reg                  <= '{default:'0}     ;
+            end
          end else begin
             //Control Signals
+            rd_ctrl                 <= id_ctrl            ;
             rd_reg                  <= id_reg            ;
-            rd_ctrl.cfg_addr_imm    <= id_AI             ;
-            rd_ctrl.cfg_dt_imm      <= id_cfg_dt_imm        ;
-            rd_ctrl.cfg_wave_src    <= id_cfg_wave_src  ;
-            rd_ctrl.cfg_port_type   <= id_type_wpd  ;
-            rd_ctrl.cfg_port_time   <= id_type_wpw & id_TO  ;
-            rd_ctrl.cfg_cond        <= id_COND           ;
-            rd_ctrl.cfg_alu_src     <= id_cfg_alu_src    ;
-            rd_ctrl.cfg_alu_op      <= id_cfg_alu_op     ;
-            rd_ctrl.usr_ctrl        <= id_usr_ctrl      ;
-            rd_ctrl.flag_we         <= id_flag_we        ;
-            rd_ctrl.dmem_we         <= id_dmem_we        ;
-            rd_ctrl.wmem_we         <= id_wmem_we        ;
-            rd_ctrl.port_we         <= id_wport_we | id_dport_we        ;
-            rd_ctrl.port_re         <= id_dport_re        ;
             r_id_pc_change          <= id_pc_change ;
             //Data Signals
             r_id_rs_A_addr          <= id_rs_A_addr;
@@ -595,10 +609,9 @@ always_ff @ (posedge clk_i) begin
          end
 /////////////////////////////////////////////////////////
 // EXECUTE 1 
-         //Control Signals
-         if (bubble_rd) begin
-            x1_ctrl              <= '{default:'0};
-            x1_reg               <= '{default:'0};
+         if (bubble_rd) begin    // Insert Bubble
+            x1_ctrl                 <= '{default:'0}     ;
+            x1_reg                  <= '{default:'0}     ;
          end else begin
             x1_ctrl              <= rd_ctrl           ;
             x1_reg               <= rd_reg            ;
@@ -615,7 +628,7 @@ always_ff @ (posedge clk_i) begin
          //Data Signals
          r_x1_imm_dt                <= r_rd_imm_dt       ;
          r_x1_alu_dt                <= x1_alu_dt         ;
-         r_x1_data_w_dt             <= x1_mem_w_dt       ;
+         r_x1_port_dt             <= x1_rsA0_dt; //x1_mem_w_dt       ;
          r_x1_port_w_addr           <= x1_port_w_addr    ;
          if (x1_ctrl.flag_we) begin 
             alu_fZ_r                <= x1_alu_fZ         ;
@@ -642,12 +655,12 @@ assign pmem_addr_o      = PC_curr         ; // Disable next instruction with pc_
 // assign pmem_addr_o   = PC_nxt         ;
 
 //DATA MEMORY
-assign dmem_we_o        = x1_ctrl.dmem_we    ;
+assign dmem_we_o        = x1_ctrl.dmem_we & ~halt   ;
 assign dmem_addr_o      = x1_mem_addr        ;
 assign dmem_w_dt_o      = x1_mem_w_dt        ;
 
 //WAVE MEMORY
-assign wmem_we_o        = x1_ctrl.wmem_we   ;
+assign wmem_we_o        = x1_ctrl.wmem_we  & ~halt ;
 assign wmem_addr_o      = x1_wave_addr      ;
 assign wmem_w_dt_o      = reg_wave_dt      ;
 
@@ -660,8 +673,8 @@ assign usr_dt_c_o      = x1_rsA0_dt ;
 assign usr_dt_d_o      = x1_rsA1_dt;
 
 // PORT OUTPUT
-assign port_we_o        = x2_ctrl.port_we    ;
-assign port_re_o        = x2_ctrl.port_re    ;
+assign port_we_o        = x2_ctrl.port_we & ~halt   ;
+assign port_re_o        = x2_ctrl.port_re & ~halt   ;
 assign port_o.p_time    = x2_ctrl.cfg_port_time ? r_x1_imm_dt : reg_time;
 assign port_o.p_type    = x2_ctrl.cfg_port_type ;
 assign port_o.p_addr    = r_x1_port_w_addr     ;

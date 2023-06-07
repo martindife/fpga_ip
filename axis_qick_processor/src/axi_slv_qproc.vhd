@@ -47,14 +47,15 @@ entity axi_slv_qproc is
         TPROC_CFG        : out std_logic_vector (31 downto 0) ;
         MEM_ADDR         : out std_logic_vector (15 downto 0) ;
         MEM_LEN          : out std_logic_vector (15 downto 0) ;
-        INIT_TIME        : in  std_logic_vector (31 downto 0) ;
-        TPROC_R_DT1      : in  std_logic_vector (31 downto 0) ;
-        TPROC_R_DT2      : in  std_logic_vector (31 downto 0) ;
         MEM_DT_I         : out std_logic_vector (31 downto 0) ;
-        MEM_DT_O         : in  std_logic_vector (31 downto 0) ;
-        TIME_USR         : in  std_logic_vector (31 downto 0) ;
         TPROC_W_DT1      : out std_logic_vector (31 downto 0) ;
         TPROC_W_DT2      : out std_logic_vector (31 downto 0) ;
+        CORE_CFG         : out std_logic_vector (7 downto 0) ;
+        READ_SEL         : out std_logic_vector (7 downto 0) ;
+        MEM_DT_O         : in  std_logic_vector (31 downto 0) ;
+        TPROC_R_DT1      : in  std_logic_vector (31 downto 0) ;
+        TPROC_R_DT2      : in  std_logic_vector (31 downto 0) ;
+        TIME_USR         : in  std_logic_vector (31 downto 0) ;
         TPROC_STATUS     : in  std_logic_vector (31 downto 0) ;
         TPROC_DEBUG      : in  std_logic_vector (31 downto 0) );
         end axi_slv_qproc;
@@ -478,21 +479,21 @@ begin
 	      when b"0101" =>
 	        reg_data_out <= slv_reg5;
 	      when b"0110" =>
-	        reg_data_out <= INIT_TIME;
+	        reg_data_out <= slv_reg6;
 	      when b"0111" =>
-	        reg_data_out <= TPROC_R_DT1;
+	        reg_data_out <= slv_reg7;
 	      when b"1000" =>
-	        reg_data_out <= TPROC_R_DT2;
+	        reg_data_out <= slv_reg8;
 	      when b"1001" =>
-	        reg_data_out <= slv_reg9;
+	        reg_data_out <= "00000000000000000000000000001001";
 	      when b"1010" =>
 	        reg_data_out <= MEM_DT_O;
 	      when b"1011" =>
-	        reg_data_out <= TIME_USR;
+	        reg_data_out <= TPROC_R_DT1;
 	      when b"1100" =>
-	        reg_data_out <= slv_reg12;
+	        reg_data_out <= TPROC_R_DT2;
 	      when b"1101" =>
-	        reg_data_out <= slv_reg13;
+	        reg_data_out <= TIME_USR;
 	      when b"1110" =>
 	        reg_data_out <= TPROC_STATUS;
 	      when b"1111" =>
@@ -525,9 +526,11 @@ TPROC_CTRL        <= slv_reg0(31 downto 0);
 TPROC_CFG         <= slv_reg1(31 downto 0);
 MEM_ADDR          <= slv_reg2(15 downto 0);
 MEM_LEN           <= slv_reg3(15 downto 0);
-MEM_DT_I          <= slv_reg9(31 downto 0);
-TPROC_W_DT1       <= slv_reg12(31 downto 0);
-TPROC_W_DT2       <= slv_reg13(31 downto 0);
+MEM_DT_I          <= slv_reg4(31 downto 0);
+TPROC_W_DT1       <= slv_reg5(31 downto 0);
+TPROC_W_DT2       <= slv_reg6(31 downto 0);
+CORE_CFG          <= slv_reg7(7 downto 0);
+READ_SEL          <= slv_reg8(7 downto 0);
 
 
 end rtl;

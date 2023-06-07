@@ -72,9 +72,6 @@ module qproc_mem_ctrl # (
    output wire [7 :0]       STATUS_O       ,
    output wire [15:0]       DEBUG_O        );
 
-
-
-
 // SIGNALS
 wire           ar_exec, ar_end     ;
 wire           aw_exec, aw_end      ;
@@ -94,7 +91,7 @@ assign mem_source  = MEM_CTRL[ 4 ] ; // 0-AXIS, 1-REGISTERS (Single)
 assign core_sel    = MEM_CTRL[6:5] ; // Core Selection 
 
 wire start_single;
-//assign start_axis   = mem_start & ~mem_source ;
+assign start_axis   = mem_start & ~mem_source ;
 assign start_single = mem_start & mem_source ;
 
 assign axis_addr    = mem_op     ? mem_w_addr_axis : mem_r_addr_axis  ;
@@ -113,7 +110,7 @@ assign gain   = mem_w_dt_axis[127 : 96] ; // 32-bit GAIN
 assign lenght = mem_w_dt_axis[159 :128] ; // 32-bit LENGHT
 assign conf   = mem_w_dt_axis[191 :160] ; // 32-bit CONF
 
-
+ 
 wire [71 :0] ext_pmem_w_dt;
 wire [31 :0] ext_dmem_w_dt;
 wire [167:0] ext_wmem_w_dt;
@@ -123,12 +120,14 @@ assign ext_dmem_w_dt  = mem_source ? mem_w_dt_single   : mem_w_dt_axis[31:0]   ;
 assign ext_wmem_w_dt  = {conf[15:0], lenght, gain, env[23:0], phase, freq} ;
 
 
-                    
+// Registe-READ ONLY with DMEM
+                   
+assign dmem_we_single = mem_we_single & mem_sel == 2'b10;
 
 // OUTPUTS
 assign ext_core_sel_o      = core_sel;
 assign ext_mem_sel_o       = mem_sel;
-assign ext_mem_we_o        = mem_we_single | mem_we_axis ;
+assign ext_mem_we_o        = dmem_we_single | mem_we_axis ;
 assign ext_mem_addr_o      = ext_mem_addr;
 
 assign ext_mem_w_dt_o  = (mem_sel == 2'b01)? ext_pmem_w_dt  : 
@@ -147,7 +146,7 @@ data_mem_ctrl #(
       .aw_exec_ack_i ( aw_end             ) ,
       .busy_o        ( busy_o             ) ,
       .mem_op_i      ( mem_op             ) ,
-      .mem_start_i   ( mem_start          ) );
+      .mem_start_i   ( start_axis         ) );
 
 mem_rw  #(
    .N( 16 ),

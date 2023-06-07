@@ -21,7 +21,7 @@
 
    typedef struct packed {
       bit         we    ;
-      bit         wreg_we ;
+      bit         r_wave_we ;
       bit [6:0]   addr  ;
       bit [1:0]   src  ;
    } CTRL_REG;
@@ -30,7 +30,7 @@
    typedef struct packed {
       reg       cfg_addr_imm  ;
       reg       cfg_dt_imm    ;
-      reg       cfg_wave_src  ;
+      reg       cfg_port_src  ;
       reg       cfg_port_type ;
       reg       cfg_port_time ;
       reg [3:0] cfg_cond      ;
@@ -83,31 +83,15 @@ interface TYPE_IF_AXI_REG #( );
    logic  [1:0]        axi_rresp   ;
    logic               axi_rvalid  ;
    logic               axi_rready  ;
+   
+   modport master ( output axi_awaddr,axi_awprot, axi_awvalid,axi_wdata,axi_wstrb,axi_wvalid,axi_bready,axi_araddr,axi_arprot,axi_arvalid,axi_rready,
+                    input  axi_awready,axi_wready,axi_bresp,axi_bvalid,axi_arready,axi_rdata,axi_rresp,axi_rvalid );
+   modport slave ( input  axi_awaddr,axi_awprot, axi_awvalid,axi_wdata,axi_wstrb,axi_wvalid,axi_bready,axi_araddr,axi_arprot,axi_arvalid,axi_rready,
+                    output  axi_awready,axi_wready,axi_bresp,axi_bvalid,axi_arready,axi_rdata,axi_rresp,axi_rvalid );
+
 endinterface
 
 
-// AXI-Lite DATA Slave I/F.   
-interface TYPE_AXI_LITE_IF_IN #( );
-   logic  [7:0]        axi_awaddr  ;
-   logic  [2:0]        axi_awprot  ;
-   logic               axi_awvalid ;
-   logic               axi_awready ;
-   logic  [31:0]       axi_wdata   ;
-   logic  [3:0]        axi_wstrb   ;
-   logic               axi_wvalid  ;
-   logic               axi_wready  ;
-   logic  [1:0]        axi_bresp   ;
-   logic               axi_bvalid  ;
-   logic               axi_bready  ;
-   logic  [7:0]        axi_araddr  ;
-   logic  [2:0]        axi_arprot  ;
-   logic               axi_arvalid ;
-   logic               axi_arready ;
-   logic  [31:0]       axi_rdata   ;
-   logic  [1:0]        axi_rresp   ;
-   logic               axi_rvalid  ;
-   logic               axi_rready  ;
-endinterface
       
    interface TYPE_IF_MEM #( 
        parameter DW = 32,

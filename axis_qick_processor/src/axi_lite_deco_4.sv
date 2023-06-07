@@ -5,11 +5,11 @@ module axi_lite_deco_4 # (
 )(
    input wire              ps_aclk      ,    
    input wire              ps_aresetn   ,    
-   TYPE_AXI_LITE_IF_IN     s_axi_lite   ,
-   TYPE_IF_AXI_REG         m00_axi_lite ,
-   TYPE_IF_AXI_REG         m01_axi_lite ,
-   TYPE_IF_AXI_REG         m10_axi_lite ,
-   TYPE_IF_AXI_REG         m11_axi_lite );
+   TYPE_AXI_LITE_IF_IN.slave     s_axi_lite   ,
+   TYPE_IF_AXI_REG.master         m00_axi_lite ,
+   TYPE_IF_AXI_REG.master         m01_axi_lite ,
+   TYPE_IF_AXI_REG.master         m10_axi_lite ,
+   TYPE_IF_AXI_REG.master         m11_axi_lite );
 
 // OUTPUTS
 

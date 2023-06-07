@@ -192,7 +192,7 @@ module arith (
 // DSP OUTPUTS
 wire [45:0] arith_result ;
 // DSP INPUTS
-reg  [2:0] ALU_OP  ;
+reg  [3:0] ALU_OP  ;
 
 reg signed [26:0] A_dt ; 
 reg signed [17:0] B_dt ; 
@@ -216,7 +216,7 @@ always_ff @ (posedge clk_i, negedge rst_ni) begin
          B_dt     <= B_i[17:0] ;
          C_dt     <= C_i[31:0] ;
          D_dt     <= D_i[26:0] ; 
-         ALU_OP   <= { alu_op_i[2:0]}  ;
+         ALU_OP   <= { alu_op_i[3:0]}  ;
          working  <= 1'b1 ;
       end else if (working_r) begin
          working           <= 1'b0;
@@ -228,7 +228,7 @@ end
 
 dsp_macro_0 ARITH_DSP (
   .CLK  ( clk_i),  // input wire CLK
-  .SEL  ( ALU_OP ),  // input wire [2 : 0] SEL
+  .SEL  ( ALU_OP ),  // input wire [3 : 0] SEL
   .A    ( A_dt[26:0]   ),      // input wire [26 : 0] A
   .B    ( B_dt[17:0]   ),      // input wire [17 : 0] B
   .C    ( C_dt[31:0]   ),      // input wire [31 : 0] C
