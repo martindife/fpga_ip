@@ -2,29 +2,29 @@
 FERMILAB
 """
 
-from tprocv2_assembler import Converter, Logger
+from tprocv2_assembler import Assembler, Logger
 
 import pickle
 
 
-filenames = ['Test_ISA.asm', 'Examples_ISA.asm','prog_WAV.txt']
+filenames = ['Test_0.asm','Test_LOOPS.asm', 'Test_OUT.asm', 'Test_ISA.asm', 'Examples_ISA.asm','prog_WAV.txt']
 
 ## LOGGER SHOW 
 INFO = 0
 WARNING = 1
 ERROR = 2
-Logger.setLevel(0)
+Logger.setLevel(1)
 
 print('-----\n Get Program List Structure from ASM')
-p_list        = Converter.asm2list(filenames[0])
+p_list        = Assembler.file_asm2list(filenames[0])
 
 print('-----\n Get ASM from Program List Structure ')
 if p_list[0]:
-    p_asm         = Converter.list2asm(p_list[0], p_list[1])
-
+    p_asm         = Assembler.list2asm(p_list[0], p_list[1])
+#    print(p_asm)
 
 print('-----\n Get Binary Files from ASM')
-p_txt, p_bin  = Converter.asm2bin(filenames[1])
+p_txt, p_bin  = Assembler.file_asm2bin(filenames[0])
 
 
 #print('-----\n Print Binary executable')
@@ -43,3 +43,6 @@ with open('program_mem.bin', 'w') as f:
 #data_to_file = p_bin
 #pickle.dump(data_to_file, open('program_mem.pkl', 'wb')) 
 #print(p_asm)
+#print(p_txt)
+
+
