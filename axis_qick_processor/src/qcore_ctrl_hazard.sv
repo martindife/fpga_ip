@@ -16,7 +16,7 @@ module qcore_ctrl_hazard (
    input   wire               rst_ni            ,
    input   wire               halt_i            ,
    input   wire [5:0]         rs_A_addr_i [2]   ,
-   input   wire [15:0]        rs_A_dt_i   [2]   ,
+   input   wire [31:0]        rs_A_dt_i   [2]   ,
 
    input   wire [6:0]         rs_D_addr_i [2]   ,
    input   wire [31:0]        rs_D_dt_i   [2]   ,
@@ -44,7 +44,7 @@ module qcore_ctrl_hazard (
    input   wire [31:0]        x1_imm_dt_i       ,
    input   wire [31:0]        x2_imm_dt_i       ,
    // New Data to avoid Hazard
-   output  wire [15:0]        reg_A_dt_o [2]      ,      
+   output  wire [31:0]        reg_A_dt_o [2]      ,      
    output  wire [31:0]        reg_D_dt_o [2]      ,      
    // Bubble in RD and Wait for DATA
    output  wire               bubble_id_o       ,       
@@ -99,7 +99,7 @@ generate
 endgenerate
 
 // ADDRESS FORWARDING
-reg  [15:0]    reg_A_nxt [2] ;
+reg  [31:0]    reg_A_nxt [2] ;
 reg  [1 :0]    stall_A_rd     ;
 
 genvar ind_A;
@@ -172,7 +172,7 @@ always_comb begin
 end
 
 
-reg  [15:0]    reg_A     [2] ;
+reg  [31:0]    reg_A     [2] ;
 reg  [31:0]    reg_D     [2] ;
 
 //Register DATA & ADDRESS OUT

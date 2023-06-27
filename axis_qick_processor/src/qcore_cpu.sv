@@ -26,10 +26,10 @@ module qcore_cpu # (
    input  wire [31:0]      sreg_port_dt_i  [2]  ,
    input  wire [31:0]      sreg_time_dt_i       , 
    output wire [31:0]      sreg_core_w_dt_o[2]  ,
-   output  wire [31:0]           usr_dt_a_o     , // Data A from Current Instruction (rsD)
-   output  wire [31:0]           usr_dt_b_o     , // Data B from Current Instruction (rsC or Imm)
-   output  wire [31:0]           usr_dt_c_o     , // Data C from Current Instruction (rsC or Imm)
-   output  wire [31:0]           usr_dt_d_o     , // Data D from Current Instruction (rsC or Imm)
+   output  wire [31:0]           usr_dt_a_o     , // Data A from Current Instruction (rsD0)
+   output  wire [31:0]           usr_dt_b_o     , // Data B from Current Instruction (rsD1)
+   output  wire [31:0]           usr_dt_c_o     , // Data C from Current Instruction (rsA0)
+   output  wire [31:0]           usr_dt_d_o     , // Data D from Current Instruction (rsA1m)
    output  wire [9:0]            usr_ctrl_o     , // CONTROL from Current Instruction 
 // PROGRAM MEMORY    
    output  wire [PMEM_AW-1:0]    pmem_addr_o    ,
@@ -74,8 +74,8 @@ wire           id_pc_change;
 reg            r_id_pc_change ;
 reg  [5:0]     r_id_rs_A_addr     [2] ; // Address in the RegBank
 reg  [6:0]     r_id_rs_D_addr     [2] ; // Address in the RegBank
-wire [15:0]    reg_A_fwd_dt      [2] ; 
 wire [31:0]    reg_D_fwd_dt      [2] ; 
+wire [31:0]    reg_A_fwd_dt      [2] ; 
 wire [31:0]    reg_time ;
 
 // PROCESSOR STATUS 
@@ -224,8 +224,8 @@ reg id_rd_wreg;
 always_comb
    unique case (id_DF)
       2'b00 : id_imm_dt = id_imm_addr  ; // Data Immediate is 16 Bits Address Space
-      2'b01 : id_imm_dt = { {16{r_if_op_data[22]}} , r_if_op_data [22:7]}  ; // Data Immediate is 16 Bits
-      2'b10 : id_imm_dt = { { 8{r_if_op_data[30]}} , r_if_op_data [30:7]}  ; // Data Immediate is 24 Bits
+      2'b01 : id_imm_dt = { {16{r_if_op_data[22]}} , r_if_op_data [22:7]}  ; // Data Immediate is 16 Bits SIGNED
+      2'b10 : id_imm_dt = { { 8{r_if_op_data[30]}} , r_if_op_data [30:7]}  ; // Data Immediate is 24 Bits SIGNED
       2'b11 : id_imm_dt = r_if_op_data [38:7]                  ; // Data Immediate is 32 Bits
    endcase
 
@@ -314,7 +314,7 @@ always @(posedge clk_i) begin
    if (restart_i) begin
       PC_curr     <= 0;
       PC_prev     <= 0;
-   end else if (~stall & ~halt ) begin
+   end else if (core_en) begin
          PC_curr <= PC_nxt;
          PC_prev <= PC_curr;
       end
@@ -327,8 +327,8 @@ end
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 wire [31:0] x1_rsD0_dt, x1_rsD1_dt ;
-wire [15:0] x1_rsA1_dt, x1_rsA0_dt ;
-wire [15:0] rs_A_dt [2] ;
+wire [31:0] x1_rsA1_dt, x1_rsA0_dt ;
+wire [31:0] rs_A_dt [2] ;
 wire [31:0] rs_D_dt [2] ;
 
 
@@ -506,13 +506,13 @@ LIFO  # (
    .clk_i   ( clk_i    ) ,
    .rst_ni  ( rst_ni   ) ,
    .data_i  ( PC_prev  ) ,
-   .push    ( id_call  ) ,
-   .pop     ( id_ret   ) ,
+   .push    ( id_call & core_en  ) ,
+   .pop     ( id_ret & core_en  ) ,
    .data_o  ( pc_stack ) ,
    .full_o  ( pc_stack_full ) );
 
 
-
+assign core_en = ~stall & ~halt;
 ///////////////////////////////////////////////////////////////////////////////
 // PIPELINE  
 ///////////////////////////////////////////////////////////////////////////////
@@ -628,7 +628,7 @@ always_ff @ (posedge clk_i) begin
          //Data Signals
          r_x1_imm_dt                <= r_rd_imm_dt       ;
          r_x1_alu_dt                <= x1_alu_dt         ;
-         r_x1_port_dt             <= x1_rsA0_dt; //x1_mem_w_dt       ;
+         r_x1_port_dt               <= x1_rsA0_dt        ;
          r_x1_port_w_addr           <= x1_port_w_addr    ;
          if (x1_ctrl.flag_we) begin 
             alu_fZ_r                <= x1_alu_fZ         ;
@@ -650,7 +650,7 @@ end //ALWAYS
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // PROGRAM MEMORY
-assign pmem_en_o        = ~stall & ~halt | r_mem_rst;
+assign pmem_en_o        = core_en | r_mem_rst;
 assign pmem_addr_o      = PC_curr         ; // Disable next instruction with pc_jump
 // assign pmem_addr_o   = PC_nxt         ;
 
@@ -664,8 +664,7 @@ assign wmem_we_o        = x1_ctrl.wmem_we  & ~halt ;
 assign wmem_addr_o      = x1_wave_addr      ;
 assign wmem_w_dt_o      = reg_wave_dt      ;
 
-// TIME CTRL // Move to X2 in case of SLOW PATH and ADD ALU OUT
-
+// PERIPH OUT
 assign usr_ctrl_o      = x1_ctrl.usr_ctrl ;
 assign usr_dt_a_o      = x1_rsD0_dt ; 
 assign usr_dt_b_o      = x1_ctrl.cfg_dt_imm ? r_rd_imm_dt : x1_rsD1_dt ;
@@ -679,7 +678,6 @@ assign port_o.p_time    = x2_ctrl.cfg_port_time ? r_x1_imm_dt : reg_time;
 assign port_o.p_type    = x2_ctrl.cfg_port_type ;
 assign port_o.p_addr    = r_x1_port_w_addr     ;
 assign port_o.p_data    = x2_port_w_dt       ;
-
 
 // DEBUG
 assign core_do [31:24] = {restart_i, stall, flush, id_flag_we, alu_fZ_r, alu_fS_r, x2_ctrl.port_we, x2_ctrl.port_re};

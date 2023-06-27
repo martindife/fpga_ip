@@ -192,10 +192,10 @@ module axis_qick_proccessor # (
    output reg                 trig_5_o          ,
    output reg                 trig_6_o          ,
    output reg                 trig_7_o          ,
-   output reg   [15:0]        port_0_dt_o          ,
-   output reg   [15:0]        port_1_dt_o          ,
-   output reg   [15:0]        port_2_dt_o          ,
-   output reg   [15:0]        port_3_dt_o          ,
+   output reg   [OUT_DPORT_DW-1:0] port_0_dt_o          ,
+   output reg   [OUT_DPORT_DW-1:0] port_1_dt_o          ,
+   output reg   [OUT_DPORT_DW-1:0] port_2_dt_o          ,
+   output reg   [OUT_DPORT_DW-1:0] port_3_dt_o          ,
 
 
 // Debug Signals

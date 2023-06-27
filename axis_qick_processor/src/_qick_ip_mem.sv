@@ -270,7 +270,7 @@ assign async_full    = (rd_gptr_r == wr_gptr_p1) ;
 
 wire do_pop, do_push;
 assign do_pop  = pop_i & !async_empty;
-assign do_push = push_i & !async_full;
+assign do_push = wr_en_i & push_i & !async_full;
 
 //assign async_empty_o = async_empty | busy; // While RESETTING, Shows EMPTY
 assign async_empty_o = async_empty_r | busy; // While RESETTING, Shows EMPTY

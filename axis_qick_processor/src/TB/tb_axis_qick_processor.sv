@@ -37,8 +37,8 @@ import axi_mst_0_pkg::*;
 `define WMEM_AW          4 
 `define REG_AW           4 
 `define IN_PORT_QTY      1
-`define OUT_TRIG_QTY     1
-`define OUT_DPORT_QTY    1 
+`define OUT_TRIG_QTY     4
+`define OUT_DPORT_QTY    2
 `define OUT_WPORT_QTY    1 
 
 
@@ -84,17 +84,20 @@ wire                   s_axi_rready     ;
 //////////////////////////////////////////////////////////////////////////
 //  CLK Generation
 reg   t_clk, s_ps_dma_aclk, rst_ni;
-reg  c_clk ;
+wire   c_clk ;
 
 initial begin
   t_clk = 1'b0;
   forever # (`T_TCLK) t_clk = ~t_clk;
 end
 
+/*
 initial begin
   c_clk = 1'b0;
   forever # (`T_CCLK) c_clk = ~c_clk;
 end
+*/
+assign c_clk = t_clk;
 initial begin
   s_ps_dma_aclk = 1'b0;
   #0.5
@@ -447,7 +450,6 @@ tnet_dt_i = '{default:'0} ;
    @ (posedge s_ps_dma_aclk); #0.1;
 	rst_ni = 1'b1;
    #10;
-   @ (posedge s_ps_dma_aclk); #0.1;
 
 //TEST_AXI ();
 //TEST_SINGLE_READ_AXI();
@@ -458,6 +460,7 @@ tnet_dt_i = '{default:'0} ;
 
 /*
 // CONFIGURE LFSR
+   @ (posedge s_ps_dma_aclk); #0.1;
    WRITE_AXI( REG_TPROC_W_DT1 , 4); //
    WRITE_AXI( REG_TPROC_W_DT2 , 10); //
    WRITE_AXI( REG_CORE_CFG, 1); //LFSR FREE RUN

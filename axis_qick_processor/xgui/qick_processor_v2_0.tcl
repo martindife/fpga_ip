@@ -23,7 +23,9 @@ proc init_gui { IPINST } {
 
   #Adding Group
   set OUT_Port_Configuration [ipgui::add_group $IPINST -name "OUT Port Configuration" -parent ${Process}]
+  ipgui::add_param $IPINST -name "OUT_TRIG_QTY" -parent ${OUT_Port_Configuration}
   ipgui::add_param $IPINST -name "OUT_DPORT_QTY" -parent ${OUT_Port_Configuration}
+  ipgui::add_param $IPINST -name "OUT_DPORT_DW" -parent ${OUT_Port_Configuration}
   ipgui::add_param $IPINST -name "OUT_WPORT_QTY" -parent ${OUT_Port_Configuration}
 
   #Adding Group
@@ -135,12 +137,30 @@ proc validate_PARAM_VALUE.LFSR { PARAM_VALUE.LFSR } {
 	return true
 }
 
+proc update_PARAM_VALUE.OUT_DPORT_DW { PARAM_VALUE.OUT_DPORT_DW } {
+	# Procedure called to update OUT_DPORT_DW when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.OUT_DPORT_DW { PARAM_VALUE.OUT_DPORT_DW } {
+	# Procedure called to validate OUT_DPORT_DW
+	return true
+}
+
 proc update_PARAM_VALUE.OUT_DPORT_QTY { PARAM_VALUE.OUT_DPORT_QTY } {
 	# Procedure called to update OUT_DPORT_QTY when any of the dependent parameters in the arguments change
 }
 
 proc validate_PARAM_VALUE.OUT_DPORT_QTY { PARAM_VALUE.OUT_DPORT_QTY } {
 	# Procedure called to validate OUT_DPORT_QTY
+	return true
+}
+
+proc update_PARAM_VALUE.OUT_TRIG_QTY { PARAM_VALUE.OUT_TRIG_QTY } {
+	# Procedure called to update OUT_TRIG_QTY when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.OUT_TRIG_QTY { PARAM_VALUE.OUT_TRIG_QTY } {
+	# Procedure called to validate OUT_TRIG_QTY
 	return true
 }
 
@@ -277,5 +297,15 @@ proc update_MODELPARAM_VALUE.TNET { MODELPARAM_VALUE.TNET PARAM_VALUE.TNET } {
 proc update_MODELPARAM_VALUE.CUSTOM_PERIPH { MODELPARAM_VALUE.CUSTOM_PERIPH PARAM_VALUE.CUSTOM_PERIPH } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.CUSTOM_PERIPH}] ${MODELPARAM_VALUE.CUSTOM_PERIPH}
+}
+
+proc update_MODELPARAM_VALUE.OUT_DPORT_DW { MODELPARAM_VALUE.OUT_DPORT_DW PARAM_VALUE.OUT_DPORT_DW } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.OUT_DPORT_DW}] ${MODELPARAM_VALUE.OUT_DPORT_DW}
+}
+
+proc update_MODELPARAM_VALUE.OUT_TRIG_QTY { MODELPARAM_VALUE.OUT_TRIG_QTY PARAM_VALUE.OUT_TRIG_QTY } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.OUT_TRIG_QTY}] ${MODELPARAM_VALUE.OUT_TRIG_QTY}
 }
 

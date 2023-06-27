@@ -406,7 +406,7 @@ wire [OUT_WPORT_QTY-1:0]  t_fifo_wave_empty , c_fifo_wave_full   ;
 
 
 wire div_rdy, arith_rdy;
-wire dfifo_full, wfifo_full, fifo_ok;
+wire dfifo_full, wfifo_full;
 
 
 // STATUS 
@@ -883,12 +883,24 @@ assign all_fifo_full = all_dfifo_full & all_wfifo_full ;
 assign tfifo_full = |c_fifo_trig_full ;
 assign dfifo_full = |c_fifo_data_full ; 
 assign wfifo_full = |c_fifo_wave_full ; 
-assign fifo_ok    = ~(tfifo_full | dfifo_full | wfifo_full)  | xreg_TPROC_CFG[11];  // With 1 CONTINUE
+
+reg fifo_ok;
+//assign fifo_ok    = ~(tfifo_full | dfifo_full | wfifo_full)  | xreg_TPROC_CFG[11];  // With 1 CONTINUE
+
+always_ff @ (posedge c_clk_i, negedge c_rst_ni) begin
+   if (!c_rst_ni) begin
+      fifo_ok       <= '{default:'0} ;
+   end else begin // if (core_en) begin
+      fifo_ok              <= ~(tfifo_full | dfifo_full | wfifo_full)  | xreg_TPROC_CFG[11];  // With 1 CONTINUE ;
+   end
+end
+
 
 /// FIFO CTRL-REG
 wire fifo_we;
 assign fifo_we = port_we ; //& core_en ;
 
+reg core_en_r;
 always_ff @ (posedge c_clk_i, negedge c_rst_ni) begin
    if (!c_rst_ni) begin
       c_fifo_data_in_r       <= '{default:'0} ;
@@ -896,7 +908,8 @@ always_ff @ (posedge c_clk_i, negedge c_rst_ni) begin
       c_fifo_trig_push_r     <= '{default:'0} ;
       c_fifo_data_push_r     <= '{default:'0} ;
       c_fifo_wave_push_r     <= '{default:'0} ;
-   end else if (core_en) begin
+   end else begin // if (core_en) begin
+      core_en_r              <= core_en ;
       c_fifo_data_in_r       <= out_port_data.p_data ;
       c_fifo_time_in_r       <= {16'd0, out_port_data.p_time} + c_time_ref_dt;
       c_fifo_trig_push_r     <= c_fifo_trig_push ;
@@ -958,11 +971,11 @@ generate
       // TRIGGER FIFO
       BRAM_FIFO_DC_2 # (
          .FIFO_DW (1+48) , 
-         .FIFO_AW (8) 
+         .FIFO_AW (2) 
       ) trig_fifo_inst ( 
          .wr_clk_i   ( c_clk_i      ) ,
          .wr_rst_ni  ( c_rst_ni     ) ,
-         .wr_en_i    ( core_en      ) ,
+         .wr_en_i    ( core_en_r     ) ,
          .push_i     ( c_fifo_trig_push_r[ind_tfifo] ) ,
          .data_i     ( {c_fifo_data_in_r[0],c_fifo_time_in_r}  ) ,
          .rd_clk_i   ( t_clk_i      ) ,
@@ -1012,11 +1025,11 @@ generate
       // WaveForm FIFO
       BRAM_FIFO_DC_2 # (
          .FIFO_DW (168+48) , 
-         .FIFO_AW (8) 
+         .FIFO_AW (2) 
       ) wave_fifo_inst ( 
          .wr_clk_i   ( c_clk_i   ) ,
          .wr_rst_ni  ( c_rst_ni  ) ,
-         .wr_en_i    ( core_en   ) ,
+         .wr_en_i    ( core_en_r   ) ,
          .push_i     ( c_fifo_wave_push_r   [ind_wfifo] ) ,
          .data_i     ( {c_fifo_data_in_r,c_fifo_time_in_r}     ) ,
          .rd_clk_i   ( t_clk_i   ) ,
@@ -1065,11 +1078,11 @@ generate
       // DATA FIFO
       BRAM_FIFO_DC_2 # (
          .FIFO_DW (OUT_DPORT_DW+48) , 
-         .FIFO_AW (8) 
+         .FIFO_AW (2) 
       ) data_fifo_inst ( 
          .wr_clk_i   ( c_clk_i      ) ,
          .wr_rst_ni  ( c_rst_ni     ) ,
-         .wr_en_i    ( core_en      ) ,
+         .wr_en_i    ( core_en_r      ) ,
          .push_i     ( c_fifo_data_push_r[ind_dfifo] ) ,
          .data_i     ( {c_fifo_data_in_r[OUT_DPORT_DW-1:0],c_fifo_time_in_r}  ) ,
          .rd_clk_i   ( t_clk_i      ) ,
