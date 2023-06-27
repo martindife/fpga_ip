@@ -16,6 +16,7 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
+<<<<<<< HEAD:axis_qick_processor/src/TB/tb_axis_QCORE0.wcfg
       <ZoomStartTime time="228.146 ns"></ZoomStartTime>
       <ZoomEndTime time="280.697 ns"></ZoomEndTime>
       <Cursor1Time time="237.321 ns"></Cursor1Time>
@@ -25,6 +26,17 @@
       <ValueColumnWidth column_width="88"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="78" />
+=======
+      <ZoomStartTime time="278.200 ns"></ZoomStartTime>
+      <ZoomEndTime time="392.201 ns"></ZoomEndTime>
+      <Cursor1Time time="323.700 ns"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="163"></NameColumnWidth>
+      <ValueColumnWidth column_width="66"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="59" />
+>>>>>>> d55a849445322e7396ab49e89efffbcfb11075ed:qick_processor/src/TB/tb_axis_QCORE0.wcfg
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/pmem_addr_o">
       <obj_property name="ElementShortName">pmem_addr_o[7:0]</obj_property>
       <obj_property name="ObjectShortName">pmem_addr_o[7:0]</obj_property>
@@ -197,6 +209,10 @@
       <obj_property name="ElementShortName">c_pmem_en_i</obj_property>
       <obj_property name="ObjectShortName">c_pmem_en_i</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_MEM/c_pmem_en_i">
+      <obj_property name="ElementShortName">c_pmem_en_i</obj_property>
+      <obj_property name="ObjectShortName">c_pmem_en_i</obj_property>
+   </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/sreg_time_dt_i">
       <obj_property name="ElementShortName">sreg_time_dt_i[31:0]</obj_property>
       <obj_property name="ObjectShortName">sreg_time_dt_i[31:0]</obj_property>
@@ -286,6 +302,7 @@
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
+<<<<<<< HEAD:axis_qick_processor/src/TB/tb_axis_QCORE0.wcfg
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/time_ref_set">
       <obj_property name="ElementShortName">time_ref_set</obj_property>
       <obj_property name="ObjectShortName">time_ref_set</obj_property>
@@ -294,6 +311,38 @@
       <obj_property name="ElementShortName">time_ref_inc</obj_property>
       <obj_property name="ObjectShortName">time_ref_inc</obj_property>
    </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/port_we_o">
+      <obj_property name="ElementShortName">port_we_o</obj_property>
+      <obj_property name="ObjectShortName">port_we_o</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/id_flag_we">
+      <obj_property name="ElementShortName">id_flag_we</obj_property>
+      <obj_property name="ObjectShortName">id_flag_we</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/id_flag_used">
+      <obj_property name="ElementShortName">id_flag_used</obj_property>
+      <obj_property name="ObjectShortName">id_flag_used</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/x1_alu_fZ">
+      <obj_property name="ElementShortName">x1_alu_fZ</obj_property>
+      <obj_property name="ObjectShortName">x1_alu_fZ</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/x1_ctrl">
+      <obj_property name="ElementShortName">x1_ctrl</obj_property>
+      <obj_property name="ObjectShortName">x1_ctrl</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/alu_fZ_r">
+      <obj_property name="ElementShortName">alu_fZ_r</obj_property>
+      <obj_property name="ObjectShortName">alu_fZ_r</obj_property>
+      <obj_property name="CustomSignalColor">#FAAFBE</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+=======
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/port_we_o">
       <obj_property name="ElementShortName">port_we_o</obj_property>
       <obj_property name="ObjectShortName">port_we_o</obj_property>
@@ -341,6 +390,23 @@
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/id_cond_used">
       <obj_property name="ElementShortName">id_cond_used</obj_property>
       <obj_property name="ObjectShortName">id_cond_used</obj_property>
+>>>>>>> d55a849445322e7396ab49e89efffbcfb11075ed:qick_processor/src/TB/tb_axis_QCORE0.wcfg
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/id_COND">
+      <obj_property name="ElementShortName">id_COND[2:0]</obj_property>
+      <obj_property name="ObjectShortName">id_COND[2:0]</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/id_cond_ok">
+      <obj_property name="ElementShortName">id_cond_ok</obj_property>
+      <obj_property name="ObjectShortName">id_cond_ok</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/id_branch_cond_ok">
+      <obj_property name="ElementShortName">id_branch_cond_ok</obj_property>
+      <obj_property name="ObjectShortName">id_branch_cond_ok</obj_property>
+   </wvobject>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/id_cond_used">
+      <obj_property name="ElementShortName">id_cond_used</obj_property>
+      <obj_property name="ObjectShortName">id_cond_used</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/port_o">
       <obj_property name="ElementShortName">port_o</obj_property>
@@ -358,6 +424,112 @@
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       <obj_property name="CustomSignalColor">#FFA500</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+<<<<<<< HEAD:axis_qick_processor/src/TB/tb_axis_QCORE0.wcfg
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_MEM/D_MEM/RAM">
+      <obj_property name="ElementShortName">RAM[0:15][31:0]</obj_property>
+      <obj_property name="ObjectShortName">RAM[0:15][31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFA500</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+=======
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[0]">
+         <obj_property name="ElementShortName">[0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[1]">
+         <obj_property name="ElementShortName">[1][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[2]">
+         <obj_property name="ElementShortName">[2][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[3]">
+         <obj_property name="ElementShortName">[3][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[4]">
+         <obj_property name="ElementShortName">[4][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[5]">
+         <obj_property name="ElementShortName">[5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[6]">
+         <obj_property name="ElementShortName">[6][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[7]">
+         <obj_property name="ElementShortName">[7][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[8]">
+         <obj_property name="ElementShortName">[8][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[9]">
+         <obj_property name="ElementShortName">[9][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[10]">
+         <obj_property name="ElementShortName">[10][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[11]">
+         <obj_property name="ElementShortName">[11][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[12]">
+         <obj_property name="ElementShortName">[12][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[13]">
+         <obj_property name="ElementShortName">[13][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[14]">
+         <obj_property name="ElementShortName">[14][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_CPU/reg_bank/dreg_32_dt[15]">
+         <obj_property name="ElementShortName">[15][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][31:0]</obj_property>
+         <obj_property name="CustomSignalColor">#FFA500</obj_property>
+         <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+>>>>>>> d55a849445322e7396ab49e89efffbcfb11075ed:qick_processor/src/TB/tb_axis_QCORE0.wcfg
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_MEM/D_MEM/RAM">
       <obj_property name="ElementShortName">RAM[0:15][31:0]</obj_property>
@@ -513,8 +685,11 @@
       <obj_property name="ElementShortName">RAM[0:15][167:0]</obj_property>
       <obj_property name="ObjectShortName">RAM[0:15][167:0]</obj_property>
    </wvobject>
+<<<<<<< HEAD:axis_qick_processor/src/TB/tb_axis_QCORE0.wcfg
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/CORE_MEM/P_MEM/RAM">
       <obj_property name="ElementShortName">RAM[0:255][71:0]</obj_property>
       <obj_property name="ObjectShortName">RAM[0:255][71:0]</obj_property>
    </wvobject>
+=======
+>>>>>>> d55a849445322e7396ab49e89efffbcfb11075ed:qick_processor/src/TB/tb_axis_QCORE0.wcfg
 </wave_config>

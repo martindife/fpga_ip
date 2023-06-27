@@ -14,19 +14,14 @@ INIT:
 /////////////////////////////////////////////////
 NOP
 
-REG_WR s_time label CASA
-REG_WR r_time label CASA
-REG_WR s_addr label CASA
-REG_WR r_addr label CASA
-
 TEST -op(r3 - #3)
 TEST -op(r4 AND #b11)
-COND set
-COND clear
 
 // REGISTER Instructions
 /////////////////////////////////////////////////
 // GENERAL REGITSERS
+REG_WR r0 imm #255
+REG_WR r0 op -op(s0-#255)
 REG_WR r1 imm #b1
 REG_WR r4 imm #4
 REG_WR r3 op -op(r4-#1) 
@@ -47,8 +42,6 @@ REG_WR r15 label INIT
 REG_WR r15 dmem [&0]
 REG_WR r15 op -op(r14 XOR #1)
 
-
-
 // SPECIAL FUNCTION REGITSERS
 REG_WR s0  imm #0  // Does Nothing (UPDATE LFRS if CFG='11')
 REG_WR s1  imm #1  // Update LFSR Value (Load Seed)
@@ -64,15 +57,13 @@ REG_WR s10 imm #10 // Does Nothing (port_msw READ ONLY register)
 REG_WR s11 imm #11 // Does Nothing (time_usr READ ONLY register)
 REG_WR s12 imm #12 // Write core_w1 Register
 REG_WR s13 imm #13 // Write core_w2 Register
+RW:
+REG_WR r_time op -op(s1)
+REG_WR s_time label RW
+REG_WR r_addr label RW
+REG_WR s_addr op -op(s1+s0)
 REG_WR s14 imm #14 // Write s_time Register
 REG_WR s15 imm #15 // Write s_addr Register
-
-REG_WR r15 dmem [&0]
-
-REG_WR s_time label CASA
-REG_WR s15 label CASA
-REG_WR s15 op -op(s1)
-REG_WR s_addr op -op(s1+s0)
 
 
 // WAVE-PARAM REGITSERS
@@ -92,7 +83,19 @@ REG_WR w_conf   imm   #17 //PHRST-NoPeriodic-DDS
 //REG_WR r_conf   imm   #5 //NoPHRST-Periodic-DDS
 //REG_WR r_conf   imm   #1 //NoPHRST-NoPeriodic-DDS
 
-REG_WR r_wave wmem [&0]
+NOP
+ARITH  T r1 r2
+NOP
+ARITH  TP r1 r2 r3
+NOP
+ARITH  TM r1 r2 r3
+NOP
+ARITH  PT r1 r2 r3
+NOP
+ARITH  PTP r1 r2 r3 r4
+NOP
+ARITH  PTM r1 r2 r3 r4
+NOP
 
 
 // MEMORY Instructions
@@ -119,10 +122,19 @@ WMEM_WR [&0]
 
 // PORT Instructions
 /////////////////////////////////////////////////
+DPORT_WR p0 imm 0
+DPORT_WR p1 imm 1  -wr(r1 imm) #2
+DPORT_WR p1 imm 2  -wr(r1 op) -op(r1+#2)
+DPORT_WR p1 imm 3  -wr(r1 op) -op(r1+r2)
+DPORT_WR p0 reg r4
+DPORT_WR p1 reg r5  -wr(r1 imm) #2
+DPORT_WR p1 reg r6  -wr(r1 op) -op(r1+#2)
+DPORT_WR p1 reg r7  -wr(r1 op) -op(r1+r2)
+
 
 
 REG_WR r0 op -op(s0+#10)
 REG_WR s_time imm #100
 
-CASA:
-
+END:
+JUMP END
