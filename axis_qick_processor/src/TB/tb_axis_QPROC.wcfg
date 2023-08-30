@@ -16,36 +16,18 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0.000 ns"></ZoomStartTime>
-      <ZoomEndTime time="2,000.001 ns"></ZoomEndTime>
-      <Cursor1Time time="651.477 ns"></Cursor1Time>
+      <ZoomStartTime time="6.026959 us"></ZoomStartTime>
+      <ZoomEndTime time="35.994609 us"></ZoomEndTime>
+      <Cursor1Time time="31.000000 us"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="208"></NameColumnWidth>
-      <ValueColumnWidth column_width="97"></ValueColumnWidth>
+      <ValueColumnWidth column_width="85"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="80" />
+   <WVObjectSize size="81" />
    <wave_markers>
       <marker label="" time="29771637" />
    </wave_markers>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/tproc_src_dt">
-      <obj_property name="ElementShortName">tproc_src_dt[3:0]</obj_property>
-      <obj_property name="ObjectShortName">tproc_src_dt[3:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core0_src_dt">
-      <obj_property name="ElementShortName">core0_src_dt[2:0]</obj_property>
-      <obj_property name="ObjectShortName">core0_src_dt[2:0]</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/QPROC_xREG/TPROC_R_DT1">
-      <obj_property name="ElementShortName">TPROC_R_DT1[31:0]</obj_property>
-      <obj_property name="ObjectShortName">TPROC_R_DT1[31:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/QPROC_xREG/TPROC_R_DT2">
-      <obj_property name="ElementShortName">TPROC_R_DT2[31:0]</obj_property>
-      <obj_property name="ObjectShortName">TPROC_R_DT2[31:0]</obj_property>
-      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core_st">
       <obj_property name="ElementShortName">core_st[31:0]</obj_property>
       <obj_property name="ObjectShortName">core_st[31:0]</obj_property>
@@ -182,12 +164,10 @@
       <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/port_o.p_addr">
          <obj_property name="ElementShortName">.p_addr[3:0]</obj_property>
          <obj_property name="ObjectShortName">.p_addr[3:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/CORE_0/port_o.p_data">
          <obj_property name="ElementShortName">.p_data[167:0]</obj_property>
          <obj_property name="ObjectShortName">.p_data[167:0]</obj_property>
-         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       </wvobject>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/time_ref_set">
@@ -212,11 +192,52 @@
       <obj_property name="ObjectShortName">c_fifo_time_in_r[47:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/fifo_we">
-      <obj_property name="ElementShortName">fifo_we</obj_property>
-      <obj_property name="ObjectShortName">fifo_we</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
+   <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/core_en">
+      <obj_property name="ElementShortName">core_en</obj_property>
+      <obj_property name="ObjectShortName">core_en</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/c_fifo_trig_push_r">
+      <obj_property name="ElementShortName">c_fifo_trig_push_r[3:0]</obj_property>
+      <obj_property name="ObjectShortName">c_fifo_trig_push_r[3:0]</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/c_fifo_time_in_r">
+      <obj_property name="ElementShortName">c_fifo_time_in_r[47:0]</obj_property>
+      <obj_property name="ObjectShortName">c_fifo_time_in_r[47:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/c_fifo_data_in_r">
+      <obj_property name="ElementShortName">c_fifo_data_in_r[167:0]</obj_property>
+      <obj_property name="ObjectShortName">c_fifo_data_in_r[167:0]</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="group" fp_name="group954">
+      <obj_property name="label">TRIG1</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\TRIG_FIFO[1].trig_fifo_inst /wr_en_i">
+         <obj_property name="ElementShortName">wr_en_i</obj_property>
+         <obj_property name="ObjectShortName">wr_en_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\TRIG_FIFO[1].trig_fifo_inst /wr_en_i">
+         <obj_property name="ElementShortName">wr_en_i</obj_property>
+         <obj_property name="ObjectShortName">wr_en_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\TRIG_FIFO[1].trig_fifo_inst /async_full">
+         <obj_property name="ElementShortName">async_full</obj_property>
+         <obj_property name="ObjectShortName">async_full</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\TRIG_FIFO[1].trig_fifo_inst /push_i">
+         <obj_property name="ElementShortName">push_i</obj_property>
+         <obj_property name="ObjectShortName">push_i</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\TRIG_FIFO[1].trig_fifo_inst /do_push">
+         <obj_property name="ElementShortName">do_push</obj_property>
+         <obj_property name="ObjectShortName">do_push</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\TRIG_FIFO[1].trig_fifo_inst /data_i">
+         <obj_property name="ElementShortName">data_i[48:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[48:0]</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/t_fifo_trig_time">
       <obj_property name="ElementShortName">t_fifo_trig_time[0:3][47:0]</obj_property>
@@ -312,6 +333,7 @@
       <obj_property name="ObjectShortName">time_abs_o[47:0]</obj_property>
       <obj_property name="CustomSignalColor">#D2691E</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/trig_3_o">
       <obj_property name="ElementShortName">trig_3_o</obj_property>
@@ -338,13 +360,13 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/port_0_dt_o">
-      <obj_property name="ElementShortName">port_0_dt_o[7:0]</obj_property>
-      <obj_property name="ObjectShortName">port_0_dt_o[7:0]</obj_property>
+      <obj_property name="ElementShortName">port_0_dt_o[3:0]</obj_property>
+      <obj_property name="ObjectShortName">port_0_dt_o[3:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/port_1_dt_o">
-      <obj_property name="ElementShortName">port_1_dt_o[7:0]</obj_property>
-      <obj_property name="ObjectShortName">port_1_dt_o[7:0]</obj_property>
+      <obj_property name="ElementShortName">port_1_dt_o[3:0]</obj_property>
+      <obj_property name="ObjectShortName">port_1_dt_o[3:0]</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/m0_axis_tdata">
@@ -559,8 +581,8 @@
          <obj_property name="ObjectShortName">push_i</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /data_i">
-         <obj_property name="ElementShortName">data_i[55:0]</obj_property>
-         <obj_property name="ObjectShortName">data_i[55:0]</obj_property>
+         <obj_property name="ElementShortName">data_i[51:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[51:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /rd_clk_i">
          <obj_property name="ElementShortName">rd_clk_i</obj_property>
@@ -579,8 +601,8 @@
          <obj_property name="ObjectShortName">pop_i</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /data_o">
-         <obj_property name="ElementShortName">data_o[55:0]</obj_property>
-         <obj_property name="ObjectShortName">data_o[55:0]</obj_property>
+         <obj_property name="ElementShortName">data_o[51:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[51:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[0].data_fifo_inst /flush_i">
          <obj_property name="ElementShortName">flush_i</obj_property>
@@ -611,12 +633,12 @@
          <obj_property name="ObjectShortName">push_i</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[1].data_fifo_inst /gcc_wr_ptr/count_bin">
-         <obj_property name="ElementShortName">count_bin[1:0]</obj_property>
-         <obj_property name="ObjectShortName">count_bin[1:0]</obj_property>
+         <obj_property name="ElementShortName">count_bin[2:0]</obj_property>
+         <obj_property name="ObjectShortName">count_bin[2:0]</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[1].data_fifo_inst /data_i">
-         <obj_property name="ElementShortName">data_i[55:0]</obj_property>
-         <obj_property name="ObjectShortName">data_i[55:0]</obj_property>
+         <obj_property name="ElementShortName">data_i[51:0]</obj_property>
+         <obj_property name="ObjectShortName">data_i[51:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[1].data_fifo_inst /rd_rst_ni">
          <obj_property name="ElementShortName">rd_rst_ni</obj_property>
@@ -631,8 +653,8 @@
          <obj_property name="ObjectShortName">pop_i</obj_property>
       </wvobject>
       <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[1].data_fifo_inst /data_o">
-         <obj_property name="ElementShortName">data_o[55:0]</obj_property>
-         <obj_property name="ObjectShortName">data_o[55:0]</obj_property>
+         <obj_property name="ElementShortName">data_o[51:0]</obj_property>
+         <obj_property name="ObjectShortName">data_o[51:0]</obj_property>
       </wvobject>
       <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DATA_FIFO[1].data_fifo_inst /flush_i">
          <obj_property name="ElementShortName">flush_i</obj_property>
@@ -706,7 +728,6 @@
    <wvobject type="group" fp_name="group1169">
       <obj_property name="label">PERIPH</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
       <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\ARITH_YES.arith_inst /start_i">
          <obj_property name="ElementShortName">start_i</obj_property>
          <obj_property name="ObjectShortName">start_i</obj_property>
@@ -762,6 +783,34 @@
          <obj_property name="ObjectShortName">periph_d_dt_o[31:0]</obj_property>
          <obj_property name="CustomSignalColor">#0000FF</obj_property>
          <obj_property name="UseCustomSignalColor">true</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject type="group" fp_name="group590">
+      <obj_property name="label">DIV</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DIVIDER_YES.div_r_inst /start_i">
+         <obj_property name="ElementShortName">start_i</obj_property>
+         <obj_property name="ObjectShortName">start_i</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DIVIDER_YES.div_r_inst /A_i">
+         <obj_property name="ElementShortName">A_i[31:0]</obj_property>
+         <obj_property name="ObjectShortName">A_i[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DIVIDER_YES.div_r_inst /B_i">
+         <obj_property name="ElementShortName">B_i[31:0]</obj_property>
+         <obj_property name="ObjectShortName">B_i[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="logic" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DIVIDER_YES.div_r_inst /ready_o">
+         <obj_property name="ElementShortName">ready_o</obj_property>
+         <obj_property name="ObjectShortName">ready_o</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DIVIDER_YES.div_r_inst /div_quotient_o">
+         <obj_property name="ElementShortName">div_quotient_o[31:0]</obj_property>
+         <obj_property name="ObjectShortName">div_quotient_o[31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_axis_qick_processor/AXIS_QPROC/QPROC/\DIVIDER_YES.div_r_inst /div_remainder_o">
+         <obj_property name="ElementShortName">div_remainder_o[31:0]</obj_property>
+         <obj_property name="ObjectShortName">div_remainder_o[31:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

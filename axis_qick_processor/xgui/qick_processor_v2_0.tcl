@@ -23,6 +23,7 @@ proc init_gui { IPINST } {
 
   #Adding Group
   set OUT_Port_Configuration [ipgui::add_group $IPINST -name "OUT Port Configuration" -parent ${Process}]
+  ipgui::add_param $IPINST -name "FIFO_DEPTH" -parent ${OUT_Port_Configuration} -layout horizontal
   ipgui::add_param $IPINST -name "OUT_TRIG_QTY" -parent ${OUT_Port_Configuration}
   ipgui::add_param $IPINST -name "OUT_DPORT_QTY" -parent ${OUT_Port_Configuration}
   ipgui::add_param $IPINST -name "OUT_DPORT_DW" -parent ${OUT_Port_Configuration}
@@ -42,7 +43,7 @@ proc init_gui { IPINST } {
 
   ipgui::add_param $IPINST -name "TIME_READ" -parent ${Process} -widget checkBox
   ipgui::add_param $IPINST -name "IO_CTRL" -parent ${Process} -widget checkBox
-  ipgui::add_param $IPINST -name "DEBUG" -parent ${Process} -widget checkBox
+  ipgui::add_param $IPINST -name "DEBUG" -parent ${Process} -widget comboBox
 
   #Adding Group
   set External_Peripherals [ipgui::add_group $IPINST -name "External Peripherals" -parent ${Page_0}]
@@ -107,6 +108,15 @@ proc update_PARAM_VALUE.DUAL_CORE { PARAM_VALUE.DUAL_CORE } {
 
 proc validate_PARAM_VALUE.DUAL_CORE { PARAM_VALUE.DUAL_CORE } {
 	# Procedure called to validate DUAL_CORE
+	return true
+}
+
+proc update_PARAM_VALUE.FIFO_DEPTH { PARAM_VALUE.FIFO_DEPTH } {
+	# Procedure called to update FIFO_DEPTH when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.FIFO_DEPTH { PARAM_VALUE.FIFO_DEPTH } {
+	# Procedure called to validate FIFO_DEPTH
 	return true
 }
 
@@ -307,5 +317,10 @@ proc update_MODELPARAM_VALUE.OUT_DPORT_DW { MODELPARAM_VALUE.OUT_DPORT_DW PARAM_
 proc update_MODELPARAM_VALUE.OUT_TRIG_QTY { MODELPARAM_VALUE.OUT_TRIG_QTY PARAM_VALUE.OUT_TRIG_QTY } {
 	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
 	set_property value [get_property value ${PARAM_VALUE.OUT_TRIG_QTY}] ${MODELPARAM_VALUE.OUT_TRIG_QTY}
+}
+
+proc update_MODELPARAM_VALUE.FIFO_DEPTH { MODELPARAM_VALUE.FIFO_DEPTH PARAM_VALUE.FIFO_DEPTH } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.FIFO_DEPTH}] ${MODELPARAM_VALUE.FIFO_DEPTH}
 }
 

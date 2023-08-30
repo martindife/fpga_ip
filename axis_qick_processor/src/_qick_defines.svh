@@ -24,7 +24,8 @@
       bit         r_wave_we ;
       bit [6:0]   addr  ;
       bit [1:0]   src  ;
-   } CTRL_REG;
+      bit         port_re ;
+      } CTRL_REG;
      
 
    typedef struct packed {
@@ -41,7 +42,6 @@
       reg       dmem_we ;
       reg       wmem_we ;
       reg       port_we ;
-      reg       port_re ;
    } CTRL_FLOW;
    
    

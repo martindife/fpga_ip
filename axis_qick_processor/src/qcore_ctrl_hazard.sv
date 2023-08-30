@@ -59,7 +59,7 @@ reg  [31:0]    data_r   [4] ;
 reg            stall_id_w, stall_id_f, stall_id_j     ;
 reg [1:0] fwd_D_RD, fwd_D_X1, fwd_D_X2, fwd_D_WR ;
 reg [1:0] src_wreg_D;
-reg  [1 :0]    w_stall_D_rd, d_stall_D_rd     ;
+reg  [1 :0]    w_stall_D_rd, d_stall_D_rd, stall_id_D_rd     ;
 
 // DATA FORWARDING
 genvar ind_D;
@@ -72,6 +72,10 @@ generate
             w_stall_D_rd[ind_D] = 1'b1 ;
          else
             w_stall_D_rd[ind_D] = 1'b0 ;
+      end
+      always_comb begin
+         stall_id_D_rd[ind_D]    = rd_reg_i.port_re | x1_reg_i.port_re | x2_reg_i.port_re ;   
+         //port_stall_D_rd[ind_D]    = x1_reg_i.port_re | x2_reg_i.port_re ;   
       end
       always_comb begin
          reg_D_nxt[ind_D] = rs_D_dt_i[ind_D];
@@ -188,7 +192,7 @@ always_ff @ (posedge clk_i, negedge rst_ni)
    end
 assign reg_A_dt_o      = reg_A;
 assign reg_D_dt_o      = reg_D;
-assign bubble_id_o   = stall_id_j | stall_id_f | stall_id_w;
+assign bubble_id_o   = stall_id_j | stall_id_f | stall_id_w | stall_id_D_rd  ;
 assign bubble_rd_o   = |stall_A_rd | |d_stall_D_rd | |w_stall_D_rd  ;
 
 endmodule

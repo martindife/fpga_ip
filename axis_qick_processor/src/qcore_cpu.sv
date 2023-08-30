@@ -85,6 +85,7 @@ wire halt, flush, stall, bubble_id, bubble_rd;
 assign halt    = ~en_i ;
 assign flush   = id_pc_change | r_id_pc_change ;
 assign stall   = bubble_id | bubble_rd;
+assign fetch_en = ~stall & ~halt;
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,10 +241,11 @@ always_comb begin
    id_rd_addr      = r_if_op_data [  6 :  0 ] ;
    id_rd_wreg      = r_if_op_data[6:5] == 2'b01 ; //RD is wreg
 end
-assign id_reg.we      = id_dreg_we      ;
-assign id_reg.r_wave_we = id_r_wave_we  ;
-assign id_reg.addr    = id_rd_addr      ;
-assign id_reg.src     = id_cfg_reg_src  ;
+assign id_reg.we        = id_dreg_we      ;
+assign id_reg.r_wave_we = id_r_wave_we    ;
+assign id_reg.addr      = id_rd_addr      ;
+assign id_reg.src       = id_cfg_reg_src  ;
+assign id_reg.port_re   = id_dport_re     ;
 
 assign id_ctrl.cfg_addr_imm  = id_AI            ;
 assign id_ctrl.cfg_dt_imm    = id_cfg_dt_imm    ;
@@ -258,7 +260,6 @@ assign id_ctrl.flag_we       = id_flag_we       ;
 assign id_ctrl.dmem_we       = id_dmem_we       ;
 assign id_ctrl.wmem_we       = id_wmem_we       ;
 assign id_ctrl.port_we       = id_wport_we | id_dport_we ;
-assign id_ctrl.port_re       = id_dport_re      ;
 
 
 // CONDITION  
@@ -314,7 +315,7 @@ always @(posedge clk_i) begin
    if (restart_i) begin
       PC_curr     <= 0;
       PC_prev     <= 0;
-   end else if (core_en) begin
+   end else if (fetch_en) begin
          PC_curr <= PC_nxt;
          PC_prev <= PC_curr;
       end
@@ -506,13 +507,14 @@ LIFO  # (
    .clk_i   ( clk_i    ) ,
    .rst_ni  ( rst_ni   ) ,
    .data_i  ( PC_prev  ) ,
-   .push    ( id_call & core_en  ) ,
-   .pop     ( id_ret & core_en  ) ,
+   .push    ( id_call & fetch_en  ) ,
+   .pop     ( id_ret & fetch_en  ) ,
    .data_o  ( pc_stack ) ,
    .full_o  ( pc_stack_full ) );
 
 
-assign core_en = ~stall & ~halt;
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // PIPELINE  
 ///////////////////////////////////////////////////////////////////////////////
@@ -650,37 +652,39 @@ end //ALWAYS
 /////////////////////////////////////////////////////////////////////////////////////////
 
 // PROGRAM MEMORY
-assign pmem_en_o        = core_en | r_mem_rst;
+assign pmem_en_o        = fetch_en | r_mem_rst;
 assign pmem_addr_o      = PC_curr         ; // Disable next instruction with pc_jump
 // assign pmem_addr_o   = PC_nxt         ;
 
 //DATA MEMORY
-assign dmem_we_o        = x1_ctrl.dmem_we & ~halt   ;
+assign dmem_we_o        = halt ? 0 : x1_ctrl.dmem_we;
 assign dmem_addr_o      = x1_mem_addr        ;
 assign dmem_w_dt_o      = x1_mem_w_dt        ;
 
 //WAVE MEMORY
-assign wmem_we_o        = x1_ctrl.wmem_we  & ~halt ;
+assign wmem_we_o        = halt ? 0 : x1_ctrl.wmem_we;
 assign wmem_addr_o      = x1_wave_addr      ;
 assign wmem_w_dt_o      = reg_wave_dt      ;
 
 // PERIPH OUT
-assign usr_ctrl_o      = x1_ctrl.usr_ctrl ;
+// assign <output> = <1-bit_select> ? <input1> : <input0>;
+assign usr_ctrl_o      = halt ? 0 : x1_ctrl.usr_ctrl ;
 assign usr_dt_a_o      = x1_rsD0_dt ; 
 assign usr_dt_b_o      = x1_ctrl.cfg_dt_imm ? r_rd_imm_dt : x1_rsD1_dt ;
 assign usr_dt_c_o      = x1_rsA0_dt ; 
 assign usr_dt_d_o      = x1_rsA1_dt;
 
 // PORT OUTPUT
-assign port_we_o        = x2_ctrl.port_we & ~halt   ;
-assign port_re_o        = x2_ctrl.port_re & ~halt   ;
+assign port_we_o        = halt ? 0 : x2_ctrl.port_we ;
+assign port_re_o        = halt ? 0 : x2_reg.port_re ;
+
 assign port_o.p_time    = x2_ctrl.cfg_port_time ? r_x1_imm_dt : reg_time;
 assign port_o.p_type    = x2_ctrl.cfg_port_type ;
 assign port_o.p_addr    = r_x1_port_w_addr     ;
 assign port_o.p_data    = x2_port_w_dt       ;
 
 // DEBUG
-assign core_do [31:24] = {restart_i, stall, flush, id_flag_we, alu_fZ_r, alu_fS_r, x2_ctrl.port_we, x2_ctrl.port_re};
+assign core_do [31:24] = {restart_i, stall, flush, id_flag_we, alu_fZ_r, alu_fS_r, x2_ctrl.port_we, x2_reg.port_re};
 assign core_do [23:16] = {id_type_ctrl, id_type_cfg, id_type_br, id_type_wr, id_type_wm, id_type_wp, 1'b0, pc_stack_full } ;
 assign core_do [15:8]  = r_x1_alu_dt[7:0]  ;
 assign core_do [7:0]   = port_o.p_time[7:0] ;

@@ -32,6 +32,7 @@ import axi_mst_0_pkg::*;
 `define DIVIDER          1
 `define ARITH            1
 `define TIME_READ        1
+`define FIFO_DEPTH       3
 `define PMEM_AW          8 
 `define DMEM_AW          4 
 `define WMEM_AW          4 
@@ -39,6 +40,7 @@ import axi_mst_0_pkg::*;
 `define IN_PORT_QTY      1
 `define OUT_TRIG_QTY     4
 `define OUT_DPORT_QTY    2
+`define OUT_DPORT_DW    2
 `define OUT_WPORT_QTY    1 
 
 
@@ -156,11 +158,7 @@ wire [167:0]       m6_axis_tdata        ;
 wire               m6_axis_tvalid       ;
 wire [167:0]       m7_axis_tdata        ;
 wire               m7_axis_tvalid       ;
-wire [31:0]         port_0_dt_o         ;
-wire [31:0]         port_1_dt_o         ;
-wire [31:0]         port_2_dt_o         ;
-wire [31:0]         port_3_dt_o         ;
-
+wire [`OUT_DPORT_DW-1:0]         port_0_dt_o, port_1_dt_o, port_2_dt_o, port_3_dt_o         ;
 
 wire                tnet_en_o   ;
 wire  [4 :0]        tnet_op_o   ;
@@ -260,6 +258,7 @@ axis_qick_proccessor # (
    .DIVIDER        (  `DIVIDER ) ,
    .ARITH          (  `ARITH ) ,
    .TIME_READ      (  `TIME_READ ) ,
+   .FIFO_DEPTH     (  `FIFO_DEPTH ) ,
    .PMEM_AW        (  `PMEM_AW ) ,
    .DMEM_AW        (  `DMEM_AW ) ,
    .WMEM_AW        (  `WMEM_AW ) ,
@@ -267,6 +266,7 @@ axis_qick_proccessor # (
    .IN_PORT_QTY    (  `IN_PORT_QTY ) ,
    .OUT_TRIG_QTY   (  `OUT_TRIG_QTY ) ,
    .OUT_DPORT_QTY  (  `OUT_DPORT_QTY ) ,
+   .OUT_DPORT_DW   (  `OUT_DPORT_DW ) ,   
    .OUT_WPORT_QTY  (  `OUT_WPORT_QTY ) 
 ) AXIS_QPROC (
    .t_clk_i             ( t_clk              ) ,

@@ -13,23 +13,24 @@
  
 module axis_qick_proccessor # (
    parameter DUAL_CORE      =  0  ,
-   parameter IO_CTRL        =  1  ,
-   parameter DEBUG          =  1  ,
-   parameter TNET           =  1  ,
-   parameter CUSTOM_PERIPH  =  1  ,
+   parameter IO_CTRL        =  0  ,
+   parameter DEBUG          =  0  ,
+   parameter TNET           =  0  ,
+   parameter CUSTOM_PERIPH  =  0  ,
    parameter LFSR           =  1  ,
    parameter DIVIDER        =  1  ,
    parameter ARITH          =  1  ,
    parameter TIME_READ      =  1  ,
+   parameter FIFO_DEPTH     =  9 ,
    parameter PMEM_AW        =  10 ,
    parameter DMEM_AW        =  10 ,
-   parameter WMEM_AW        =  8  ,
-   parameter REG_AW         =  4  ,
-   parameter IN_PORT_QTY    =  2  ,
-   parameter OUT_TRIG_QTY   =  2  ,
+   parameter WMEM_AW        =  10  ,
+   parameter REG_AW         =  5  ,
+   parameter IN_PORT_QTY    =  4  ,
+   parameter OUT_TRIG_QTY   =  4  ,
    parameter OUT_DPORT_QTY  =  1  ,
-   parameter OUT_DPORT_DW   =  8 ,
-   parameter OUT_WPORT_QTY  =  4 
+   parameter OUT_DPORT_DW   =  4 ,
+   parameter OUT_WPORT_QTY  =  8 
 )(
 // Core, Time and AXI CLK & RST.
    input  wire                t_clk_i         ,
@@ -301,6 +302,7 @@ qick_processor # (
    .DIVIDER        ( DIVIDER        ),
    .ARITH          ( ARITH          ),
    .TIME_READ      ( TIME_READ      ),
+   .FIFO_DEPTH     ( FIFO_DEPTH     ),
    .PMEM_AW        ( PMEM_AW        ),
    .DMEM_AW        ( DMEM_AW        ),
    .WMEM_AW        ( WMEM_AW        ),
@@ -479,6 +481,7 @@ assign m13_axis_tvalid    = m_axis_tvalid_s[13]  ;
 assign m14_axis_tdata     = m_axis_tdata_s [14]  ;
 assign m14_axis_tvalid    = m_axis_tvalid_s[14]  ;
 assign m15_axis_tdata     = m_axis_tdata_s [15]  ;
+assign m15_axis_tvalid    = m_axis_tvalid_s[15]  ;
 
 ///// DEBUG 
 generate

@@ -107,14 +107,14 @@ module sync_reg # (
    output wire [DW-1:0] dt_o     );
    
 // FAST REGISTER GRAY TRANSFORM OF INPUT
-reg [DW-1:0] data_rcd, data_r ;
+(* ASYNC_REG = "TRUE" *) reg [DW-1:0] data_cdc, data_r ;
 always_ff @(posedge clk_i)
    if(!rst_ni) begin
-      data_rcd  <= 0;
+      data_cdc  <= 0;
       data_r    <= 0;
    end else begin 
-      data_rcd  <= dt_i;
-      data_r    <= data_rcd;
+      data_cdc  <= dt_i;
+      data_r    <= data_cdc;
       end
 assign dt_o = data_r ;
 
@@ -147,14 +147,14 @@ always_comb begin
    end
 end
 
-reg clear_rcd, clear_r;
+(* ASYNC_REG = "TRUE" *) reg clear_cdc, clear_r;
 always_ff @(posedge clk_i, negedge rst_ni)
    if(!rst_ni) begin
-      clear_rcd       <= 0;
+      clear_cdc       <= 0;
       clear_r         <= 0;
    end else begin
-      clear_rcd       <= async_clear_i;
-      clear_r         <= clear_rcd;
+      clear_cdc       <= async_clear_i;
+      clear_r         <= clear_cdc;
    end
    
 assign count_bin_p1 = count_bin + 1 ; 
@@ -223,19 +223,17 @@ wire async_empty, async_full;
 
 
 // Sample Pointers
-reg [FIFO_AW-1:0] wr_gptr_rcd, wr_gptr_r, wr_gptr_p1_rcd, wr_gptr_p1_r; 
+(* ASYNC_REG = "TRUE" *) reg [FIFO_AW-1:0] wr_gptr_cdc, wr_gptr_r; 
 always_ff @(posedge rd_clk_i) begin
-   wr_gptr_rcd      <= wr_gptr;
-   wr_gptr_r        <= wr_gptr_rcd;
-   wr_gptr_p1_rcd   <= wr_gptr_p1;
-   wr_gptr_p1_r     <= wr_gptr_p1_rcd;
+   wr_gptr_cdc      <= wr_gptr;
+   wr_gptr_r        <= wr_gptr_cdc;
    async_empty_r    <= async_empty;
 end
 
-reg [FIFO_AW-1:0] rd_gptr_rcd, rd_gptr_r; 
+(* ASYNC_REG = "TRUE" *) reg [FIFO_AW-1:0] rd_gptr_cdc, rd_gptr_r; 
 always_ff @(posedge wr_clk_i) begin
-   rd_gptr_rcd      <= rd_gptr;
-   rd_gptr_r        <= rd_gptr_rcd;
+   rd_gptr_cdc      <= rd_gptr;
+   rd_gptr_r        <= rd_gptr_cdc;
 end
 
 
