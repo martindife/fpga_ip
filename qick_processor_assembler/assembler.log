@@ -2,20 +2,27 @@
 
 INFO : [ASM2LIST] > ##### STEP_1 - LABEL RECOGNITION
 INFO : [ALIAS_RECOGNITION] >  > r0 is called repeat_cnt
-INFO : [ALIAS_RECOGNITION] >  > r1 is called addr_aux
-INFO : [ALIAS_RECOGNITION] >  > r2 is called data_aux
-INFO : [ALIAS_RECOGNITION] >  > r3 is called time_aux
+INFO : [ALIAS_RECOGNITION] >  > r5 is called pulse_inc
+INFO : [ALIAS_RECOGNITION] >  > r15 is called aux
+INFO : [ALIAS_RECOGNITION] >  > r4 is called pulse_start
+INFO : [ALIAS_RECOGNITION] >  > r3 is called pulse_moving_pos
+INFO : [CONSTANT_RECOGNITION] >  > 100 is called pulse_envelope_w
+INFO : [CONSTANT_RECOGNITION] >  > 50 is called pulse_central_pos
+INFO : [CONSTANT_RECOGNITION] >  > 5 is called pulse_central_w
+INFO : [CONSTANT_RECOGNITION] >  > 5 is called pulse_moving_w
+INFO : [CONSTANT_RECOGNITION] >  > 1000 is called total_repeat
+INFO : [CONSTANT_RECOGNITION] >  > 1 is called velocity
 INFO : [ALIAS_RECOGNITION] > 
 ## ALIAS LIST
 ###############################
 REG  > ALIAS NAME
 -----|-------------
-w0  > w_freq|r_freq
-w1  > w_phase|r_phase
-w2  > w_env|r_env
-w3  > w_gain|r_gain
-w4  > w_lenght|r_lenght
-w5  > w_conf|r_conf
+w0  > w_freq
+w1  > w_phase
+w2  > w_env
+w3  > w_gain
+w4  > w_length
+w5  > w_conf
 s0  > zero
 s1  > rand
 s2  > s_conf
@@ -27,48 +34,58 @@ s7  > core_r1
 s8  > core_r2
 s9  > port_l
 s10 > port_h
-s11 > tuser
+s11 > curr_usr_time
 s12 > core_w1
 s13 > core_w2
-s14 > r_time|s_time
-s15 > r_addr|s_addr
+s14 > out_usr_time
+s15 > s_addr
 r0  > repeat_cnt
-r1  > addr_aux
-r2  > data_aux
-r3  > time_aux
+r5  > pulse_inc
+r15 > aux
+r4  > pulse_start
+r3  > pulse_moving_pos
+#100 > pulse_envelope_w
+#50 > pulse_central_pos
+#5  > pulse_central_w
+#5  > pulse_moving_w
+#1000 > total_repeat
+#1  > velocity
 ###############################
 INFO : [LABEL_RECOGNITION] > 
 ## LABEL LIST 
 ###############################
 LABEL NAME       > PMEM ADDRESS
 -----------------|-------------  
-INIT            > &1
-CASA            > &77
+INIT            > &17
+TRIG_LOOP       > &19
+END             > &33
 ###############################
 INFO : [ASM2LIST] > ##### STEP_2 - COMMAND RECOGNITION
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 17
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 18
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 19
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 20
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: INIT replaced by value &1  in line 46
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 72
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 73
+INFO : [COMMAND_RECOGNITION] > BRANCH to label : TRIG_LOOP is done to address &19  > line 61
+INFO : [COMMAND_RECOGNITION] > BRANCH to label : END is done to address &33  > line 64
 INFO : [ASM2LIST] > ##### STEP_1 - LABEL RECOGNITION
 INFO : [ALIAS_RECOGNITION] >  > r0 is called repeat_cnt
-INFO : [ALIAS_RECOGNITION] >  > r1 is called addr_aux
-INFO : [ALIAS_RECOGNITION] >  > r2 is called data_aux
-INFO : [ALIAS_RECOGNITION] >  > r3 is called time_aux
+INFO : [ALIAS_RECOGNITION] >  > r5 is called pulse_inc
+INFO : [ALIAS_RECOGNITION] >  > r15 is called aux
+INFO : [ALIAS_RECOGNITION] >  > r4 is called pulse_start
+INFO : [ALIAS_RECOGNITION] >  > r3 is called pulse_moving_pos
+INFO : [CONSTANT_RECOGNITION] >  > 100 is called pulse_envelope_w
+INFO : [CONSTANT_RECOGNITION] >  > 50 is called pulse_central_pos
+INFO : [CONSTANT_RECOGNITION] >  > 5 is called pulse_central_w
+INFO : [CONSTANT_RECOGNITION] >  > 5 is called pulse_moving_w
+INFO : [CONSTANT_RECOGNITION] >  > 1000 is called total_repeat
+INFO : [CONSTANT_RECOGNITION] >  > 1 is called velocity
 INFO : [ALIAS_RECOGNITION] > 
 ## ALIAS LIST
 ###############################
 REG  > ALIAS NAME
 -----|-------------
-w0  > w_freq|r_freq
-w1  > w_phase|r_phase
-w2  > w_env|r_env
-w3  > w_gain|r_gain
-w4  > w_lenght|r_lenght
-w5  > w_conf|r_conf
+w0  > w_freq
+w1  > w_phase
+w2  > w_env
+w3  > w_gain
+w4  > w_length
+w5  > w_conf
 s0  > zero
 s1  > rand
 s2  > s_conf
@@ -80,83 +97,52 @@ s7  > core_r1
 s8  > core_r2
 s9  > port_l
 s10 > port_h
-s11 > tuser
+s11 > curr_usr_time
 s12 > core_w1
 s13 > core_w2
-s14 > r_time|s_time
-s15 > r_addr|s_addr
+s14 > out_usr_time
+s15 > s_addr
 r0  > repeat_cnt
-r1  > addr_aux
-r2  > data_aux
-r3  > time_aux
+r5  > pulse_inc
+r15 > aux
+r4  > pulse_start
+r3  > pulse_moving_pos
+#100 > pulse_envelope_w
+#50 > pulse_central_pos
+#5  > pulse_central_w
+#5  > pulse_moving_w
+#1000 > total_repeat
+#1  > velocity
 ###############################
 INFO : [LABEL_RECOGNITION] > 
 ## LABEL LIST 
 ###############################
 LABEL NAME       > PMEM ADDRESS
 -----------------|-------------  
-INIT            > &1
-CASA            > &77
-END_OF_CASE_0   > &88
-END_OF_CASE_1   > &98
-END_OF_CASE_2   > &111
-CMD_0           > &112
-CMD_1           > &119
-CMD_2           > &126
-CMD_3           > &130
-CMD_OTHERS      > &134
-F_SHOW_WAVES    > &138
-SHOW_LOOP       > &140
-F_CREATE_WAVES  > &145
-CREATE_LOOP     > &146
-F_RAND_WAVE     > &150
+INIT            > &17
+TRIG_LOOP       > &19
+END             > &33
 ###############################
 INFO : [ASM2LIST] > ##### STEP_2 - COMMAND RECOGNITION
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 17
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 18
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 19
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 20
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: INIT replaced by value &1  in line 46
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 72
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CASA replaced by value &77  in line 73
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : F_CREATE_WAVES is done to address &145  > line 136
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : F_SHOW_WAVES is done to address &138  > line 137
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_OTHERS replaced by value &134  in line 145
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : CMD_0 is done to address &112  > line 147
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : CMD_1 is done to address &119  > line 149
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : CMD_2 is done to address &126  > line 151
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : CMD_3 is done to address &130  > line 153
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_OTHERS replaced by value &134  in line 159
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_0 replaced by value &112  in line 161
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_1 replaced by value &119  in line 163
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_2 replaced by value &126  in line 165
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_3 replaced by value &130  in line 167
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_0 replaced by value &112  in line 175
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : END_OF_CASE_2 is done to address &111  > line 176
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_1 replaced by value &119  in line 178
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : END_OF_CASE_2 is done to address &111  > line 179
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_2 replaced by value &126  in line 181
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : END_OF_CASE_2 is done to address &111  > line 182
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_3 replaced by value &130  in line 184
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : END_OF_CASE_2 is done to address &111  > line 185
-INFO : [COMMAND_RECOGNITION] > REG_WR command source label: CMD_OTHERS replaced by value &134  in line 186
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : SHOW_LOOP is done to address &140  > line 260
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : F_RAND_WAVE is done to address &150  > line 267
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : CREATE_LOOP is done to address &146  > line 269
-INFO : [COMMAND_RECOGNITION] > BRANCH to label : CASA is done to address &77  > line 288
+INFO : [COMMAND_RECOGNITION] > BRANCH to label : TRIG_LOOP is done to address &19  > line 61
+INFO : [COMMAND_RECOGNITION] > BRANCH to label : END is done to address &33  > line 64
 INFO : [LIST2BIN] > ##### LIST 2 BIN
-WARNING : [Instruction.REG_WR] > Register used to BRANCH should be s15 in instruction 17
-WARNING : [Instruction.REG_WR] > Register used to BRANCH should be s15 in instruction 18
-WARNING : [Instruction.REG_WR] > Register used to BRANCH should be s15 in instruction 46
-WARNING : [Instruction.REG_WR] > Register used to BRANCH should be s15 in instruction 72
-INFO : [Parameter.SRC] > With < -op() > imm value should be 16 Bits in instruction 106
-INFO : [Parameter.SRC] > [OK] Literal 0 can be represented with 16 Bits.
-INFO : [Parameter.SRC] > With < -op() > imm value should be 16 Bits in instruction 108
-INFO : [Parameter.SRC] > [OK] Literal 5 can be represented with 16 Bits.
-INFO : [Parameter.SRC] > With < -op() > imm value should be 16 Bits in instruction 110
-INFO : [Parameter.SRC] > [OK] Literal 3 can be represented with 16 Bits.
-INFO : [Parameter.SRC] > With < -op() > imm value should be 16 Bits in instruction 111
-INFO : [Parameter.SRC] > [OK] Literal 0 can be represented with 16 Bits.
-WARNING : [Instruction.PORT_WR] > No time specified for command will use r_time in line 215
-WARNING : [Instruction.PORT_WR] > No time specified for command will use r_time in line 258
-WARNING : [Instruction.PORT_WR] > No time specified for command will use r_time in line 259
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 18
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 20
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 21
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 22
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 23
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 25
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 26
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 29
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 31
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 32
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 33
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 48
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 49
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 51
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 52
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 54
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 55
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 57
+INFO : [Instruction.PORT_WR] > No time specified for command will use r_time in line 60
