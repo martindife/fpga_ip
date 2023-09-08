@@ -1,4 +1,4 @@
-module aurora_ctrl# (
+module aurora_ctrl_simplex # (
    parameter SIM_LEVEL = 1
 )( 
 // Core, Time and AXI CLK & RST.
@@ -36,6 +36,7 @@ module aurora_ctrl# (
    input  wire             rxp_B_i        ,
    output wire             txn_B_o        ,
    output  wire            txp_B_o        ,
+
 // A RX and B TX CONNECTION
 ////////////////   LINK CHANNEL A
    input  wire  [63:0]     s_axi_rx_tdata_RX_i  ,
@@ -83,6 +84,7 @@ module aurora_ctrl# (
 reg             reset_pb           ;
 reg             pma_init           ;
 
+
 /*
 // A and B DUPLEX CONNECTION
 wire             axi_rx_tvalid_A_RX, axi_rx_tlast_A_RX, axi_rx_tkeep_A_RX ;
@@ -101,7 +103,6 @@ reg  [7 :0]      axi_tx_tkeep_B_TX   ;
 
 assign axi_tx_tkeep_A_TX = {8{axi_tx_tlast_A_TX}};
 assign axi_tx_tkeep_B_TX = {8{axi_tx_tlast_B_TX}};
-
 */
 
 // A RX and B TX CONNECTION
@@ -137,39 +138,19 @@ wire user_clk, mmcm_not_locked;
 generate
 /////////////////////////////////////////////////
    if (SIM_LEVEL == 1) begin : SIM_NO_AURORA
-         assign txn_A_o             = 0 ;
-         assign txp_A_o             = 0 ;
-         assign txn_B_o             = 0 ;
-         assign txp_B_o             = 0 ;
-      assign aurora_do = 0;
+      assign txn_A_o             = 0 ;
+      assign txp_A_o             = 0 ;
+      assign txn_B_o             = 0 ;
+      assign txp_B_o             = 0 ;
+      assign init_clk            = 1;
+      assign user_clk            = ps_clk_i   ;
+      assign mmcm_not_locked     = ~ps_rst_ni ;
+      assign channel_A_up        = 1;
+      assign channel_B_up        = 1;
+      assign aurora_do           = 0;
 
-      assign user_clk          = ps_clk_i   ;
-      assign mmcm_not_locked   = ~ps_rst_ni ;
-      assign init_clk          = 1;
-      assign channel_A_up    = 1;
-      assign channel_B_up    = 1;
+// A RX and B TX CONNECTION
 
-//////// SIMPLEX
-
-
-   input  wire  [63:0]     s_axi_rx_tdata_RX_i  ,
-   input  wire             s_axi_rx_tvalid_RX_i ,
-   input  wire             s_axi_rx_tlast_RX_i  ,
-////////////////   LINK CHANNEL B
-   output reg  [63:0]      m_axi_tx_tdata_TX_o  ,
-   output reg              m_axi_tx_tvalid_TX_o ,
-   output reg              m_axi_tx_tlast_TX_o  ,
-   input  wire             m_axi_tx_tready_TX_i ,
-   
-   // LINK CHANNEL A
-   input  wire  [63:0]     s_axi_rx_tdata_RX  ,
-   input  wire             s_axi_rx_tvalid_RX ,
-   input  wire             s_axi_rx_tlast_RX  ,
-// LINK CHANNEL B
-   output reg  [63:0]      m_axi_tx_tdata_TX  ,
-   output reg              m_axi_tx_tvalid_TX ,
-   output reg              m_axi_tx_tlast_TX  ,
-   input  wire             m_axi_tx_tready_TX ,
       assign axi_rx_tvalid_RX   = s_axi_rx_tvalid_RX_i;
       assign axi_rx_tdata_RX    = s_axi_rx_tdata_RX_i ;
       assign axi_rx_tlast_RX    = s_axi_rx_tlast_RX_i ;
@@ -179,14 +160,7 @@ generate
       assign m_axi_tx_tlast_TX_o  = axi_tx_tlast_TX   ;
       assign axi_tx_tready_TX   = m_axi_tx_tready_TX_i;
 
-      assign axi_rx_tvalid_B_RX   = axi_rx_tvalid_B_RX_i;
-      assign axi_rx_tdata_B_RX    = axi_rx_tdata_B_RX_i ;
-      assign axi_rx_tlast_B_RX    = axi_rx_tlast_B_RX_i ;
 
-      assign axi_tx_tvalid_B_TX_o = axi_tx_tvalid_B_TX  ;
-      assign axi_tx_tdata_B_TX_o  = axi_tx_tdata_B_TX   ;
-      assign axi_tx_tlast_B_TX_o  = axi_tx_tlast_B_TX   ;
-      assign axi_tx_tready_B_TX   = axi_tx_tready_B_TX_i;
 /*   
 // A and B DUPLEX CONNECTION
 // Channel A=0 B=1
@@ -210,12 +184,14 @@ generate
 */
    end else begin 
       if (SIM_LEVEL == 2) begin : SIM_YES_AURORA
-         assign axi_tx_tdata_TX_o   = 0 ;
-         assign axi_tx_tvalid_TX_o  = 0 ;
-         assign axi_tx_tlast_TX_o   = 0 ;
+         assign m_axi_tx_tdata_TX_o   = 0 ;
+         assign m_axi_tx_tvalid_TX_o  = 0 ;
+         assign m_axi_tx_tlast_TX_o   = 0 ;
       end else begin : SYNT_AURORA
-         assign txn_o = 0 ;
-         assign txp_o = 0 ;
+         assign txn_A_o             = 0 ;
+         assign txp_A_o             = 0 ;
+         assign txn_B_o             = 0 ;
+         assign txp_B_o             = 0 ;
       end
       /////// INIT CLK
       clk_wiz_0 CLK_AURORA (
@@ -424,6 +400,39 @@ reg RX_A_wfh;
 // In hte Future Size of PACKET A can be MORE than 2
 // B is always 2 (ANSWER) 
 // Capture Data From Channels_RX
+
+
+always_ff @ (posedge user_clk, posedge user_rst) begin
+   if (user_rst) begin
+      RX_A_wfh      <= 1'b1;
+      RX_A_req      <= 1'b0;
+      RX_A_cnt      <= 8'd0;
+      RX_A_h_buff   <= 63'd0 ;
+      RX_A_dt_buff  <= '{default:'0};
+      RX_B_req      <= 1'b0;
+      RX_B_cnt      <= 8'd0;
+      RX_B_h_buff   <= 63'd0 ;
+      RX_B_dt_buff  <= 63'd0 ;
+   end else begin
+// RX CHannel
+      if (s_axi_rx_tvalid_RX_i)
+         if (s_axi_rx_tlast_RX_i) begin
+            RX_req      <= 1; 
+            RX_dt_buff  <= s_axi_rx_tdata_RX_i ;
+            RX_cnt      <= RX_cnt + 1'b1;
+         end else
+            RX_h_buff   <= axi_rx_tdata_RX_i ;
+      else if (RX_B_ack)
+         RX_B_req    <= 0;
+      if (RX_B_ack_set) begin
+         RX_B_ack    <= 1;
+         RX_B_req    <= 0;
+      end else if (idle_ing)
+         RX_B_ack    <= 0;
+   end
+end
+
+/*
 always_ff @ (posedge user_clk, posedge user_rst) begin
    if (user_rst) begin
       RX_A_wfh      <= 1'b1;
@@ -472,6 +481,7 @@ always_ff @ (posedge user_clk, posedge user_rst) begin
          RX_B_ack    <= 0;
    end
 end
+*/
 
 // DECODING INCOMING TRANSMISSION
 wire [63:0] h_buff, dt_buff;

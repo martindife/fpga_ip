@@ -1,4 +1,4 @@
-module aurora_ctrl# (
+module aurora_ctrl_duplex # (
    parameter SIM_LEVEL = 1
 )( 
 // Core, Time and AXI CLK & RST.
@@ -36,18 +36,6 @@ module aurora_ctrl# (
    input  wire             rxp_B_i        ,
    output wire             txn_B_o        ,
    output  wire            txp_B_o        ,
-// A RX and B TX CONNECTION
-////////////////   LINK CHANNEL A
-   input  wire  [63:0]     s_axi_rx_tdata_RX_i  ,
-   input  wire             s_axi_rx_tvalid_RX_i ,
-   input  wire             s_axi_rx_tlast_RX_i  ,
-////////////////   LINK CHANNEL B
-   output reg  [63:0]      m_axi_tx_tdata_TX_o  ,
-   output reg              m_axi_tx_tvalid_TX_o ,
-   output reg              m_axi_tx_tlast_TX_o  ,
-   input  wire             m_axi_tx_tready_TX_i ,
-
-/*
 // A and B DUPLEX CONNECTION
 ////////////////   CHANNEL A LINK
    input  wire             axi_rx_tvalid_A_RX_i  ,
@@ -65,9 +53,6 @@ module aurora_ctrl# (
    output reg              axi_tx_tvalid_B_TX_o  ,
    output reg              axi_tx_tlast_B_TX_o   ,
    input  wire             axi_tx_tready_B_TX_i  ,
-*/
-
-
 // DEBUGGING
    output wire [3:0]       aurora_do        ,
    output wire             channel_A_up   ,
@@ -83,7 +68,7 @@ module aurora_ctrl# (
 reg             reset_pb           ;
 reg             pma_init           ;
 
-/*
+
 // A and B DUPLEX CONNECTION
 wire             axi_rx_tvalid_A_RX, axi_rx_tlast_A_RX, axi_rx_tkeep_A_RX ;
 wire  [63:0]     axi_rx_tdata_A_RX   ;
@@ -101,22 +86,6 @@ reg  [7 :0]      axi_tx_tkeep_B_TX   ;
 
 assign axi_tx_tkeep_A_TX = {8{axi_tx_tlast_A_TX}};
 assign axi_tx_tkeep_B_TX = {8{axi_tx_tlast_B_TX}};
-
-*/
-
-// A RX and B TX CONNECTION
-wire             channel_up_RX        ;
-wire             axi_rx_tvalid_RX, axi_rx_tlast_RX   ;
-wire  [63:0]     axi_rx_tdata_RX    ;
-wire             channel_up_TX        ;
-wire             axi_tx_tready_TX, axi_tx_tvalid_TX, axi_tx_tlast_TX ;
-wire  [63:0]     axi_tx_tdata_TX    ;
-wire  [7 :0]     axi_tx_tkeep_TX , axi_rx_tkeep_RX;
-
-
-
-assign axi_tx_tkeep_TX = {8{axi_tx_tlast_TX}};
-assign axi_tx_tkeep_TX = {8{axi_tx_tlast_TX}};
 
 reg cmd_req;
 
@@ -149,45 +118,6 @@ generate
       assign channel_A_up    = 1;
       assign channel_B_up    = 1;
 
-//////// SIMPLEX
-
-
-   input  wire  [63:0]     s_axi_rx_tdata_RX_i  ,
-   input  wire             s_axi_rx_tvalid_RX_i ,
-   input  wire             s_axi_rx_tlast_RX_i  ,
-////////////////   LINK CHANNEL B
-   output reg  [63:0]      m_axi_tx_tdata_TX_o  ,
-   output reg              m_axi_tx_tvalid_TX_o ,
-   output reg              m_axi_tx_tlast_TX_o  ,
-   input  wire             m_axi_tx_tready_TX_i ,
-   
-   // LINK CHANNEL A
-   input  wire  [63:0]     s_axi_rx_tdata_RX  ,
-   input  wire             s_axi_rx_tvalid_RX ,
-   input  wire             s_axi_rx_tlast_RX  ,
-// LINK CHANNEL B
-   output reg  [63:0]      m_axi_tx_tdata_TX  ,
-   output reg              m_axi_tx_tvalid_TX ,
-   output reg              m_axi_tx_tlast_TX  ,
-   input  wire             m_axi_tx_tready_TX ,
-      assign axi_rx_tvalid_RX   = s_axi_rx_tvalid_RX_i;
-      assign axi_rx_tdata_RX    = s_axi_rx_tdata_RX_i ;
-      assign axi_rx_tlast_RX    = s_axi_rx_tlast_RX_i ;
-
-      assign m_axi_tx_tvalid_TX_o = axi_tx_tvalid_TX  ;
-      assign m_axi_tx_tdata_TX_o  = axi_tx_tdata_TX   ;
-      assign m_axi_tx_tlast_TX_o  = axi_tx_tlast_TX   ;
-      assign axi_tx_tready_TX   = m_axi_tx_tready_TX_i;
-
-      assign axi_rx_tvalid_B_RX   = axi_rx_tvalid_B_RX_i;
-      assign axi_rx_tdata_B_RX    = axi_rx_tdata_B_RX_i ;
-      assign axi_rx_tlast_B_RX    = axi_rx_tlast_B_RX_i ;
-
-      assign axi_tx_tvalid_B_TX_o = axi_tx_tvalid_B_TX  ;
-      assign axi_tx_tdata_B_TX_o  = axi_tx_tdata_B_TX   ;
-      assign axi_tx_tlast_B_TX_o  = axi_tx_tlast_B_TX   ;
-      assign axi_tx_tready_B_TX   = axi_tx_tready_B_TX_i;
-/*   
 // A and B DUPLEX CONNECTION
 // Channel A=0 B=1
       assign axi_rx_tvalid_A_RX   = axi_rx_tvalid_A_RX_i;
@@ -207,7 +137,7 @@ generate
       assign axi_tx_tdata_B_TX_o  = axi_tx_tdata_B_TX   ;
       assign axi_tx_tlast_B_TX_o  = axi_tx_tlast_B_TX   ;
       assign axi_tx_tready_B_TX   = axi_tx_tready_B_TX_i;
-*/
+
    end else begin 
       if (SIM_LEVEL == 2) begin : SIM_YES_AURORA
          assign axi_tx_tdata_TX_o   = 0 ;
@@ -224,82 +154,8 @@ generate
          .locked        ( locked      ), // output locked
          .clk_in1       ( ps_clk_i      )); // input clk_in1
 
-   // RECEIVING PORT
-   aurora_64b66b_SL AURORA_RX  (
-     .rxn                  ( rxn ),
-     .rxp                  ( rxp ),
-     .gt_refclk1_p         ( gt_refclk1_p       ), // input wire gt_refclk1_p
-     .gt_refclk1_n         ( gt_refclk1_n       ), // input wire gt_refclk1_n
-     .init_clk             ( init_clk           ), // input wire init_clk
-     .reset_pb             ( reset_pb           ), // input wire reset_pb
-     .pma_init             ( pma_init           ), // input wire pma_init
-     .m_axi_rx_tvalid      ( axi_rx_tvalid_RX  ), // output wire m_axi_rx_tvalid
-     .m_axi_rx_tdata       ( axi_rx_tdata_RX   ), // output wire [0 : 63] m_axi_rx_tdata
-     .m_axi_rx_tkeep       ( axi_rx_tkeep_RX   ), // output wire [0 : 7] m_axi_rx_tkeep
-     .m_axi_rx_tlast       ( axi_rx_tlast_RX   ), // output wire m_axi_rx_tlast
-     .power_down           ( 1'b0               ), // input wire power_down
-     .gt_rxcdrovrden_in    ( 1'b0               ), // input wire gt_rxcdrovrden_in
-     .gt_refclk1_out       ( gt_refclk1         ), // output wire gt_refclk1_out
-     .user_clk_out         ( user_clk           ), // output wire user_clk_out
-     .mmcm_not_locked_out  ( mmcm_not_locked    ), // output wire mmcm_not_locked_out
-     .reset2fc             (                    ), // output wire reset2fc
-     .rx_channel_up        ( channel_up_RX      ), // output wire channel_up
-     .rx_lane_up           ( lane_up_RX         ), // output wire lane_up
-     .rx_hard_err          (                    ), // output wire hard_err
-     .rx_soft_err          (                    ), // output wire soft_err
-     .tx_out_clk           (                    ), // output wire tx_out_clk
-     .gt_pll_lock          ( gt_pll_lock        ), // output wire gt_pll_lock
-     .gt0_drpaddr          ( 10'd0              ), // input wire [9 : 0] gt0_drpaddr
-     .gt0_drpdi            ( 16'd0              ), // input wire [15 : 0] gt0_drpdi
-     .gt0_drprdy           (                    ), // output wire gt0_drprdy
-     .gt0_drpwe            ( 1'b0               ), // input wire gt0_drpwe
-     .gt0_drpen            ( 1'b0               ), // input wire gt0_drpen
-     .gt0_drpdo            (                    ), // output wire [15 : 0] gt0_drpdo
-     .link_reset_out       (                    ), // output wire link_reset_out
-     .sys_reset_out        ( sys_reset          ), // output wire sys_reset_out
-     .gt_reset_out         ( gt_reset           ), // output wire gt_reset_out
-     .gt_powergood         (                    )  // output wire [1 : 0] gt_powergood
-   );
-///// TX PORT
-   aurora_64b66b_NSL AURORA_TX  (
-   // FOR SIMULATIONS
-      .txn                 ( txn ),
-      .txp                 ( txp ),
-      .init_clk            ( init_clk           ), // input wire init_clk
-   // QPLL CONTROL
-      .mmcm_not_locked     ( mmcm_not_locked  ), // input wire mmcm_not_locked
-      .refclk1_in          ( gt_refclk1       ), // input wire refclk1_in
-      .user_clk            ( user_clk         ), // input wire user_clk
-      .sync_clk            (          ), // input wire sync_clk
-      .reset_pb            ( sys_reset        ), // input wire reset_pb
-      .pma_init            ( gt_reset         ), // input wire pma_init
-      .s_axi_tx_tvalid     ( axi_tx_tvalid_TX  ), // input wire s_axi_tx_tvalid
-      .s_axi_tx_tdata      ( axi_tx_tdata_TX   ), // input wire [0 : 127] s_axi_tx_tdata
-      .s_axi_tx_tkeep      ( axi_tx_tkeep_TX   ), // input wire [0 : 15] s_axi_tx_tkeep
-      .s_axi_tx_tlast      ( axi_tx_tlast_TX   ), // input wire s_axi_tx_tlast
-      .s_axi_tx_tready     ( axi_tx_tready_TX  ), // output wire s_axi_tx_tready
-      .tx_channel_up       ( channel_up_TX     ), // output wire channel_up
-      .tx_lane_up          (                  ), // output wire [0 : 1] lane_up
-      .power_down          ( 1'b0             ), // input wire power_down
-      .gt_rxcdrovrden_in   ( 1'b0             ), // input wire gt_rxcdrovrden_in
-      .gt0_drpaddr         ( 10'd0 ),// input wire [9 : 0] gt0_drpaddr
-      .gt0_drpdi           ( 16'd0 ),// input wire [15 : 0] gt0_drpdi
-      .gt0_drpwe           ( 1'b0  ),// input wire gt0_drpwe
-      .gt0_drpen           ( 1'b0  ),// input wire gt0_drpen
-      .tx_hard_err         (  ), 
-      .tx_soft_err         (  ), 
-      .tx_out_clk          (  ), 
-      .bufg_gt_clr_out     (  ), 
-      .gt_pll_lock         (  ), 
-      .gt0_drprdy          (  ), 
-      .gt0_drpdo           (  ), 
-      .link_reset_out      (  ), 
-      .reset2fg            (  ), 
-      .sys_reset_out       (  ), 
-      .gt_powergood        (  )
-      );
-   
-/*   
+  
+  
 // A and B DUPLEX CONNECTION
 /////// LINK A
        aurora_64b66b_SL link_A (
@@ -388,7 +244,7 @@ generate
       .sync_clk            ( sync_clk             ), // input wire sync_clk
       .gt_powergood        (                      )   // output wire [1 : 0] gt_powergood
      );
-*/  
+
 
       assign aurora_do[0] = ~mmcm_not_locked;
       assign aurora_do[1] = gt_pll_lock ;

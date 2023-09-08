@@ -157,7 +157,7 @@ wire  [9 :0]       param_10_dt     ;
 wire  [31:0]       param_64_dt [2] ;
 
 
-qnet_cmd_dec CMD_DEC (
+qnet_cmd_cod CMD_COD (
    .c_clk_i       ( c_clk_i       ) ,
    .c_rst_ni      ( c_rst_ni      ) ,
    .t_clk_i       ( t_clk_i       ) ,
@@ -206,18 +206,17 @@ qnet_cmd_proc CMD_PROCESSING (
    .loc_cmd_ack_o   ( loc_cmd_ack_s   ) ,
    .net_cmd_ack_o   ( net_cmd_ack_s   ) ,
    .tx_req_o        ( tx_req_s        ) ,
-   .tx_ch_o         ( tx_ch_s         ) ,
    .tx_cmd_header_o ( tx_cmd_header_s ) ,
    .tx_cmd_dt_o     ( tx_cmd_dt_s     ) ,
    .tx_ack_i        ( tx_ack_s        ) ,
-   .time_reset        ( time_reset        ) ,
-   .time_init        ( time_init        ) ,
-   .time_updt        ( time_updt        ) ,
+   .time_reset_o        ( time_reset        ) ,
+   .time_init_o        ( time_init        ) ,
+   .time_updt_o        ( time_updt        ) ,
    .cmd_st_do       ( cmd_st_do       ) );
 
    
     wire [31:0] qnet_T_LINK ;
-aurora_ctrl # (
+aurora_ctrl_duplex  # (
    .SIM_LEVEL ( SIM_LEVEL )
 ) QNET_LINK_INST (
    .gt_refclk1_p         ( gt_refclk1_p         ),      
@@ -229,7 +228,7 @@ aurora_ctrl # (
    .ID_i                 ( param.ID                ),
    .NN_i                 ( param.NN                ),
    .tx_req_i             ( tx_req_s             ),
-   .tx_ch_i              ( tx_ch_s              ),
+   .tx_ch_i              ( 0              ),
    .tx_header_i          ( tx_cmd_header_s   ),
    .tx_data_i            ( tx_cmd_dt_s       ),
    .tx_ack_o             ( tx_ack_s          ),

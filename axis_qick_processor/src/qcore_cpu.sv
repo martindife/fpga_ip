@@ -55,7 +55,7 @@ module qcore_cpu # (
 // Signal Declaration
 
 // Address Signals
-reg  [DMEM_AW-1:0]      r_id_imm_addr, r_rd_imm_addr ;
+reg  [10:0]      r_id_imm_addr, r_rd_imm_addr ;
 reg  [WMEM_AW-1:0]      r_rd_rsA0_addr, r_rd_rsA1_addr ;
 wire [PMEM_AW-1:0]      reg_addr;
 //Data Signals
