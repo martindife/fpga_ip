@@ -104,7 +104,6 @@
  
      // System Interface
      USER_CLK,
-     RESET2FC,
      RESET
  );
  `define DLY #1
@@ -149,7 +148,6 @@
  
      // System Interface
        input               USER_CLK;         // Clock for all non-MGT Aurora Logic. 
-       output              RESET2FC; 
        input               RESET; 
  
  //**************************External Register Declarations****************************
@@ -177,8 +175,6 @@
        reg                 remote_ready_det; 
        reg      [4:0]      rx_na_idles_cntr = 5'h0;         
 
-       reg                 reset2fc_r; 
-       reg      [15:0]     Shift4Reset2FC = 16'h0;         
        reg                 RX_HEADER_1_REG;      // bit 1 of sync header. 
        reg                 RX_HEADER_0_REG;     // bit 0 of sync header. 
        reg      [63:0]     RX_DATA_REG;         // Data to MGT for transmission to channel partner. 
@@ -196,10 +192,6 @@
        wire                rx_cb_c; 
        wire                valid_c;
        wire                valid_d;
-       wire                CB_detect0;   
-       wire                CC_detect0;   
-       wire                IDLE_done;   
-       wire                CBseqON;   
        wire      [63:0]     rxdata_s;     
  
  //*********************************Main Body of Code**********************************
@@ -211,34 +203,6 @@
        RXDATAVALID_IN_REG <= RXDATAVALID_IN; 
      end
  
-// RESET to Frame_CHECK
-
-     always @(posedge USER_CLK)
-         if (RESET || CC_detect0 || IDLE_done)
-           Shift4Reset2FC <= `DLY 16'd0;
-         else
-           Shift4Reset2FC <= `DLY {Shift4Reset2FC[14:0],CB_detect0};
-
-     assign CB_detect0 = ((RX_DATA_REG[63:48] == CHANNEL_BOND_BTF) && RXDATAVALID_IN_REG && (sync_header_c == 2'h2));  
-     assign CC_detect0 = ((RX_DATA_REG[63:48] == CC_BTF_SA1) && RXDATAVALID_IN_REG && (sync_header_c == 2'h2));  
-     assign IDLE_done  = (((RX_DATA_REG[63:48] != IDLE_BTF) & RXDATAVALID_IN_REG) && ((RX_DATA_REG[63:48] != CHANNEL_BOND_BTF) & RXDATAVALID_IN_REG));  
-     assign CBseqON    = (CB_detect0 || ((|Shift4Reset2FC) && !IDLE_done));
-
-     always @(posedge USER_CLK)
-     begin
-         if(RESET)
-           reset2fc_r   <=  `DLY  1'b0;
-         else if (CBseqON)
-           reset2fc_r   <=  `DLY  1'b1;
-         else if (IDLE_done)
-           reset2fc_r   <=  `DLY  1'b0;
-         else
-           reset2fc_r   <=  `DLY  reset2fc_r;
-     end
-
-     assign RESET2FC = reset2fc_r;
-// RESET to Frame_CHECK ENDS
-
 
      always @(posedge USER_CLK)
      begin

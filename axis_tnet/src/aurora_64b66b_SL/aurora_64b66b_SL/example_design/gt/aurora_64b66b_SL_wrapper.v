@@ -61,7 +61,7 @@
  // This is V8/K8 wrapper
 
  `timescale 1ns / 1ps
-   (* core_generation_info = "aurora_64b66b_SL,aurora_64b66b_v12_0_9,{c_aurora_lanes=1,c_column_used=left,c_gt_clock_1=GTYQ0,c_gt_clock_2=None,c_gt_loc_1=1,c_gt_loc_10=X,c_gt_loc_11=X,c_gt_loc_12=X,c_gt_loc_13=X,c_gt_loc_14=X,c_gt_loc_15=X,c_gt_loc_16=X,c_gt_loc_17=X,c_gt_loc_18=X,c_gt_loc_19=X,c_gt_loc_2=X,c_gt_loc_20=X,c_gt_loc_21=X,c_gt_loc_22=X,c_gt_loc_23=X,c_gt_loc_24=X,c_gt_loc_25=X,c_gt_loc_26=X,c_gt_loc_27=X,c_gt_loc_28=X,c_gt_loc_29=X,c_gt_loc_3=X,c_gt_loc_30=X,c_gt_loc_31=X,c_gt_loc_32=X,c_gt_loc_33=X,c_gt_loc_34=X,c_gt_loc_35=X,c_gt_loc_36=X,c_gt_loc_37=X,c_gt_loc_38=X,c_gt_loc_39=X,c_gt_loc_4=X,c_gt_loc_40=X,c_gt_loc_41=X,c_gt_loc_42=X,c_gt_loc_43=X,c_gt_loc_44=X,c_gt_loc_45=X,c_gt_loc_46=X,c_gt_loc_47=X,c_gt_loc_48=X,c_gt_loc_5=X,c_gt_loc_6=X,c_gt_loc_7=X,c_gt_loc_8=X,c_gt_loc_9=X,c_lane_width=4,c_line_rate=1.25,c_gt_type=GTYE4,c_qpll=false,c_nfc=false,c_nfc_mode=IMM,c_refclk_frequency=156.25,c_simplex=true,c_simplex_mode=RX,c_stream=false,c_ufc=false,c_user_k=false,flow_mode=None,interface_mode=Framing,dataflow_config=RX-only_Simplex}" *)
+   (* core_generation_info = "aurora_64b66b_SL,aurora_64b66b_v12_0_9,{c_aurora_lanes=1,c_column_used=left,c_gt_clock_1=GTYQ0,c_gt_clock_2=None,c_gt_loc_1=1,c_gt_loc_10=X,c_gt_loc_11=X,c_gt_loc_12=X,c_gt_loc_13=X,c_gt_loc_14=X,c_gt_loc_15=X,c_gt_loc_16=X,c_gt_loc_17=X,c_gt_loc_18=X,c_gt_loc_19=X,c_gt_loc_2=X,c_gt_loc_20=X,c_gt_loc_21=X,c_gt_loc_22=X,c_gt_loc_23=X,c_gt_loc_24=X,c_gt_loc_25=X,c_gt_loc_26=X,c_gt_loc_27=X,c_gt_loc_28=X,c_gt_loc_29=X,c_gt_loc_3=X,c_gt_loc_30=X,c_gt_loc_31=X,c_gt_loc_32=X,c_gt_loc_33=X,c_gt_loc_34=X,c_gt_loc_35=X,c_gt_loc_36=X,c_gt_loc_37=X,c_gt_loc_38=X,c_gt_loc_39=X,c_gt_loc_4=X,c_gt_loc_40=X,c_gt_loc_41=X,c_gt_loc_42=X,c_gt_loc_43=X,c_gt_loc_44=X,c_gt_loc_45=X,c_gt_loc_46=X,c_gt_loc_47=X,c_gt_loc_48=X,c_gt_loc_5=X,c_gt_loc_6=X,c_gt_loc_7=X,c_gt_loc_8=X,c_gt_loc_9=X,c_lane_width=4,c_line_rate=1.25,c_gt_type=GTYE4,c_qpll=false,c_nfc=false,c_nfc_mode=IMM,c_refclk_frequency=156.25,c_simplex=false,c_simplex_mode=TX,c_stream=false,c_ufc=false,c_user_k=false,flow_mode=None,interface_mode=Framing,dataflow_config=Duplex}" *)
 (* DowngradeIPIdentifiedWarnings="yes" *)
  module aurora_64b66b_SL_WRAPPER #
  (
@@ -81,10 +81,6 @@
  `define DLY #1
  (
 
-    //----------------- Receive Ports - Polarity Determination Ports ----------
-     IN_POLARITY,            
-     HLD_POLARITY,             
-     POLARITY_VAL,           
  
     //----------------- Receive Ports - Channel Bonding Ports -----------------
        ENCHANSYNC_IN,
@@ -122,9 +118,25 @@
 
        TXOUTCLK1_OUT,
      //-------------- Transmit Ports - 64b66b TX Header Ports --------------
+       TXHEADER_IN,
+       //---------------- Transmit Ports - TX Data Path interface -----------------
+       TXDATA_IN,
+       TXRESET_IN,
+
+       TXUSRCLK_IN,//
+       TXUSRCLK2_IN,//
+       //txusrclk_out,
+       //txusrclk2_out,
+
+       TXBUFERR_OUT,
+       //--------------Data Valid Signals for Local Link
+       TXDATAVALID_OUT,
+       TXDATAVALID_SYMGEN_OUT,
 
        RXDATAVALID_OUT,
      //------------- Transmit Ports - TX Driver and OOB signalling --------------
+       TX1N_OUT,
+       TX1P_OUT,
     //---------------------- Loopback Port ----------------------
        LOOPBACK_IN,
     //---------------------- GTXE2 CHANNEL DRP Ports ----------------------
@@ -158,10 +170,6 @@
  );
  //***************************** Port Declarations *****************************
 
-    //----------------- Receive Ports - Polarity Determination Ports ----------
-       input    [0:0]           IN_POLARITY;         // informing in polarity     
-       output   [0:0]           HLD_POLARITY;        // holding polarity state      
-       output   [0:0]           POLARITY_VAL;        // polarity determined       
 
      //---------------------- Loopback and Powerdown Ports ----------------------
      input    [2:0]      LOOPBACK_IN;
@@ -196,6 +204,21 @@
        input               POWERDOWN_IN;
        input               RESET;
        input               GT_RXCDROVRDEN_IN;
+     //-------------- Transmit Ports - TX Header Control Port ----------------
+       input    [1:0]    TXHEADER_IN;
+     //---------------- Transmit Ports - TX Data Path interface -----------------
+       input    [63:0]   TXDATA_IN;
+       input             TXRESET_IN;
+       output            TXBUFERR_OUT;
+     input               TXUSRCLK_IN;//
+     input               TXUSRCLK2_IN;//
+     //output              txusrclk_out;//
+     //output              txusrclk2_out;//
+     //------------- Transmit Ports - TX Driver and OOB signalling --------------
+       output            TX1N_OUT;
+       output            TX1P_OUT;
+     output              TXDATAVALID_OUT;
+     output              TXDATAVALID_SYMGEN_OUT;
        output            RXDATAVALID_OUT;
     //---------------------- GTXE2 CHANNEL DRP Ports ----------------------
      input             DRP_CLK_IN;
@@ -237,8 +260,6 @@
      // Ground and VCC signals
      wire                    tied_to_ground_i;
      wire    [280:0]          tied_to_ground_vec_i;
-    //----------------- Receive Polarity Determination wire ----------
-       wire    [0:0]           in_polarity_i;       // informing in polarity     
 
      // floating input port connection signals
        wire [2:0]       int_gt_rxbufstatus;
@@ -261,6 +282,10 @@
      reg                     txsequence_ctr_en_int = 1'b0;
      reg   [6:0]             txseq_counter_i;
      wire                    data_valid_i;
+     reg   [2:0]             extend_reset_r;
+     reg                     resetdone_r1;
+     reg                     resetdone_r2;
+     reg                     resetdone_r3;
      reg                     reset_r1;
      reg                     reset_r2;
      reg                     rx_reset_r1;
@@ -269,6 +294,8 @@
      reg                     data_valid_r;
               reg      FSM_RESETDONE_j;
      //reg   [63:0]            pmaInitStage = 64'd0;
+       wire  [1:0]             txheader_i;
+       wire  [63:0]            scrambled_data_i;
 
 (* shift_extract = "{no}"*)     wire  [63:0]            pre_rxdata_from_gtx_i;
 (* shift_extract = "{no}"*)     wire  [1:0]             pre_rxheader_from_gtx_i;
@@ -333,6 +360,11 @@ wire      gtpll_locked_out_r2;
      wire                    gt_qplllock_quad3_i;
      wire                    gt_qplllock_quad4_i;
      wire                    gt_qplllock_quad5_i;
+     wire                    txusrclk_gtx_reset_comb;
+     wire                    stableclk_gtx_reset_comb;
+     wire                    gtx_reset_comb;
+       reg   [1:0]             txheader_r;
+       reg   [1:0]             tx_hdr_r;
       reg [1:0] cdr_reset_fsm_r = 2'd0;
       reg [7:0] cdr_reset_fsm_cntr_r = 8'd0;
       reg allow_block_sync_propagation = 1'b0;
@@ -485,7 +517,11 @@ aurora_64b66b_SL_cdc_sync
                                   || int_gt_txbufstatus [1]
 ;
      wire tx_hard_err_usr;
-        assign tx_hard_err_usr = 1'b0;
+        // TXBUFERR_OUT ports are not used & are tied to ground
+        assign  TXBUFERR_OUT  =  tx_elastic_buf_err;
+        assign tx_hard_err_usr = 1'b0
+                                || TXBUFERR_OUT
+        ;
   // Logic to infer hard error
   reg hard_err_usr = 0;
   wire hard_err_init_sync;
@@ -569,16 +605,79 @@ aurora_64b66b_SL_cdc_sync
          .scndry_out   (rx_fsm_resetdone_i_j) 
      );
     //----------------------------------------
+    // tx_fsm_resetdone_i sychronized on user_clock
+	aurora_64b66b_SL_rst_sync # 
+     ( 
+         .c_mtbf_stages (3) 
+     )u_rst_done_sync_tx 
+     ( 
+         .prmry_in     (tx_fsm_resetdone_i), 
+         .scndry_aclk  (USER_CLK), 
+         .scndry_out   (tx_fsm_resetdone_i_i) 
+     ); 
+    //----------------------------------------
+    // tx_fsm_resetdone_i sychronized on rxusrclk_out
+    aurora_64b66b_SL_rst_sync # 
+    ( 
+        .c_mtbf_stages (3) 
+    )u_rst_done_sync_tx1 
+    ( 
+        .prmry_in     (tx_fsm_resetdone_i), 
+        .scndry_aclk  (rxusrclk_out), 
+        .scndry_out   (tx_fsm_resetdone_i_j) 
+    ); 
+    //----------------------------------------
 //------------------------------------------------------------------------------
-        // Assumption: RX Reset Done are static and will remain active once activated
-        assign FSM_RESETDONE   = rx_fsm_resetdone_i_i;
-		assign FSM_RESETDONE_i = rx_fsm_resetdone_i_j;
+        // Assumption: TR/RX Reset Done are static and will remain active once activated
+        assign FSM_RESETDONE   = tx_fsm_resetdone_i_i & rx_fsm_resetdone_i_i;
+		assign FSM_RESETDONE_i = tx_fsm_resetdone_i_j & rx_fsm_resetdone_i_j;
         always @(posedge USER_CLK) begin
             FSM_RESETDONE_j <= `DLY FSM_RESETDONE;
         end
 //------------------------------------------------------------------------------
 
+aurora_64b66b_SL_rst_sync u_rst_sync_txusrclk_gtx_reset_comb
+    (
+      .prmry_in         (txusrclk_gtx_reset_comb),
+      .scndry_aclk      (INIT_CLK),
+      .scndry_out       (stableclk_gtx_reset_comb)
+    );
+
+aurora_64b66b_SL_rst_sync u_rst_sync_gtx_reset_comb
+    (
+      .prmry_in         (stableclk_gtx_reset_comb),
+      .scndry_aclk      (TXUSRCLK2_IN),
+      .scndry_out       (gtx_reset_comb)
+    );
 //------------------------------------------------------------------------------
+
+     //------------------------- External Sequence Counter--------------------------
+     //always @(TXUSRCLK2_IN)//
+     always @(posedge TXUSRCLK2_IN)
+     begin
+         if(gtx_reset_comb) begin
+             txseq_counter_i <=  `DLY  7'd0;
+             txsequence_ctr_en_int <= `DLY 1'b0;
+         end
+         else if (txsequence_ctr_en_int) begin
+           if(txseq_counter_i == 32)
+             txseq_counter_i <=  `DLY  7'd0;
+           else
+             txseq_counter_i <=  `DLY txseq_counter_i + 7'd1;
+         end
+         txsequence_ctr_en_int <= `DLY ~txsequence_ctr_en_int;         
+     end
+
+     //Assign the Data Valid signal
+     assign TXDATAVALID_OUT           = ((txseq_counter_i != 30));
+   //assign TXDATAVALID_OUT           = ((txseq_counter_i != 30) && !((txseq_counter_i == 29) && txsequence_ctr_en_int));
+
+     assign TXDATAVALID_SYMGEN_OUT    = (txseq_counter_i != 31);
+
+     assign data_valid_i = (txseq_counter_i != 32);
+
+
+
 
 
        assign gtpll_locked_out_i = (gt_cplllock_i) ;
@@ -635,6 +734,12 @@ aurora_64b66b_SL_cdc_sync
    assign  hpreset_in             = link_reset_0_c[0];
 
 //------------------------------------------------------------------------------
+     always @ (posedge TXUSRCLK2_IN)//always @ (posedge TXUSRCLK2_IN)
+     begin
+           tx_hdr_r   <= `DLY TXHEADER_IN;
+     end
+
+        assign txreset_for_lanes = TXRESET_IN;
 //------------------------------------------------------------------------------
 
      always @ (posedge INIT_CLK)
@@ -642,7 +747,26 @@ aurora_64b66b_SL_cdc_sync
                              cdr_reset_fsm_lnkreset |
                              link_reset_0_c[0] ;
 
-assign mmcm_reset_i = rx_fsm_resetdone_ii;
+  //Clocking onto the INIT-clock.
+aurora_64b66b_SL_cdc_sync
+   # (
+      .c_cdc_type    (1),  // 0 Pulse synchronizer, 1 level synchronizer 2 level synchronizer with ACK 
+      .c_flop_input  (0),  // 1 Adds one flop stage to the input prmry_in signal
+      .c_reset_state (0),  // 1 Reset needed for sync flops 
+      .c_single_bit  (1),  // 1 single bit input.
+      .c_mtbf_stages (5)   // Number of sync stages needed
+     )   u_cdc_tx_fsm_resetdone_i
+     (
+       .prmry_aclk      (1'b0),
+       .prmry_rst_n     (1'b1 ),
+       .prmry_in        (tx_fsm_resetdone_i),
+       .prmry_vect_in   (32'd0 ),
+       .scndry_aclk     (INIT_CLK ),
+       .scndry_rst_n    (1'b1 ),
+       .prmry_ack       ( ),
+       .scndry_out      (tx_fsm_resetdone_ii),
+       .scndry_vect_out ( )
+      );
   //Clocking onto the INIT-clock.
 aurora_64b66b_SL_cdc_sync
    # (
@@ -663,7 +787,10 @@ aurora_64b66b_SL_cdc_sync
        .scndry_out      (rx_fsm_resetdone_ii),
        .scndry_vect_out ( )
       );
+assign mmcm_reset_i = tx_fsm_resetdone_ii & rx_fsm_resetdone_ii;
 
+wire fabric_pcs_reset;
+ assign txusrclk_gtx_reset_comb = fabric_pcs_reset;
 //------------------------------------------------------------------------------
 wire gtwiz_userclk_tx_active;
 assign gtwiz_userclk_tx_active = !gtwiz_userclk_tx_active_out;
@@ -675,11 +802,11 @@ aurora_64b66b_SL_MULTI_GT  aurora_64b66b_SL_multi_gt_i
          //---------------------------------------------------------------------
          //gtwix reset module interface ports starts
          //---------------------------------------------------------------------
-         .gtwiz_reset_all_in                       (1'b0),     //(GTXRESET_IN),
+		 .gtwiz_reset_all_in                       (GTXRESET_IN),
 
          .gtwiz_reset_clk_freerun_in               (INIT_CLK   ),
 
-         .gtwiz_reset_tx_pll_and_datapath_in       (GTXRESET_IN),//(1'b0),
+         .gtwiz_reset_tx_pll_and_datapath_in       (1'b0),
 
          .gtwiz_reset_tx_datapath_in               (1'b0),
 
@@ -725,8 +852,8 @@ aurora_64b66b_SL_MULTI_GT  aurora_64b66b_SL_multi_gt_i
          .gt0_rxusrclk_out                 (rxusrclk_out), //(rxrecclk_to_fabric_i),
          .gt0_rxusrclk2_out                (),//(keep it open --> rxusrclk2_out),//(rxrecclk_to_fabric_i),
     //---------------- Transmit Ports - FPGA TX Interface Ports ----------------
-         .gt0_txusrclk_in                 (user_clk),//Tieing off with RX clocking for Simplex RX
-         .gt0_txusrclk2_in                (user_clk),//Tieing off with RX clocking for Simplex RX
+         .gt0_txusrclk_in                 (TXUSRCLK_IN), 
+         .gt0_txusrclk2_in                (TXUSRCLK2_IN),
     //----------------------------- Loopback Ports -----------------------------
          .gt_loopback                             ({1{LOOPBACK_IN}}),
 
@@ -751,20 +878,20 @@ aurora_64b66b_SL_MULTI_GT  aurora_64b66b_SL_multi_gt_i
         //------------------- TX Initialization and Reset Ports --------------------
          .gt_gttxreset                 ({1{GTXRESET_IN}}),
 
-        //.gt0_txuserrdy_in                 (1'b0),//
+        //.gt0_txuserrdy_in                 (txuserrdy_t),//
         //------------ Transmit Ports - 64b66b and 64b67b Gearbox Ports ------------
-         .gt0_txheader_in                  (2'b0),
+         .gt0_txheader_in                  (txheader_r),
         //---------------- Transmit Ports - TX Data Path interface -----------------
-           .gt0_txdata_in                  (tied_to_ground_vec_i[63:0]),
+           .gt0_txdata_in                  (scrambled_data_i),
         //-------------- Transmit Ports - TX Driver and OOB signaling --------------
-          .gt0_gthtxn_out                  (),
-          .gt0_gthtxp_out                  (),
+          .gt0_gthtxn_out                  (TX1N_OUT),
+          .gt0_gthtxp_out                  (TX1P_OUT),
         //--------- Transmit Ports - TX Fabric Clock Output Control Ports ----------
           .gt0_txoutclk_out                (TXOUTCLK1_OUT),
           .gt0_txoutclkfabric_out          (),
           .gt0_txoutclkpcs_out             (),
         //------------------- Transmit Ports - TX Gearbox Ports --------------------
-          .gt0_txsequence_in               (7'b0),
+          .gt0_txsequence_in               (txseq_counter_i),
         //----------------------- Receive Ports - CDR Ports ------------------------
          .gt0_rxcdrovrden_in               (GT_RXCDROVRDEN_IN),
 
@@ -905,6 +1032,29 @@ aurora_64b66b_SL_MULTI_GT  aurora_64b66b_SL_multi_gt_i
         .rxrecclk_to_fabric                     ( rxusrclk_out                )////( rxrecclk_to_fabric_i )
      );
 
+
+    //#########################scrambler instantiation########################
+       reg    [63:0]   TXDATA_IN_REG;
+
+       always @ (posedge TXUSRCLK2_IN) 
+       begin
+         TXDATA_IN_REG <= `DLY TXDATA_IN;
+         txheader_r    <= `DLY tx_hdr_r;
+       end
+aurora_64b66b_SL_SCRAMBLER_64B66B #
+     (
+        .TX_DATA_WIDTH(64)
+     )
+       scrambler_64b66b_gtx0_i
+     (
+       // User Interface
+        .UNSCRAMBLED_DATA_IN    (TXDATA_IN_REG),
+        .SCRAMBLED_DATA_OUT     (scrambled_data_i),
+        .DATA_VALID_IN          (data_valid_i),
+        // System Interface
+        .USER_CLK               (TXUSRCLK2_IN), // (TXUSRCLK2_IN),
+        .SYSTEM_RESET           (gtx_reset_comb)
+     );
 
 
      //---------------------------Polarity Control Logic---------------------
@@ -1156,47 +1306,5 @@ aurora_64b66b_SL_cdc_sync
       end
 
  
-     //---------------------------Polarity Control Logic---------------------
-     //Double synchronize POLARITY_IN signal to account for domain crossing
-
-aurora_64b66b_SL_cdc_sync
-   # (
-      .c_cdc_type    (1),  // 0 Pulse synchronizer, 1 level synchronizer 2 level synchronizer with ACK 
-      .c_flop_input  (0),  // 1 Adds one flop stage to the input prmry_in signal
-      .c_reset_state (0),  // 1 Reset needed for sync flops 
-      .c_single_bit  (1),  // 1 single bit input.
-      .c_mtbf_stages (2)   // Number of sync stages needed
-     )   u_cdc__in_polarity
-     (
-       .prmry_aclk      (1'b0 ),
-       .prmry_rst_n     (1'b1 ),
-       .prmry_in        (IN_POLARITY[0]),
-       .prmry_vect_in   (32'd0 ),
-       .scndry_aclk     (rxusrclk_out),
-       .scndry_rst_n    (1'b1 ),
-       .prmry_ack       ( ),
-       .scndry_out      (in_polarity_i[0]),
-       .scndry_vect_out ( )
-      );
- 
-     //#########################CBCC module instantiation########################
-aurora_64b66b_SL_POLARITY_CHECK #
-     (
-     .SEQ_COUNT(SEQ_COUNT),
-     .INTER_CB_GAP(5'd14) // 15-> 14
-     )
-       polarity_check_i 
-     (
-       // GT path inputs
-         .INPOLARITY_IN                 (in_polarity_i[0]),
-         .HLD_POLARITY_OUT              (HLD_POLARITY[0]),
-         .POLARITY_VAL_OUT              (POLARITY_VAL[0]),
-         .RXHEADER_IN                   (rxheader_to_fifo_i),
-         .RXHEADERVALID_IN              (1'b0),
-         .RXDATA_IN                     (rxdata_to_fifo_i),
-         .RXDATAVALID_IN                (rxdatavalid_to_fifo_i),
-         .USER_CLK                      (rxusrclk_out),
-         .RESET                         (blocksync_out_i)
-     );
  
  endmodule

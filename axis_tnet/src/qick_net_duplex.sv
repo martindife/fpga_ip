@@ -1,6 +1,6 @@
 `include "_qnet_defines.svh"
 
-module qick_net # (
+module qick_net_duplex # (
    parameter SIM_LEVEL = 1 ,
    parameter DEBUG     = 1
    
@@ -195,10 +195,10 @@ qnet_cmd_proc CMD_PROCESSING (
    .t_time_abs      ( t_time_abs      ) ,
    .tx_req_set_o    ( get_time_lcs      ) ,
    .param_we        ( param_we      ) ,
-   .param_64_dt      ( param_64_dt     ) ,
-   .param_32_dt      ( param_32_dt      ) ,
-   .param_10_dt      ( param_10_dt      ) ,
-   .c_ready_o      ( c_ready_o      ) ,
+   .param_64_dt     ( param_64_dt     ) ,
+   .param_32_dt     ( param_32_dt      ) ,
+   .param_10_dt     ( param_10_dt      ) ,
+   .c_ready_o       ( c_ready_o      ) ,
    .loc_cmd_req_i   ( loc_cmd_req   ) ,
    .net_cmd_req_i   ( net_cmd_req   ) ,
    .cmd_header_i    ( cmd_header_r    ) ,
@@ -206,6 +206,7 @@ qnet_cmd_proc CMD_PROCESSING (
    .loc_cmd_ack_o   ( loc_cmd_ack_s   ) ,
    .net_cmd_ack_o   ( net_cmd_ack_s   ) ,
    .tx_req_o        ( tx_req_s        ) ,
+   .tx_ch_o         ( tx_ch_s        ) ,
    .tx_cmd_header_o ( tx_cmd_header_s ) ,
    .tx_cmd_dt_o     ( tx_cmd_dt_s     ) ,
    .tx_ack_i        ( tx_ack_s        ) ,
@@ -214,8 +215,9 @@ qnet_cmd_proc CMD_PROCESSING (
    .time_updt_o        ( time_updt        ) ,
    .cmd_st_do       ( cmd_st_do       ) );
 
-   
-    wire [31:0] qnet_T_LINK ;
+wire [31:0] qnet_T_LINK ;   
+wire        link_A_rdy_01, link_B_rdy_01, link_A_rdy_cc, link_B_rdy_cc ;
+
 aurora_ctrl_duplex # (
    .SIM_LEVEL ( SIM_LEVEL )
 ) QNET_LINK_INST (
@@ -228,33 +230,43 @@ aurora_ctrl_duplex # (
    .ID_i                 ( param.ID                ),
    .NN_i                 ( param.NN                ),
    .tx_req_i             ( tx_req_s             ),
+   .tx_ch_i              ( tx_ch_s             ),
    .tx_header_i          ( tx_cmd_header_s   ),
    .tx_data_i            ( tx_cmd_dt_s       ),
    .tx_ack_o             ( tx_ack_s          ),
-   .sync_tx              ( link_B_rdy_01     ),
-   .sync_cc              ( link_B_rdy_cc     ),
+   .link_A_rdy_01        ( link_A_rdy_01     ),
+   .link_B_rdy_01        ( link_B_rdy_01     ),
+   .link_A_rdy_cc        ( link_A_rdy_cc     ),
+   .link_B_rdy_cc        ( link_B_rdy_cc     ),
    .qnet_LINK_o          ( qnet_T_LINK       ),
    .cmd_net_o            ( net_cmd_hit           ),
    .cmd_o                ( net_cmd                ),
    .ready_o              ( aurora_ready         ),
    .rxn_A_i              ( rxn_A_i              ),
    .rxp_A_i              ( rxp_A_i              ),
+   .txn_A_o              ( txn_A_o              ),
+   .txp_A_o              ( txp_A_o              ),
+   .rxn_B_i              ( rxn_B_i              ),
+   .rxp_B_i              ( rxp_B_i              ),
    .txn_B_o              ( txn_B_o              ),
    .txp_B_o              ( txp_B_o              ),
-   .s_axi_rx_tdata_RX_i   ( axi_rx_tdata_A_RX_i  ),
-   .s_axi_rx_tvalid_RX_i   ( axi_rx_tvalid_A_RX_i ),
-   .s_axi_rx_tlast_RX_i    ( axi_rx_tlast_A_RX_i  ),
-   .m_axi_tx_tdata_B_TX_o  ( axi_tx_tdata_B_TX_o  ),
-   .m_axi_tx_tvalid_B_TX_o ( axi_tx_tvalid_B_TX_o ),
-   .m_axi_tx_tlast_B_TX_o  ( axi_tx_tlast_B_TX_o  ),
-   .m_axi_tx_tready_B_TX_i ( axi_tx_tready_B_TX_i ),
-   //.s_axi_rx_tdata_RX    ( s_axi_rx_tdata_RX    ),
-   //.s_axi_rx_tvalid_RX   ( s_axi_rx_tvalid_RX   ),
-   //.s_axi_rx_tlast_RX    ( s_axi_rx_tlast_RX    ),
-   //.m_axi_tx_tdata_TX    ( m_axi_tx_tdata_TX    ),
-   //.m_axi_tx_tvalid_TX   ( m_axi_tx_tvalid_TX   ),
-   //.m_axi_tx_tlast_TX    ( m_axi_tx_tlast_TX    ),
-   //.m_axi_tx_tready_TX   ( m_axi_tx_tready_TX   ),
+// Channel A
+   .axi_rx_tvalid_A_RX_i ( axi_rx_tvalid_A_RX_i ),
+   .axi_rx_tdata_A_RX_i  ( axi_rx_tdata_A_RX_i  ),
+   .axi_rx_tlast_A_RX_i  ( axi_rx_tlast_A_RX_i  ),
+   .axi_tx_tvalid_A_TX_o ( axi_tx_tvalid_A_TX_o ),
+   .axi_tx_tdata_A_TX_o  ( axi_tx_tdata_A_TX_o  ),
+   .axi_tx_tlast_A_TX_o  ( axi_tx_tlast_A_TX_o  ),
+   .axi_tx_tready_A_TX_i ( axi_tx_tready_A_TX_i ),
+// Channel B
+   .axi_rx_tvalid_B_RX_i ( axi_rx_tvalid_B_RX_i ),
+   .axi_rx_tdata_B_RX_i  ( axi_rx_tdata_B_RX_i  ),
+   .axi_rx_tlast_B_RX_i  ( axi_rx_tlast_B_RX_i  ),
+   .axi_tx_tvalid_B_TX_o ( axi_tx_tvalid_B_TX_o ),
+   .axi_tx_tdata_B_TX_o  ( axi_tx_tdata_B_TX_o  ),
+   .axi_tx_tlast_B_TX_o  ( axi_tx_tlast_B_TX_o  ),
+   .axi_tx_tready_B_TX_i ( axi_tx_tready_B_TX_i ),
+
    .aurora_do            ( aurora_do            ),
    .channel_A_up       ( channelA_ok_do       ),
    .channel_B_up       ( channelB_ok_do       ),

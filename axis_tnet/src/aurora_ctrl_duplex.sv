@@ -17,10 +17,10 @@ module aurora_ctrl_duplex # (
    input  wire [63 :0]     tx_header_i      ,
    input  wire [31 :0]     tx_data_i [2]       ,
    output reg              tx_ack_o        ,
-   output wire             sync_tx_A       ,
-   output wire             sync_tx_B       ,
-   output wire             sync_cc_A       ,
-   output wire             sync_cc_B       ,
+   output wire             link_A_rdy_01       ,
+   output wire             link_B_rdy_01       ,
+   output wire             link_A_rdy_cc       ,
+   output wire             link_B_rdy_cc       ,
    output reg [31:0]       qnet_LINK_o     ,
 // Command Processing  
    output reg              cmd_net_o       ,
@@ -158,7 +158,7 @@ generate
   
 // A and B DUPLEX CONNECTION
 /////// LINK A
-       aurora_64b66b_SL link_A (
+       aurora_A_Duplex_SL link_A (
       .rxp                 ( rxn_A_i              ),  // input wire [0 : 0] rxp
       .rxn                 ( rxp_A_i              ),  // input wire [0 : 0] rxn
       .txp                 ( txp_A_o              ),  // output wire [0 : 0] txp
@@ -203,7 +203,7 @@ generate
       );
 
 /////// LINK B     
-      aurora_64b66b_NSL link_B (
+      aurora_B_Duplex_NSL link_B (
       .rxp                 ( rxn_B_i              ),  // input wire [0 : 0] rxp
       .rxn                 ( rxp_B_i              ),  // input wire [0 : 0] rxn
       .txp                 ( txp_B_o              ),  // output wire [0 : 0] txp

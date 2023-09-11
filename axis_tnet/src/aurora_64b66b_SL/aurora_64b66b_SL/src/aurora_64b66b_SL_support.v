@@ -64,11 +64,17 @@
 
  `timescale 1 ns / 10 ps
 
-   (* core_generation_info = "aurora_64b66b_SL,aurora_64b66b_v12_0_9,{c_aurora_lanes=1,c_column_used=left,c_gt_clock_1=GTYQ0,c_gt_clock_2=None,c_gt_loc_1=1,c_gt_loc_10=X,c_gt_loc_11=X,c_gt_loc_12=X,c_gt_loc_13=X,c_gt_loc_14=X,c_gt_loc_15=X,c_gt_loc_16=X,c_gt_loc_17=X,c_gt_loc_18=X,c_gt_loc_19=X,c_gt_loc_2=X,c_gt_loc_20=X,c_gt_loc_21=X,c_gt_loc_22=X,c_gt_loc_23=X,c_gt_loc_24=X,c_gt_loc_25=X,c_gt_loc_26=X,c_gt_loc_27=X,c_gt_loc_28=X,c_gt_loc_29=X,c_gt_loc_3=X,c_gt_loc_30=X,c_gt_loc_31=X,c_gt_loc_32=X,c_gt_loc_33=X,c_gt_loc_34=X,c_gt_loc_35=X,c_gt_loc_36=X,c_gt_loc_37=X,c_gt_loc_38=X,c_gt_loc_39=X,c_gt_loc_4=X,c_gt_loc_40=X,c_gt_loc_41=X,c_gt_loc_42=X,c_gt_loc_43=X,c_gt_loc_44=X,c_gt_loc_45=X,c_gt_loc_46=X,c_gt_loc_47=X,c_gt_loc_48=X,c_gt_loc_5=X,c_gt_loc_6=X,c_gt_loc_7=X,c_gt_loc_8=X,c_gt_loc_9=X,c_lane_width=4,c_line_rate=1.25,c_gt_type=GTYE4,c_qpll=false,c_nfc=false,c_nfc_mode=IMM,c_refclk_frequency=156.25,c_simplex=true,c_simplex_mode=RX,c_stream=false,c_ufc=false,c_user_k=false,flow_mode=None,interface_mode=Framing,dataflow_config=RX-only_Simplex}" *)
+   (* core_generation_info = "aurora_64b66b_SL,aurora_64b66b_v12_0_9,{c_aurora_lanes=1,c_column_used=left,c_gt_clock_1=GTYQ0,c_gt_clock_2=None,c_gt_loc_1=1,c_gt_loc_10=X,c_gt_loc_11=X,c_gt_loc_12=X,c_gt_loc_13=X,c_gt_loc_14=X,c_gt_loc_15=X,c_gt_loc_16=X,c_gt_loc_17=X,c_gt_loc_18=X,c_gt_loc_19=X,c_gt_loc_2=X,c_gt_loc_20=X,c_gt_loc_21=X,c_gt_loc_22=X,c_gt_loc_23=X,c_gt_loc_24=X,c_gt_loc_25=X,c_gt_loc_26=X,c_gt_loc_27=X,c_gt_loc_28=X,c_gt_loc_29=X,c_gt_loc_3=X,c_gt_loc_30=X,c_gt_loc_31=X,c_gt_loc_32=X,c_gt_loc_33=X,c_gt_loc_34=X,c_gt_loc_35=X,c_gt_loc_36=X,c_gt_loc_37=X,c_gt_loc_38=X,c_gt_loc_39=X,c_gt_loc_4=X,c_gt_loc_40=X,c_gt_loc_41=X,c_gt_loc_42=X,c_gt_loc_43=X,c_gt_loc_44=X,c_gt_loc_45=X,c_gt_loc_46=X,c_gt_loc_47=X,c_gt_loc_48=X,c_gt_loc_5=X,c_gt_loc_6=X,c_gt_loc_7=X,c_gt_loc_8=X,c_gt_loc_9=X,c_lane_width=4,c_line_rate=1.25,c_gt_type=GTYE4,c_qpll=false,c_nfc=false,c_nfc_mode=IMM,c_refclk_frequency=156.25,c_simplex=false,c_simplex_mode=TX,c_stream=false,c_ufc=false,c_user_k=false,flow_mode=None,interface_mode=Framing,dataflow_config=Duplex}" *)
 (* DowngradeIPIdentifiedWarnings="yes" *)
  module aurora_64b66b_SL_support
   (
        //-----------------------------------------------------------------------
+       // TX AXI Interface
+       input  [0:63]     s_axi_tx_tdata,
+       input  [0:7]      s_axi_tx_tkeep,
+       input             s_axi_tx_tlast,
+       input             s_axi_tx_tvalid,
+       output            s_axi_tx_tready,
        //-----------------------------------------------------------------------
        // RX AXI Interface
        output [0:63]     m_axi_rx_tdata,
@@ -82,21 +88,24 @@
        // GTX Serial I/O
        input              rxp,
        input              rxn,
+       output             txp,
+       output             txn,
        // Error Detection Interface
-       output             rx_hard_err,
-       output             rx_soft_err,
+       output             hard_err,
+       output             soft_err,
        // Status
-       output             rx_channel_up,
-       output             rx_lane_up,
+       output             channel_up,
+       output             lane_up,
        //-----------------------------------------------------------------------
        //-----------------------------------------------------------------------
        // System Interface
        output              user_clk_out,
-       output              reset2fc, 
+       output              sync_clk_out,
        //-----------------------------------------------------------------------
        input              reset_pb, 
        input              gt_rxcdrovrden_in,
        input              power_down,
+       input   [2:0]      loopback,
        input              pma_init,
 
        output  [15:0]  gt0_drpdo,
@@ -310,6 +319,14 @@
 //----- Instance of core in shared mode -----
 aurora_64b66b_SL_core   aurora_64b66b_SL_core_i
      (
+       // TX AXI4-S Interface
+       .s_axi_tx_tdata                (s_axi_tx_tdata),
+
+       .s_axi_tx_tlast                (s_axi_tx_tlast),
+       .s_axi_tx_tkeep                (s_axi_tx_tkeep),
+
+       .s_axi_tx_tvalid               (s_axi_tx_tvalid),
+       .s_axi_tx_tready               (s_axi_tx_tready),
 
        // RX AXI4-S Interface
        .m_axi_rx_tdata                (m_axi_rx_tdata),
@@ -324,25 +341,28 @@ aurora_64b66b_SL_core   aurora_64b66b_SL_core_i
        // GTX Serial I/O
        .rxp                           (rxp),
        .rxn                           (rxn),
+       .txp                           (txp),
+       .txn                           (txn),
 
        //GTX Reference Clock Interface
        .gt_refclk1                    (refclk1_in),
-       .rx_hard_err                   (rx_hard_err),
-       .rx_soft_err                   (rx_soft_err),
+       .hard_err                      (hard_err),
+       .soft_err                      (soft_err),
 
        // Status
-       .rx_channel_up                 (rx_channel_up),
-       .rx_lane_up                    (rx_lane_up),
+       .channel_up                    (channel_up),
+       .lane_up                       (lane_up),
 
 
        // System Interface
        .mmcm_not_locked               (mmcm_not_locked_out),//connect to gtwiz_userclk_tx_active_out of multi GT
        .user_clk                      (user_clk_out),
-       .reset2fc                      (reset2fc),
+       .sync_clk                      (sync_clk_out),
 
          .sysreset_to_core(sysreset_from_support),
        .gt_rxcdrovrden_in               (gt_rxcdrovrden_in),
        .power_down                      (power_down),
+       .loopback                        (loopback),
        .pma_init                        (pma_init_i),
        .rst_drp_strt                    (pma_init_i),
        .gt_pll_lock                     (gt_pll_lock),

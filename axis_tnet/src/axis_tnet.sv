@@ -74,7 +74,7 @@ module axis_tnet # (
    output wire             s_axi_rvalid      ,
    input  wire             s_axi_rready      );
 
-qick_net # (
+qick_net_duplex # (
    .SIM_LEVEL ( SIM_LEVEL )
 ) QICK_NET (
    .gt_refclk1_p         ( gt_refclk1_p         ) ,

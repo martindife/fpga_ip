@@ -31,6 +31,7 @@ module qnet_cmd_proc # (
    output reg  [ 9:0]     param_10_dt       ,
 // Transmit Info
    output  reg            tx_req_o          ,
+   output  reg            tx_ch_o          ,
    output  reg [63:0]     tx_cmd_header_o   ,
    output  reg [31:0]     tx_cmd_dt_o[2]    ,
    input   wire           tx_ack_i          ,
@@ -456,6 +457,7 @@ end
 
 reg get_time_lcs   ;
 reg tx_req_set     ;
+reg tx_ch_sel ;
 
 reg time_reset     ;
 reg time_init      ;
@@ -488,6 +490,7 @@ always_comb begin
    cmd_error      = 1'b0;
 
    tx_req_set     = 1'b0 ;
+   tx_ch_sel      = 1'b1 ;
    tx_cmd_dt      = '{default:'0};
    tx_cmd_header  = 0;
 
@@ -551,8 +554,6 @@ always_comb begin
             tx_req_set    = 1'b1 ;
          end
       end
-      
-      
       LOC_GET_OFF: begin
          tx_cmd_header = cmd_header_i;
          tx_cmd_dt     = cmd_dt_i;
@@ -810,6 +811,7 @@ always_ff @(posedge t_clk_i)
    end else begin 
       if (tx_req_set ) begin   
          tx_req_o          <= 1'b1;
+         tx_ch_o           <= tx_ch_sel ;
          tx_cmd_header_o <= tx_cmd_header;
          tx_cmd_dt_o     <= { tx_cmd_dt[1], tx_cmd_dt[0] };
       end 
