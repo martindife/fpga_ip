@@ -1478,7 +1478,7 @@
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.rx_termination">PROGRAMMABLE</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.rx_termination_prog_value">800</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.supportlevel">true</spirit:configurableElementValue>
-        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.transceivercontrol">false</spirit:configurableElementValue>
+        <spirit:configurableElementValue spirit:referenceId="MODELPARAM_VALUE.transceivercontrol">true</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.CHANNEL_ENABLE">X0Y8</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.C_AURORA_LANES">1</spirit:configurableElementValue>
         <spirit:configurableElementValue spirit:referenceId="PARAM_VALUE.C_COLUMN_USED">left</spirit:configurableElementValue>
@@ -1985,11 +1985,32 @@
                   &quot;gt_refclk1_n&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
                   &quot;user_clk_out&quot;: [ { &quot;direction&quot;: &quot;out&quot; } ],
                   &quot;gt_rxcdrovrden_in&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxusrclk_out&quot;: [ { &quot;direction&quot;: &quot;out&quot; } ],
                   &quot;reset2fc&quot;: [ { &quot;direction&quot;: &quot;out&quot; } ],
                   &quot;sys_reset_out&quot;: [ { &quot;direction&quot;: &quot;out&quot; } ],
                   &quot;gt_reset_out&quot;: [ { &quot;direction&quot;: &quot;out&quot; } ],
                   &quot;gt_refclk1_out&quot;: [ { &quot;direction&quot;: &quot;out&quot; } ],
-                  &quot;gt_powergood&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ]
+                  &quot;gt_qplllock&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_eyescanreset&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_eyescandataerror&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxlpmen&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_eyescantrigger&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxcdrhold&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxdfelpmreset&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxpmareset&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxpcsreset&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxbufreset&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxpmaresetdone&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxprbssel&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;3&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxprbserr&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxprbscntreset&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxresetdone&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxbufstatus&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;2&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_powergood&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_pcsrsvdin&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;15&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ],
+                  &quot;gt_dmonitorout&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;15&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_cplllock&quot;: [ { &quot;direction&quot;: &quot;out&quot;, &quot;size_left&quot;: &quot;0&quot;, &quot;size_right&quot;: &quot;0&quot; } ],
+                  &quot;gt_rxrate&quot;: [ { &quot;direction&quot;: &quot;in&quot;, &quot;size_left&quot;: &quot;2&quot;, &quot;size_right&quot;: &quot;0&quot;, &quot;driver_value&quot;: &quot;0&quot; } ]
                 },
                 &quot;interfaces&quot;: {
                   &quot;USER_DATA_M_AXIS_RX&quot;: {
@@ -2149,6 +2170,33 @@
                       &quot;DWE&quot;: [ { &quot;physical_name&quot;: &quot;gt0_drpwe&quot; } ]
                     }
                   },
+                  &quot;TRANSCEIVER_DEBUG&quot;: {
+                    &quot;vlnv&quot;: &quot;xilinx.com:display_aurora:transceiver_debug:1.0&quot;,
+                    &quot;abstraction_type&quot;: &quot;xilinx.com:display_aurora:transceiver_debug_rtl:1.0&quot;,
+                    &quot;mode&quot;: &quot;master&quot;,
+                    &quot;port_maps&quot;: {
+                      &quot;cplllock&quot;: [ { &quot;physical_name&quot;: &quot;gt_cplllock&quot; } ],
+                      &quot;dmonitorout&quot;: [ { &quot;physical_name&quot;: &quot;gt_dmonitorout&quot; } ],
+                      &quot;eyescandataerror&quot;: [ { &quot;physical_name&quot;: &quot;gt_eyescandataerror&quot; } ],
+                      &quot;eyescanreset&quot;: [ { &quot;physical_name&quot;: &quot;gt_eyescanreset&quot; } ],
+                      &quot;eyescantrigger&quot;: [ { &quot;physical_name&quot;: &quot;gt_eyescantrigger&quot; } ],
+                      &quot;pcsrsvdin&quot;: [ { &quot;physical_name&quot;: &quot;gt_pcsrsvdin&quot; } ],
+                      &quot;qplllock&quot;: [ { &quot;physical_name&quot;: &quot;gt_qplllock&quot; } ],
+                      &quot;rxbufreset&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxbufreset&quot; } ],
+                      &quot;rxbufstatus&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxbufstatus&quot; } ],
+                      &quot;rxcdrhold&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxcdrhold&quot; } ],
+                      &quot;rxdfelpmreset&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxdfelpmreset&quot; } ],
+                      &quot;rxlpmen&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxlpmen&quot; } ],
+                      &quot;rxpcsreset&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxpcsreset&quot; } ],
+                      &quot;rxpmareset&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxpmareset&quot; } ],
+                      &quot;rxpmaresetdone&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxpmaresetdone&quot; } ],
+                      &quot;rxprbscntreset&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxprbscntreset&quot; } ],
+                      &quot;rxprbserr&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxprbserr&quot; } ],
+                      &quot;rxprbssel&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxprbssel&quot; } ],
+                      &quot;rxrate&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxrate&quot; } ],
+                      &quot;rxresetdone&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxresetdone&quot; } ]
+                    }
+                  },
                   &quot;tx_out_clk&quot;: {
                     &quot;vlnv&quot;: &quot;xilinx.com:signal:clock:1.0&quot;,
                     &quot;abstraction_type&quot;: &quot;xilinx.com:signal:clock_rtl:1.0&quot;,
@@ -2165,6 +2213,24 @@
                     },
                     &quot;port_maps&quot;: {
                       &quot;CLK&quot;: [ { &quot;physical_name&quot;: &quot;tx_out_clk&quot; } ]
+                    }
+                  },
+                  &quot;gt_rxusrclk_out&quot;: {
+                    &quot;vlnv&quot;: &quot;xilinx.com:signal:clock:1.0&quot;,
+                    &quot;abstraction_type&quot;: &quot;xilinx.com:signal:clock_rtl:1.0&quot;,
+                    &quot;mode&quot;: &quot;slave&quot;,
+                    &quot;parameters&quot;: {
+                      &quot;FREQ_HZ&quot;: [ { &quot;value&quot;: &quot;100000000&quot;, &quot;resolve_type&quot;: &quot;generated&quot;, &quot;format&quot;: &quot;long&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ],
+                      &quot;FREQ_TOLERANCE_HZ&quot;: [ { &quot;value&quot;: &quot;0&quot;, &quot;resolve_type&quot;: &quot;generated&quot;, &quot;format&quot;: &quot;long&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ],
+                      &quot;PHASE&quot;: [ { &quot;value&quot;: &quot;0.0&quot;, &quot;resolve_type&quot;: &quot;generated&quot;, &quot;format&quot;: &quot;float&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ],
+                      &quot;CLK_DOMAIN&quot;: [ { &quot;value&quot;: &quot;&quot;, &quot;resolve_type&quot;: &quot;generated&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ],
+                      &quot;ASSOCIATED_BUSIF&quot;: [ { &quot;value&quot;: &quot;&quot;, &quot;resolve_type&quot;: &quot;generated&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ],
+                      &quot;ASSOCIATED_PORT&quot;: [ { &quot;value&quot;: &quot;&quot;, &quot;resolve_type&quot;: &quot;generated&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ],
+                      &quot;ASSOCIATED_RESET&quot;: [ { &quot;value&quot;: &quot;&quot;, &quot;resolve_type&quot;: &quot;generated&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ],
+                      &quot;INSERT_VIP&quot;: [ { &quot;value&quot;: &quot;0&quot;, &quot;resolve_type&quot;: &quot;user&quot;, &quot;format&quot;: &quot;long&quot;, &quot;usage&quot;: &quot;simulation.rtl&quot;, &quot;is_ips_inferred&quot;: true, &quot;is_static_object&quot;: false } ]
+                    },
+                    &quot;port_maps&quot;: {
+                      &quot;CLK&quot;: [ { &quot;physical_name&quot;: &quot;gt_rxusrclk_out&quot; } ]
                     }
                   },
                   &quot;CORE_STATUS&quot;: {

@@ -1,4 +1,4 @@
-module axis_tnet_duplex # (
+module axis_tnet_simplex # (
    parameter SIM_LEVEL = 1
 )(
 // Core, Time and AXI CLK & RST.
@@ -11,6 +11,7 @@ module axis_tnet_duplex # (
    input  wire             ps_clk            , //99.999001
    input  wire             ps_aresetn        ,
    input  wire  [47:0]     t_time_abs        ,
+   input  wire             net_sync          ,
 // TPROC CONTROL
    input  wire             c_cmd_i           ,
    input  wire  [4:0]      c_op_i            ,
@@ -23,36 +24,23 @@ module axis_tnet_duplex # (
    output reg              time_rst_o        ,
    output reg              time_init_o       ,
    output reg              time_updt_o       ,
-   output reg  [31:0]      time_off_dt_o         ,
+   output reg  [31:0]      time_off_dt_o     ,
    output reg  [31:0]      tnet_dt1_o        ,
    output reg  [31:0]      tnet_dt2_o        ,
-
 ///////////////// SIMULATION    
    input  wire             rxn_A_i        ,
    input  wire             rxp_A_i        ,
-   output wire             txn_A_o        ,
-   output  wire            txp_A_o        ,
-   input  wire             rxn_B_i        ,
-   input  wire             rxp_B_i        ,
    output wire             txn_B_o        ,
    output  wire            txp_B_o        ,
 ////////////////   CHANNEL A LINK
    input  wire             axi_rx_tvalid_A_RX_i  ,
    input  wire  [63:0]     axi_rx_tdata_A_RX_i   ,
    input  wire             axi_rx_tlast_A_RX_i   ,
-   output reg   [63:0]     axi_tx_tdata_A_TX_o   ,
-   output reg              axi_tx_tvalid_A_TX_o  ,
-   output reg              axi_tx_tlast_A_TX_o   ,
-   input  wire             axi_tx_tready_A_TX_i  ,
 ////////////////   CHANNEL B LINK
-   input  wire             axi_rx_tvalid_B_RX_i  ,
-   input  wire  [63:0]     axi_rx_tdata_B_RX_i   ,
-   input  wire             axi_rx_tlast_B_RX_i   ,
    output reg   [63:0]     axi_tx_tdata_B_TX_o   ,
    output reg              axi_tx_tvalid_B_TX_o  ,
    output reg              axi_tx_tlast_B_TX_o   ,
    input  wire             axi_tx_tready_B_TX_i  ,
-
 // AXI-Lite DATA Slave I/F.   
    input  wire [5:0]       s_axi_awaddr      ,
    input  wire [2:0]       s_axi_awprot      ,
@@ -74,18 +62,19 @@ module axis_tnet_duplex # (
    output wire             s_axi_rvalid      ,
    input  wire             s_axi_rready      );
 
-qick_net_duplex # (
+qick_net_simplex # (
    .SIM_LEVEL ( SIM_LEVEL )
 ) QICK_NET (
    .gt_refclk1_p         ( gt_refclk1_p         ) ,
    .gt_refclk1_n         ( gt_refclk1_n         ) ,
-   .t_clk_i              ( t_clk              ) ,
-   .t_rst_ni             ( t_aresetn             ) ,
-   .c_clk_i              ( c_clk              ) ,
-   .c_rst_ni             ( c_aresetn             ) ,
-   .ps_clk_i             ( ps_clk             ) ,
-   .ps_rst_ni            ( ps_aresetn            ) ,
+   .t_clk_i              ( t_clk                ) ,
+   .t_rst_ni             ( t_aresetn            ) ,
+   .c_clk_i              ( c_clk                ) ,
+   .c_rst_ni             ( c_aresetn            ) ,
+   .ps_clk_i             ( ps_clk               ) ,
+   .ps_rst_ni            ( ps_aresetn           ) ,
    .t_time_abs           ( t_time_abs           ) ,
+   .net_sync_i           ( net_sync             ) ,
    .c_cmd_i              ( c_cmd_i              ) ,
    .c_op_i               ( c_op_i               ) ,
    .c_dt1_i              ( c_dt1_i              ) ,
@@ -102,22 +91,11 @@ qick_net_duplex # (
    .tnet_dt2_o           ( tnet_dt2_o           ) ,
    .rxn_A_i              ( rxn_A_i              ) ,
    .rxp_A_i              ( rxp_A_i              ) ,
-   .txn_A_o              ( txn_A_o              ) ,
-   .txp_A_o              ( txp_A_o              ) ,
-   .rxn_B_i              ( rxn_B_i              ) ,
-   .rxp_B_i              ( rxp_B_i              ) ,
    .txn_B_o              ( txn_B_o              ) ,
    .txp_B_o              ( txp_B_o              ) ,
    .axi_rx_tvalid_A_RX_i ( axi_rx_tvalid_A_RX_i ) ,
    .axi_rx_tdata_A_RX_i  ( axi_rx_tdata_A_RX_i  ) ,
    .axi_rx_tlast_A_RX_i  ( axi_rx_tlast_A_RX_i  ) ,
-   .axi_tx_tdata_A_TX_o  ( axi_tx_tdata_A_TX_o  ) ,
-   .axi_tx_tvalid_A_TX_o ( axi_tx_tvalid_A_TX_o ) ,
-   .axi_tx_tlast_A_TX_o  ( axi_tx_tlast_A_TX_o  ) ,
-   .axi_tx_tready_A_TX_i ( axi_tx_tready_A_TX_i ) ,
-   .axi_rx_tvalid_B_RX_i ( axi_rx_tvalid_B_RX_i ) ,
-   .axi_rx_tdata_B_RX_i  ( axi_rx_tdata_B_RX_i  ) ,
-   .axi_rx_tlast_B_RX_i  ( axi_rx_tlast_B_RX_i  ) ,
    .axi_tx_tdata_B_TX_o  ( axi_tx_tdata_B_TX_o  ) ,
    .axi_tx_tvalid_B_TX_o ( axi_tx_tvalid_B_TX_o ) ,
    .axi_tx_tlast_B_TX_o  ( axi_tx_tlast_B_TX_o  ) ,

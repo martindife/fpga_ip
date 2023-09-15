@@ -83,11 +83,32 @@ aurora_64b66b_SL your_instance_name (
   .gt_refclk1_n(gt_refclk1_n),                // input wire gt_refclk1_n
   .user_clk_out(user_clk_out),                // output wire user_clk_out
   .gt_rxcdrovrden_in(gt_rxcdrovrden_in),      // input wire gt_rxcdrovrden_in
+  .gt_rxusrclk_out(gt_rxusrclk_out),          // output wire gt_rxusrclk_out
   .reset2fc(reset2fc),                        // output wire reset2fc
   .sys_reset_out(sys_reset_out),              // output wire sys_reset_out
   .gt_reset_out(gt_reset_out),                // output wire gt_reset_out
   .gt_refclk1_out(gt_refclk1_out),            // output wire gt_refclk1_out
-  .gt_powergood(gt_powergood)                // output wire [0 : 0] gt_powergood
+  .gt_qplllock(gt_qplllock),                  // output wire [0 : 0] gt_qplllock
+  .gt_eyescanreset(gt_eyescanreset),          // input wire [0 : 0] gt_eyescanreset
+  .gt_eyescandataerror(gt_eyescandataerror),  // output wire [0 : 0] gt_eyescandataerror
+  .gt_rxlpmen(gt_rxlpmen),                    // input wire [0 : 0] gt_rxlpmen
+  .gt_eyescantrigger(gt_eyescantrigger),      // input wire [0 : 0] gt_eyescantrigger
+  .gt_rxcdrhold(gt_rxcdrhold),                // input wire [0 : 0] gt_rxcdrhold
+  .gt_rxdfelpmreset(gt_rxdfelpmreset),        // input wire [0 : 0] gt_rxdfelpmreset
+  .gt_rxpmareset(gt_rxpmareset),              // input wire [0 : 0] gt_rxpmareset
+  .gt_rxpcsreset(gt_rxpcsreset),              // input wire [0 : 0] gt_rxpcsreset
+  .gt_rxbufreset(gt_rxbufreset),              // input wire [0 : 0] gt_rxbufreset
+  .gt_rxpmaresetdone(gt_rxpmaresetdone),      // output wire [0 : 0] gt_rxpmaresetdone
+  .gt_rxprbssel(gt_rxprbssel),                // input wire [3 : 0] gt_rxprbssel
+  .gt_rxprbserr(gt_rxprbserr),                // output wire [0 : 0] gt_rxprbserr
+  .gt_rxprbscntreset(gt_rxprbscntreset),      // input wire [0 : 0] gt_rxprbscntreset
+  .gt_rxresetdone(gt_rxresetdone),            // output wire [0 : 0] gt_rxresetdone
+  .gt_rxbufstatus(gt_rxbufstatus),            // output wire [2 : 0] gt_rxbufstatus
+  .gt_powergood(gt_powergood),                // output wire [0 : 0] gt_powergood
+  .gt_pcsrsvdin(gt_pcsrsvdin),                // input wire [15 : 0] gt_pcsrsvdin
+  .gt_dmonitorout(gt_dmonitorout),            // output wire [15 : 0] gt_dmonitorout
+  .gt_cplllock(gt_cplllock),                  // output wire [0 : 0] gt_cplllock
+  .gt_rxrate(gt_rxrate)                      // input wire [2 : 0] gt_rxrate
 );
 // INST_TAG_END ------ End INSTANTIATION Template ---------
 

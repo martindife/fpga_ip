@@ -29,14 +29,14 @@ module aurora_ctrl_simplex # (
    output wire             txn_B_o        ,
    output  wire            txp_B_o        ,
 ////////////////   LINK CHANNEL A
-   input  wire  [63:0]     s_axi_rx_tdata_RX_i  ,
-   input  wire             s_axi_rx_tvalid_RX_i ,
-   input  wire             s_axi_rx_tlast_RX_i  ,
+   input  wire             axi_rx_tvalid_A_RX_i ,
+   input  wire  [63:0]     axi_rx_tdata_A_RX_i  ,
+   input  wire             axi_rx_tlast_A_RX_i  ,
 ////////////////   LINK CHANNEL B
-   output reg  [63:0]      m_axi_tx_tdata_TX_o  ,
-   output reg              m_axi_tx_tvalid_TX_o ,
-   output reg              m_axi_tx_tlast_TX_o  ,
-   input  wire             m_axi_tx_tready_TX_i ,
+   output reg              axi_tx_tvalid_B_TX_o ,
+   output reg  [63:0]      axi_tx_tdata_B_TX_o  ,
+   output reg              axi_tx_tlast_B_TX_o  ,
+   input  wire             axi_tx_tready_B_TX_i ,
 // DEBUGGING
    output wire [3:0]       aurora_do        ,
    output wire             channel_TX_up   ,
@@ -170,21 +170,22 @@ generate
       assign channel_TX_up        = 1;
       assign aurora_do           = 0;
 
-// A RX and B TX CONNECTION
-      assign axi_rx_tvalid_RX   = s_axi_rx_tvalid_RX_i;
-      assign axi_rx_tdata_RX    = s_axi_rx_tdata_RX_i ;
-      assign axi_rx_tlast_RX    = s_axi_rx_tlast_RX_i ;
+   // A RX and B TX CONNECTION
+      assign axi_rx_tvalid_RX   = axi_rx_tvalid_A_RX_i;
+      assign axi_rx_tdata_RX    = axi_rx_tdata_A_RX_i ;
+      assign axi_rx_tlast_RX    = axi_rx_tlast_A_RX_i ;
 
-      assign m_axi_tx_tvalid_TX_o = axi_tx_tvalid_TX  ;
-      assign m_axi_tx_tdata_TX_o  = axi_tx_tdata_TX   ;
-      assign m_axi_tx_tlast_TX_o  = axi_tx_tlast_TX   ;
-      assign axi_tx_tready_TX     = m_axi_tx_tready_TX_i;
+      assign axi_tx_tvalid_B_TX_o = axi_tx_tvalid_TX  ;
+      assign axi_tx_tdata_B_TX_o  = axi_tx_tdata_TX   ;
+      assign axi_tx_tlast_B_TX_o  = axi_tx_tlast_TX   ;
+      assign axi_tx_tready_TX     = axi_tx_tready_B_TX_i;
+
 
  end else begin 
       if (SIM_LEVEL == 2) begin : SIM_YES_AURORA
-         assign m_axi_tx_tdata_TX_o   = 0 ;
-         assign m_axi_tx_tvalid_TX_o  = 0 ;
-         assign m_axi_tx_tlast_TX_o   = 0 ;
+         assign axi_tx_tvalid_B_TX_o   = 0 ;
+         assign axi_tx_tdata_B_TX_o  = 0 ;
+         assign axi_tx_tlast_B_TX_o   = 0 ;
       end else begin : SYNT_AURORA
          assign txn_A_o             = 0 ;
          assign txp_A_o             = 0 ;
@@ -444,7 +445,7 @@ always_comb begin
    axi_tx_tvalid_TX   = 1'b0;
    axi_tx_tdata_TX    = 63'd0;
    axi_tx_tlast_TX    = 1'b0;
-
+         cmd_req  = 1'b0;
 
    case (tnet_st)
       NOT_RDY: begin
@@ -461,8 +462,8 @@ always_comb begin
          else if  ( net_propagate      )  tnet_st_nxt = PROPAGATE ;
       end
       PROCESS: begin
-         cmd_req_set  = 1'b1;
-         if ( cmd_req ) tnet_st_nxt    = IDLE ;
+         cmd_req  = 1'b1;
+         tnet_st_nxt    = IDLE ;
       end
       PROPAGATE: begin
          TX_req_net = 1'b1 ;
@@ -501,21 +502,6 @@ end
 
 
 
-
-
-
-always_ff @(posedge user_clk)
-   if (user_rst)   begin
-      cmd_req <= 1'b0;
-   end else begin
-      if ( cmd_req_set) begin
-         if ( net_sync )  
-            if ( tx_rdy_10 ) cmd_req  <= 1'b1;
-         else 
-            cmd_req  <= 1'b1;
-      end else 
-            cmd_req  <= 1'b0;
-   end
 
 
 reg cmd_req_r, cmd_req_r2;

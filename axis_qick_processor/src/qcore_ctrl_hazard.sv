@@ -52,20 +52,22 @@ module qcore_ctrl_hazard (
 
 
 // DATA HAZARD
-reg  [31:0]    reg_D_nxt [2] ;
 
 reg  [31:0]    data_nxt [4] ;
 reg  [31:0]    data_r   [4] ;
 reg            stall_id_w, stall_id_f, stall_id_j     ;
 reg [1:0] fwd_D_RD, fwd_D_X1, fwd_D_X2, fwd_D_WR ;
 reg [1:0] src_wreg_D;
-reg  [1 :0]    w_stall_D_rd, d_stall_D_rd, stall_id_D_rd     ;
 
 // DATA FORWARDING
+reg  [31:0]    reg_D_nxt [2] ;
+reg  [1 :0]    w_stall_D_rd, d_stall_D_rd     ;
+
 genvar ind_D;
 generate
    for (ind_D=0; ind_D <2 ; ind_D=ind_D+1) begin
 
+      // REG_WR from WaveRegister   after   REG_WR r_wave 
       always_comb begin
          src_wreg_D[ind_D] = rs_D_addr_i[ind_D][6:5] == 2'b01 & (x1_reg_i.r_wave_we | x2_reg_i.r_wave_we) ;           //WREG Read and modified  
          if ( src_wreg_D[ind_D] )     
@@ -73,10 +75,8 @@ generate
          else
             w_stall_D_rd[ind_D] = 1'b0 ;
       end
-      always_comb begin
-         stall_id_D_rd[ind_D]    = rd_reg_i.port_re | x1_reg_i.port_re | x2_reg_i.port_re ;   
-         //port_stall_D_rd[ind_D]    = x1_reg_i.port_re | x2_reg_i.port_re ;   
-      end
+
+      // REG_WR from DataRegister   after   REG_WR DataRegister 
       always_comb begin
          reg_D_nxt[ind_D] = rs_D_dt_i[ind_D];
          d_stall_D_rd[ind_D] = 1'b0;
@@ -109,6 +109,8 @@ reg  [1 :0]    stall_A_rd     ;
 genvar ind_A;
 generate
    for (ind_A=0; ind_A <2 ; ind_A=ind_A+1) begin
+
+      // REG_WR from AddresRegister   after   REG_WR to AddresRegister 
       always_comb begin
          reg_A_nxt[ind_A] = rs_A_dt_i[ind_A];
          stall_A_rd[ind_A] = 1'b0;
@@ -130,7 +132,14 @@ generate
    end //for
 endgenerate
 
-// WMEM_WR after a REG_WR r_wave  
+
+//assign rd_wr_wreg = rd_reg_i.we & rd_reg_i.addr[6:5] == 2'b01 ; 
+//assign x1_wr_wreg = x1_reg_i.we & x1_reg_i.addr[6:5] == 2'b01 ; 
+//assign x2_wr_wreg = x2_reg_i.we & x2_reg_i.addr[6:5] == 2'b01 ; 
+//assign wr_wreg = rd_wr_wreg | x1_wr_wreg| x2_wr_wreg;
+
+///////////////////////////////////////////////////////////////////////////////
+// WMEM_WR    after    REG_WR r_wave  
 wire wr_r_wave;
 assign wr_r_wave = rd_reg_i.r_wave_we | x1_reg_i.r_wave_we | x2_reg_i.r_wave_we ;
 
@@ -143,14 +152,8 @@ always_comb begin
 end
 
   
-assign rd_wr_wreg = rd_reg_i.we & rd_reg_i.addr[6:5] == 2'b01 ; 
-assign x1_wr_wreg = x1_reg_i.we & x1_reg_i.addr[6:5] == 2'b01 ; 
-assign x2_wr_wreg = x2_reg_i.we & x2_reg_i.addr[6:5] == 2'b01 ; 
-assign wr_wreg = rd_wr_wreg | x1_wr_wreg| x2_wr_wreg;
-  
-
-
-// FLAG Change STALL 
+///////////////////////////////////////////////////////////////////////////////
+// -if()   after   -uf >>>  STALL 
 always_comb begin
    stall_id_f    = 1'b0    ;
    if (id_flag_used) begin       // FLAG WILL BE USED
@@ -159,7 +162,9 @@ always_comb begin
    end
 end
 
-// PC JUJMP ADDR Change STALL 
+
+///////////////////////////////////////////////////////////////////////////////
+// JUMP r_addr   after    WRITE_REG r_addr   >>>  STALL 
 wire rd_w_reg_addr, x1_w_reg_addr, x2_w_reg_addr  ;
 wire w_reg_addr;
 assign rd_w_reg_addr = (rd_reg_i.addr == 7'b1001111) ;
@@ -175,10 +180,18 @@ always_comb begin
    end
 end
 
+///////////////////////////////////////////////////////////////////////////////
+// DPORT_RD >>> STALL (Too much logic to check if reg will be used just after)
+wire stall_id_D_rd ;
+assign    stall_id_D_rd    = rd_reg_i.port_re | x1_reg_i.port_re | x2_reg_i.port_re ;   
 
+
+// OUTPUTS
+
+///////////////////////////////////////////////////////////////////////////////
+// Data Forwarding REGISTER 
 reg  [31:0]    reg_A     [2] ;
 reg  [31:0]    reg_D     [2] ;
-
 //Register DATA & ADDRESS OUT
 always_ff @ (posedge clk_i, negedge rst_ni)
    if (!rst_ni) begin
@@ -190,6 +203,7 @@ always_ff @ (posedge clk_i, negedge rst_ni)
          reg_D          = reg_D_nxt ;
       end
    end
+   
 assign reg_A_dt_o      = reg_A;
 assign reg_D_dt_o      = reg_D;
 assign bubble_id_o   = stall_id_j | stall_id_f | stall_id_w | stall_id_D_rd  ;

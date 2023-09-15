@@ -258,6 +258,12 @@
      reg  new_do_wr_en = 1'b0;
      reg CB_flag_flopped;
 
+     reg flag4CB_r='b0; 
+//     reg reset_frm_CB;
+//     reg reset_frm_CB_r2;
+//     reg [15:0] Shift4Reset2FC;
+
+     reg flag_mask_CB_r;
      reg    [71:0]     fifo_dout;
      reg               master_do_rd_en;
 
@@ -308,6 +314,8 @@
      wire               CC_flag_direct;
      wire               CC_flag_dlyd1;
      wire               valid_btf_detect_c;
+     reg                valid_btf_detect_r;
+     wire               valid_btf_detect_c1;
      wire               valid_btf_detect_pulse_i;
      wire               link_reset_0;
      wire               link_reset_1;
@@ -488,16 +496,37 @@ generate
                                     (GTX_RX_DATA_IN[63:48] == NA_CHARACTER)) && GTX_RX_DATAVALID_IN);
  
   else
- 
-     assign valid_btf_detect_c   =  ((GTX_RX_HEADER_IN == 2'b10) &&
-                                    (GTX_RX_DATA_IN[63:48] == CC_CHARACTER)
-                                     && GTX_RX_DATAVALID_IN);
+    assign valid_btf_detect_c   =  (master_do_rd_en & (fifo_dout[63:48]==CC_CHARACTER) & (fifo_dout[65:64]==2'b10) & fifo_dout[68]);
  
                                      
 endgenerate
 
+    always @(posedge RD_CLK)
+        valid_btf_detect_r <= `DLY valid_btf_detect_c;
+
+aurora_64b66b_SL_cdc_sync
+   # (
+      .c_cdc_type    (1),  // 0 Pulse synchronizer, 1 level synchronizer 2 level synchronizer with ACK
+      .c_flop_input  (0),  // 1 Adds one flop stage to the input prmry_in signal
+      .c_reset_state (0),  // 1 Reset needed for sync flops
+      .c_single_bit  (1),  // 1 single bit input.
+      .c_mtbf_stages (5)   // Number of sync stages needed
+     )   u_cdc_valid_btf_detect
+     (
+       .prmry_aclk      (RD_CLK ),
+       .prmry_rst_n     (1'b1 ),
+       .prmry_in        (valid_btf_detect_r),
+       .prmry_vect_in   (32'd0 ),
+       .scndry_aclk     (USER_CLK ),
+       .scndry_rst_n    (1'b1 ),
+       .prmry_ack       ( ),
+       .scndry_out      (valid_btf_detect_c1),
+       .scndry_vect_out ( )
+      );
+
      always @(posedge USER_CLK)
-          valid_btf_detect  <= `DLY valid_btf_detect_c;
+          valid_btf_detect  <= `DLY valid_btf_detect_c1;
+
                                      
 
 
@@ -998,33 +1027,49 @@ end
      begin
          if(CBCC_FIFO_RESET_TO_FIFO_WR_CLK)
              wr_monitor_flag <= `DLY 5'd0;
-         else if (wr_monitor_flag >= (INTER_CB_GAP + 2))
+         else if (wr_monitor_flag >= (INTER_CB_GAP + 3))
              wr_monitor_flag <= `DLY wr_monitor_flag;
          else if(new_do_wr_en)
              wr_monitor_flag <= `DLY wr_monitor_flag + 1'b1;
+     end
+
+ assign mask_CB = (new_do_wr_en && (new_fifo_din_i[63:48] == CB_CHARACTER) && (new_fifo_din_i[68])); 
+
+     always @(posedge USER_CLK)
+     begin
+         if(CBCC_FIFO_RESET_TO_FIFO_WR_CLK)
+             flag_mask_CB_r <= `DLY 1'd0;
+         else if ((wr_monitor_flag >= INTER_CB_GAP) && (wr_monitor_flag <= INTER_CB_GAP + 2))
+             if (mask_CB)
+               flag_mask_CB_r <= `DLY 1'b1;
+             else if (!flag_mask_CB_r)
+               flag_mask_CB_r <= `DLY 1'b0;
+         else if(wr_monitor_flag > INTER_CB_GAP + 2)
+             flag_mask_CB_r <= `DLY 1'd0;
      end
 
      always @(posedge USER_CLK)
      begin
          if(CBCC_FIFO_RESET_TO_FIFO_WR_CLK)
              FIRST_CB_BITERR_CB_RESET_OUT <= `DLY 1'b0;
-         else if(wr_monitor_flag == 5'd0 || wr_monitor_flag >= (INTER_CB_GAP + 2))
+         else if(wr_monitor_flag == 5'd0 || wr_monitor_flag >= (INTER_CB_GAP + 3))
              FIRST_CB_BITERR_CB_RESET_OUT <= `DLY 1'b0;
-         else if(wr_monitor_flag == INTER_CB_GAP + 1)
-         begin
-             if(new_do_wr_en) //header info is not sent to fifo, so allowing this change, need to review
-                 FIRST_CB_BITERR_CB_RESET_OUT <= `DLY !((new_fifo_din_i[63:48] == CB_CHARACTER) && (new_fifo_din_i[68]));
-             else
-                 FIRST_CB_BITERR_CB_RESET_OUT <= `DLY FIRST_CB_BITERR_CB_RESET_OUT;
-         end
-         else
+         else if(wr_monitor_flag <= INTER_CB_GAP - 1)
          begin
              if(new_do_wr_en) //header info is not sent to fifo, so allowing this change, need to review
                  FIRST_CB_BITERR_CB_RESET_OUT <= `DLY ((new_fifo_din_i[63:48] == CB_CHARACTER) && (new_fifo_din_i[68]));
              else
                  FIRST_CB_BITERR_CB_RESET_OUT <= `DLY FIRST_CB_BITERR_CB_RESET_OUT;
          end
+         else if (wr_monitor_flag > INTER_CB_GAP + 2 )
+         begin
+             if(!flag_mask_CB_r) //header info is not sent to fifo, so allowing this change, need to review
+                 FIRST_CB_BITERR_CB_RESET_OUT <= `DLY 1'b1;
+             else
+                 FIRST_CB_BITERR_CB_RESET_OUT <= `DLY FIRST_CB_BITERR_CB_RESET_OUT;
+         end
      end
+
 
 //   // Instantiate a FIFO
 //             aurora_64b66b_SL_fifo_512x72 #

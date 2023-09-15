@@ -80,11 +80,32 @@ COMPONENT aurora_64b66b_SL
     gt_refclk1_n : IN STD_LOGIC;
     user_clk_out : OUT STD_LOGIC;
     gt_rxcdrovrden_in : IN STD_LOGIC;
+    gt_rxusrclk_out : OUT STD_LOGIC;
     reset2fc : OUT STD_LOGIC;
     sys_reset_out : OUT STD_LOGIC;
     gt_reset_out : OUT STD_LOGIC;
     gt_refclk1_out : OUT STD_LOGIC;
-    gt_powergood : OUT STD_LOGIC_VECTOR(0 DOWNTO 0) 
+    gt_qplllock : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_eyescanreset : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_eyescandataerror : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxlpmen : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_eyescantrigger : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxcdrhold : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxdfelpmreset : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxpmareset : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxpcsreset : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxbufreset : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxpmaresetdone : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxprbssel : IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+    gt_rxprbserr : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxprbscntreset : IN STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxresetdone : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxbufstatus : OUT STD_LOGIC_VECTOR(2 DOWNTO 0);
+    gt_powergood : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_pcsrsvdin : IN STD_LOGIC_VECTOR(15 DOWNTO 0);
+    gt_dmonitorout : OUT STD_LOGIC_VECTOR(15 DOWNTO 0);
+    gt_cplllock : OUT STD_LOGIC_VECTOR(0 DOWNTO 0);
+    gt_rxrate : IN STD_LOGIC_VECTOR(2 DOWNTO 0) 
   );
 END COMPONENT;
 -- COMP_TAG_END ------ End COMPONENT Declaration ------------
@@ -123,11 +144,32 @@ your_instance_name : aurora_64b66b_SL
     gt_refclk1_n => gt_refclk1_n,
     user_clk_out => user_clk_out,
     gt_rxcdrovrden_in => gt_rxcdrovrden_in,
+    gt_rxusrclk_out => gt_rxusrclk_out,
     reset2fc => reset2fc,
     sys_reset_out => sys_reset_out,
     gt_reset_out => gt_reset_out,
     gt_refclk1_out => gt_refclk1_out,
-    gt_powergood => gt_powergood
+    gt_qplllock => gt_qplllock,
+    gt_eyescanreset => gt_eyescanreset,
+    gt_eyescandataerror => gt_eyescandataerror,
+    gt_rxlpmen => gt_rxlpmen,
+    gt_eyescantrigger => gt_eyescantrigger,
+    gt_rxcdrhold => gt_rxcdrhold,
+    gt_rxdfelpmreset => gt_rxdfelpmreset,
+    gt_rxpmareset => gt_rxpmareset,
+    gt_rxpcsreset => gt_rxpcsreset,
+    gt_rxbufreset => gt_rxbufreset,
+    gt_rxpmaresetdone => gt_rxpmaresetdone,
+    gt_rxprbssel => gt_rxprbssel,
+    gt_rxprbserr => gt_rxprbserr,
+    gt_rxprbscntreset => gt_rxprbscntreset,
+    gt_rxresetdone => gt_rxresetdone,
+    gt_rxbufstatus => gt_rxbufstatus,
+    gt_powergood => gt_powergood,
+    gt_pcsrsvdin => gt_pcsrsvdin,
+    gt_dmonitorout => gt_dmonitorout,
+    gt_cplllock => gt_cplllock,
+    gt_rxrate => gt_rxrate
   );
 -- INST_TAG_END ------ End INSTANTIATION Template ---------
 

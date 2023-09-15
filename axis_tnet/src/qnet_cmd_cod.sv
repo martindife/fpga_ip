@@ -5,8 +5,8 @@ module qnet_cmd_cod (
    input  wire             c_rst_ni            ,
    input  wire             t_clk_i             ,
    input  wire             t_rst_ni            ,
-   input  wire             param_NN            ,
-   input  wire             param_ID            ,
+   input  wire  [ 9:0]     param_NN            ,
+   input  wire  [ 9:0]     param_ID            ,
    input  wire             c_cmd_i             ,
    input  wire  [4:0]      c_op_i              ,
    input  wire  [31:0]     c_dt_i [3]          ,
@@ -37,7 +37,6 @@ wire [4:0] control_op;
 // AXI Command Register
 sync_reg # (.DW ( 5 ) )       sync_pcmd_op (
    .dt_i      ( p_op_i ) ,
-   //.dt_i      ( TNET_CTRL[5:0] ) ,
    .clk_i     ( t_clk_i      ) ,
    .rst_ni    ( t_rst_ni  ) ,
    .dt_o      ( {control_op}  ) );
@@ -58,8 +57,6 @@ always_ff @(posedge t_clk_i)
          p_cmd_op   <= control_op[4:0] ;
          p_cmd_dt   <= {p_dt_i[0], p_dt_i[1] }  ;
          p_cmd_hdt  <= p_dt_i[2] ;
-         //p_cmd_dt   <= {REG_AXI_DT1, REG_AXI_DT2 }  ;
-         //p_cmd_hdt  <= REG_AXI_DT3 ;
       end
       if ( loc_cmd_ack_i ) p_cmd_req  <= 1'b0;
    end
@@ -113,7 +110,7 @@ sync_reg # (.DW ( 1 ) )       sync_cmd_req (
 reg [4:0]  loc_cmd_op;
 reg [63:0] loc_cmd_header;
 reg [31:0] loc_cmd_dt[2];
-reg [31:0] loc_cmd_hdt;
+reg [23:0] loc_cmd_hdt;
 
   
  
@@ -127,23 +124,23 @@ always_comb begin
       loc_cmd_dt  = c_cmd_dt  ;
       loc_cmd_hdt = c_cmd_hdt ;
    end
-//////////////////////////////////////////////////////////    CFG_CMD___SXCWOA___DEST_______SOURCE_____STEP_______ID0________ID1
-   if      (loc_cmd_op == _get_net    ) loc_cmd_header =  64'b100_00001_100100_1111111111_0000000001_0000000000_0000000000_0000000001;
-   else if (loc_cmd_op == _set_net    ) loc_cmd_header = {44'b100_00010_100100_1111111111_0000000001_0000000000, param_NN, 10'b0000000010} ;
-   else if (loc_cmd_op == _sync1_net   ) loc_cmd_header =  64'b100_01000_100100_1111111111_0000000001_0000000000_0000000000_0000000000;
-   else if (loc_cmd_op == _sync2_net   ) loc_cmd_header =  64'b100_01000_100100_1111111111_0000000001_0000000000_0000000000_0000000000;
-   else if (loc_cmd_op == _sync3_net   ) loc_cmd_header =  64'b100_01000_100100_1111111111_0000000001_0000000000_0000000000_0000000000;
-   else if (loc_cmd_op == _sync4_net   ) loc_cmd_header =  64'b100_01000_100100_1111111111_0000000001_0000000000_0000000000_0000000000;
-//   else if (loc_cmd_op == _get_off    ) loc_cmd_header = {14'b100_00101_000100, loc_cmd_hdt[9:0] , param_ID, 30'b0000000000_0000000000_0000000000};
-   else if (loc_cmd_op == _updt_off   ) loc_cmd_header = {14'b100_01001_000100, loc_cmd_hdt[9:0] , param_ID, 30'b0000000000_0000000000_0000000000};
-   else if (loc_cmd_op == _set_dt     ) loc_cmd_header = {14'b100_01010_100100, loc_cmd_hdt[9:0] , param_ID, 30'b0000000000_0000000000_0000000000};
-   else if (loc_cmd_op == _get_dt     ) loc_cmd_header = {14'b100_01011_100100, loc_cmd_hdt[9:0] , param_ID, 20'b0000000000_0000000000, loc_cmd_hdt[25:16]};
-   else if (loc_cmd_op == _rst_time  ) loc_cmd_header = {24'b100_10000_100100_1111111111, param_ID, 30'b0000000000_0000000000_0000000000};
-   else if (loc_cmd_op == _start_core ) loc_cmd_header = {24'b100_10001_100100_1111111111, param_ID, 30'b0000000000_0000000000_0000000000};
-   else if (loc_cmd_op == _stop_core  ) loc_cmd_header = {24'b100_10010_100100_1111111111, param_ID, 30'b0000000000_0000000000_0000000000};
-   else if (loc_cmd_op == _set_cond   ) loc_cmd_header = {24'b100_10011_100100_1111111111, param_ID, 30'b0000000000_0000000000_0000000000};
-   else if (loc_cmd_op == _get_cond) loc_cmd_header = {24'b100_10100_100100_1111111111, param_ID, 30'b0000000000_0000000000_0000000000};
-   else                                 loc_cmd_header =  64'b000_00000_000000_0000000000_0000000000_0000000000_0000000000_0000000000;
+//////////////////////////////////////////////////////////  Type_CMD___SWA___DEST_______SOURCE_____STEP_______ID0________ID1
+   if      (loc_cmd_op == _get_net    ) loc_cmd_header =  64'b00_00001_100_1111111111_0000000001_0000000000_00000000000000_0000000001;
+   else if (loc_cmd_op == _set_net    ) loc_cmd_header = {40'b00_00010_000_1111111111_0000000001_0000000000, 14'd1460, param_NN  };
+   else if (loc_cmd_op == _sync1_net  ) loc_cmd_header = {40'b00_00011_100_1111111111_0000000001_0000000000, loc_cmd_hdt[23:10], 10'd0} ;
+   else if (loc_cmd_op == _sync2_net  ) loc_cmd_header =  64'b00_00100_100_1111111111_0000000001_0000000000_00000000000000_0000000000;
+   else if (loc_cmd_op == _sync3_net  ) loc_cmd_header =  64'b00_00101_100_1111111111_0000000001_0000000000_00000000000000_0000000000;
+   else if (loc_cmd_op == _sync4_net  ) loc_cmd_header =  64'b00_00110_100_1111111111_0000000001_0000000000_00000000000000_0000000000;
+   else if (loc_cmd_op == _get_off    ) loc_cmd_header = {14'b00_00111_000, loc_cmd_hdt[9:0] , param_ID, 34'd0};
+   else if (loc_cmd_op == _updt_off   ) loc_cmd_header = {14'b00_01000_000, loc_cmd_hdt[9:0] , param_ID, 34'd0};
+   else if (loc_cmd_op == _set_dt     ) loc_cmd_header = {14'b00_01001_100, loc_cmd_hdt[9:0] , param_ID, 34'd0};
+   else if (loc_cmd_op == _get_dt     ) loc_cmd_header = {14'b00_01010_100, loc_cmd_hdt[9:0] , param_ID, 34'd0};
+   else if (loc_cmd_op == _rst_time   ) loc_cmd_header = {24'b00_10000_100_1111111111, param_ID, 34'd0};
+   else if (loc_cmd_op == _start_core ) loc_cmd_header = {24'b00_10001_100_1111111111, param_ID, 34'd0};
+   else if (loc_cmd_op == _stop_core  ) loc_cmd_header = {24'b00_10010_100_1111111111, param_ID, 34'd0};
+   else if (loc_cmd_op == _set_cond   ) loc_cmd_header = {24'b00_11000_100_1111111111, param_ID, 34'd0};
+   else if (loc_cmd_op == _get_cond   ) loc_cmd_header = {24'b00_11001_100_1111111111, param_ID, 34'd0};
+   else                                 loc_cmd_header =  64'b00_00000_000_0000000000_0000000000_0000000000_00000000_0000000000000000;
    end
 
 //         tx_cmd_header   = {14'b100_01011_000001, cmd_header_r[39:30] , param_ID, 20'b0000000000_0000000000, loc_cmd_hdt[9:0]};
@@ -151,7 +148,6 @@ always_comb begin
   
 reg [63:0] cmd_header_r;
 reg [31:0] cmd_dt_r [2];
-
 
 
 sync_reg # (.DW ( 1 ) ) sync_net_cmd (
@@ -191,60 +187,7 @@ assign loc_cmd_req_o = loc_cmd_req ;
 assign net_cmd_req_o = net_cmd_req ;
 assign header_o = cmd_header_r;
 assign data_o   = cmd_dt_r;
+
 endmodule
 
-      
-/*
-
-// TIMEOUT
-reg m_axi_ready_TX_r, m_axi_ready_TX_r2, m_axi_ready_TX_r3, m_axi_ready_TX_r4;
-
-always_ff @ (posedge user_clk_i, posedge user_rst_i) begin
-   if (user_rst_i) begin
-      m_axi_ready_TX_r    <= 0;
-      m_axi_ready_TX_r2   <= 0;
-      m_axi_ready_TX_r3   <= 0;
-      m_axi_ready_TX_r4   <= 0;
-      
-   end else begin
-      m_axi_ready_TX_r     <= m_axi_tx_tready_TX;
-      m_axi_ready_TX_r2    <= m_axi_ready_TX_r;
-      m_axi_ready_TX_r3    <= m_axi_ready_TX_r2;
-   end
-end
-wire m_axi_ready_TX_cc;
-assign m_axi_ready_TX_cc    = !m_axi_ready_TX_r3 & !m_axi_ready_TX_r2 & !m_axi_ready_TX_r & m_axi_tx_tready_TX ;
-
-reg ready_TX_r, ready_TX_r2, cc_TX_r, cc_TX_2r;
-
-wire t_ready_t01, t_ready_t3rd;
-reg tready_cnt_rst;
-reg [1:0] tready_cnt;
-(* ASYNC_REG = "TRUE" *) reg ready_TX_cdc, cc_TX_cdc;
-
-// Detect Rising Edge on TREADY
-always_ff @(posedge t_clk)
-   if (!t_aresetn) begin
-      ready_TX_cdc  <= 0;
-      ready_TX_r    <= 0;
-      ready_TX_r2    <= 0;
-
-      tready_cnt    <= 0;
-   end else begin
-      ready_TX_cdc   <= m_axi_tx_tready_TX;
-      ready_TX_r     <= ready_TX_cdc;
-      ready_TX_r2    <= ready_TX_r;
-      cc_TX_cdc      <= m_axi_ready_TX_cc;
-      cc_TX_r        <= cc_TX_cdc;
-      cc_TX_2r       <= cc_TX_r;
-
-      if (tready_cnt_rst) 
-         tready_cnt    <= 0;
-      else if (t_ready_t01)
-         tready_cnt    <=    tready_cnt + 1'b1;
-   end
-
-assign t_ready_t01    = !ready_TX_r2 & ready_TX_r ;
-assign cc_TX_t01      = !cc_TX_2r & cc_TX_r;
-assign t_ready_t3rd  = (tready_cnt == 2'b11);
-*/
+    

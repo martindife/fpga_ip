@@ -30,7 +30,7 @@ always_comb begin
       LOC_UPDT_OFF     : debug_dt = 9 ;
       LOC_SET_DT       : debug_dt = 10 ;
       LOC_GET_DT       : debug_dt = 11 ;
-      LOC_RST_PROC     : debug_dt = 12 ;
+      LOC_RST_TIME     : debug_dt = 12 ;
       LOC_START_CORE   : debug_dt = 13 ;
       LOC_STOP_CORE    : debug_dt = 14 ;
       NET_GNET_P       : debug_dt = 15 ;
@@ -43,7 +43,7 @@ always_comb begin
       NET_UPDT_OFF_P   : debug_dt = 22 ;
       NET_SET_DT_P     : debug_dt = 23 ;
       NET_GET_DT_P     : debug_dt = 24 ;
-      NET_RST_PROC_P   : debug_dt = 25 ;
+      NET_RST_TIME_P   : debug_dt = 25 ;
       NET_START_CORE_P : debug_dt = 26 ;
       NET_STOP_CORE_P  : debug_dt = 27 ;
       NET_GNET_R       : debug_dt = 28 ;
@@ -55,7 +55,7 @@ always_comb begin
       NET_UPDT_OFF_R   : debug_dt = 34 ;
       NET_SET_DT_R     : debug_dt = 35 ;
       NET_GET_DT_R     : debug_dt = 36 ;
-      NET_RST_PROC_R   : debug_dt = 37 ;
+      NET_RST_TIME_R   : debug_dt = 37 ;
       NET_START_CORE_R : debug_dt = 38 ;
       NET_STOP_CORE_R  : debug_dt = 39 ;
       NET_GET_OFF_A    : debug_dt = 40 ;

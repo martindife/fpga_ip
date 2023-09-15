@@ -14,15 +14,29 @@
    parameter _sync2_net   = 5'd4;
    parameter _sync3_net   = 5'd5;
    parameter _sync4_net   = 5'd6;
-   parameter _sync5_net   = 5'd7;
+   parameter _get_off     = 5'd7;
    parameter _updt_off    = 5'd8;
-   parameter _get_dt      = 5'd9;
-   parameter _set_dt      = 5'd10;
+   parameter _set_dt      = 5'd9;
+   parameter _get_dt      = 5'd10;
    parameter _rst_time    = 5'd16;
    parameter _start_core  = 5'd17;
    parameter _stop_core   = 5'd18;
    parameter _get_cond    = 5'd24;
    parameter _set_cond    = 5'd25;
+
+   // Processor Command
+   parameter qick_rst     = 3'd1;
+   parameter qick_init    = 3'd2;
+   parameter qick_updt    = 3'd3;
+   parameter qick_start   = 3'd4;
+   parameter qick_stop    = 3'd5;
+
+typedef enum { X_NOP=0, X_NOW=1, X_TIME=2, X_EXT=3 } TYPE_CTRL_REQ  ; // Execution Time
+      
+typedef enum { NOP, 
+      QICK_TIME_RST, QICK_TIME_INIT, QICK_TIME_UPDT ,       
+      QICK_CORE_START , QICK_CORE_STOP       
+      } TYPE_CTRL_OP ;
 
 typedef enum {NOT_READY, IDLE, ST_ERROR, NET_CMD_RT, 
       LOC_GNET       , NET_GNET_P       , NET_GNET_R      ,
@@ -35,7 +49,7 @@ typedef enum {NOT_READY, IDLE, ST_ERROR, NET_CMD_RT,
       LOC_UPDT_OFF   , NET_UPDT_OFF_P   , NET_UPDT_OFF_R   ,
       LOC_SET_DT     , NET_SET_DT_P     , NET_SET_DT_R     ,
       LOC_GET_DT     , NET_GET_DT_P     , NET_GET_DT_R     , NET_GET_DT_A      ,
-      LOC_RST_PROC   , NET_RST_PROC_P   , NET_RST_PROC_R   , 
+      LOC_RST_TIME   , NET_RST_TIME_P   , NET_RST_TIME_R   , 
       LOC_START_CORE , NET_START_CORE_P , NET_START_CORE_R ,
       LOC_STOP_CORE  , NET_STOP_CORE_P  , NET_STOP_CORE_R  ,
       WAIT_TX_ACK, WAIT_TX_nACK, WAIT_CMD_nACK
@@ -51,9 +65,8 @@ typedef enum {NOT_READY, IDLE, ST_ERROR, NET_CMD_RT,
 
    typedef struct packed {
       bit [31:0]   T_NCR  ;
-      bit [31:0]   T_LTR  ;
       bit [31:0]   T_LCS  ;
-      bit [31:0]   T_LCC  ;
+      bit [31:0]   T_SYNC  ;
       bit [31:0]   RTD    ;
       bit [31:0]   OFF    ;
       bit [ 9:0]   NN     ;

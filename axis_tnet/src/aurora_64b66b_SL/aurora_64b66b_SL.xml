@@ -16814,7 +16814,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
       <spirit:vendorExtensions>
         <xilinx:busInterfaceInfo>
           <xilinx:enablement>
-            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.TRANSCEIVER_DEBUG" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.TRANSCEIVER_DEBUG" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
           </xilinx:enablement>
         </xilinx:busInterfaceInfo>
       </spirit:vendorExtensions>
@@ -21984,7 +21984,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
       <spirit:vendorExtensions>
         <xilinx:busInterfaceInfo>
           <xilinx:enablement>
-            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.gt_rxusrclk_out" xilinx:dependency="((spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;))">false</xilinx:isEnabled>
+            <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="BUSIF_ENABLEMENT.gt_rxusrclk_out" xilinx:dependency="((spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;))">true</xilinx:isEnabled>
           </xilinx:enablement>
         </xilinx:busInterfaceInfo>
       </spirit:vendorExtensions>
@@ -28484,10 +28484,6 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         </spirit:fileSetRef>
         <spirit:parameters>
           <spirit:parameter>
-            <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu May 11 17:07:41 UTC 2023</spirit:value>
-          </spirit:parameter>
-          <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
             <spirit:value>9:f7b3f044</spirit:value>
           </spirit:parameter>
@@ -28504,11 +28500,11 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Jul 14 19:05:06 UTC 2023</spirit:value>
+            <spirit:value>Tue Sep 12 17:53:49 UTC 2023</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:0c503513</spirit:value>
+            <spirit:value>9:19b5f84e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28523,11 +28519,11 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Jul 14 19:05:08 UTC 2023</spirit:value>
+            <spirit:value>Tue Sep 12 17:53:52 UTC 2023</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:0c503513</spirit:value>
+            <spirit:value>9:19b5f84e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28538,7 +28534,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:0c503513</spirit:value>
+            <spirit:value>9:19b5f84e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28554,11 +28550,11 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Jul 14 19:05:09 UTC 2023</spirit:value>
+            <spirit:value>Tue Sep 12 17:53:52 UTC 2023</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:0c503513</spirit:value>
+            <spirit:value>9:19b5f84e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28573,11 +28569,11 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Jul 14 19:05:08 UTC 2023</spirit:value>
+            <spirit:value>Tue Sep 12 17:53:52 UTC 2023</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:446b22cf</spirit:value>
+            <spirit:value>9:f1edce61</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28593,11 +28589,11 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Jul 14 19:05:09 UTC 2023</spirit:value>
+            <spirit:value>Tue Sep 12 17:53:52 UTC 2023</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:446b22cf</spirit:value>
+            <spirit:value>9:f1edce61</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28608,7 +28604,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:0c503513</spirit:value>
+            <spirit:value>9:19b5f84e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28622,11 +28618,11 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Jul 14 19:05:09 UTC 2023</spirit:value>
+            <spirit:value>Tue Sep 12 17:53:52 UTC 2023</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:0c503513</spirit:value>
+            <spirit:value>9:19b5f84e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -28640,11 +28636,11 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Fri Jul 14 19:06:35 UTC 2023</spirit:value>
+            <spirit:value>Tue Sep 12 17:55:15 UTC 2023</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:0c503513</spirit:value>
+            <spirit:value>9:19b5f84e</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -53361,7 +53357,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxusrclk_out" xilinx:dependency="((spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxusrclk_out" xilinx:dependency="((spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -59909,7 +59905,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_qplllock" xilinx:dependency="(((spirit:decode(id(&apos;MODELPARAM_VALUE.is_7series&apos;))=true) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true)) or ((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true)))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_qplllock" xilinx:dependency="(((spirit:decode(id(&apos;MODELPARAM_VALUE.is_7series&apos;))=true) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true)) or ((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true)))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60416,7 +60412,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_eyescanreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_eyescanreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60440,7 +60436,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_eyescandataerror" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_eyescandataerror" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60467,7 +60463,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxlpmen" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxlpmen" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60494,7 +60490,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_eyescantrigger" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_eyescantrigger" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60521,7 +60517,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxcdrhold" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxcdrhold" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60548,7 +60544,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxdfelpmreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxdfelpmreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60575,7 +60571,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxpmareset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxpmareset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60602,7 +60598,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxpcsreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxpcsreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60629,7 +60625,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxbufreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxbufreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60653,7 +60649,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxpmaresetdone" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxpmaresetdone" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60680,7 +60676,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxprbssel" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxprbssel" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60704,7 +60700,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxprbserr" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxprbserr" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60731,7 +60727,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxprbscntreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxprbscntreset" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60755,7 +60751,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxresetdone" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxresetdone" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60779,7 +60775,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxbufstatus" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxbufstatus" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -60911,7 +60907,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_pcsrsvdin" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_pcsrsvdin" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -61145,7 +61141,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_dmonitorout" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_dmonitorout" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -61169,7 +61165,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_cplllock" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_cplllock" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -61196,7 +61192,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
         <spirit:vendorExtensions>
           <xilinx:portInfo>
             <xilinx:enablement>
-              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxrate" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">false</xilinx:isEnabled>
+              <xilinx:isEnabled xilinx:resolve="dependent" xilinx:id="PORT_ENABLEMENT.gt_rxrate" xilinx:dependency="((((spirit:decode(id(&apos;MODELPARAM_VALUE.is_8series&apos;))=true) or (spirit:decode(id(&apos;MODELPARAM_VALUE.is_versal&apos;))=true)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.c_gtwiz_out&apos;))=false)) and (spirit:decode(id(&apos;MODELPARAM_VALUE.DATAFLOW_CONFIG&apos;))!=&quot;TX-only_Simplex&quot;) and (spirit:decode(id(&apos;MODELPARAM_VALUE.TransceiverControl&apos;))=true))">true</xilinx:isEnabled>
             </xilinx:enablement>
           </xilinx:portInfo>
         </spirit:vendorExtensions>
@@ -65556,7 +65552,7 @@ AXILITE_DRP_IF_5:AXILITE_DRP_IF_6:AXILITE_DRP_IF_7:AXILITE_DRP_IF_8:AXILITE_DRP_
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="boolean">
         <spirit:name>transceivercontrol</spirit:name>
-        <spirit:value spirit:format="bool" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.transceivercontrol">false</spirit:value>
+        <spirit:value spirit:format="bool" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.transceivercontrol">true</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="boolean">
         <spirit:name>c_use_byteswap</spirit:name>

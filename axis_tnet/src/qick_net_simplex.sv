@@ -1,6 +1,6 @@
 `include "_qnet_defines.svh"
 
-module qick_net_duplex # (
+module qick_net_simplex # (
    parameter SIM_LEVEL = 1 ,
    parameter DEBUG     = 1
    
@@ -15,6 +15,7 @@ module qick_net_duplex # (
    input  wire             ps_clk_i        ,
    input  wire             ps_rst_ni       ,
    input  wire  [47:0]     t_time_abs      ,
+   input  wire             net_sync_i      ,
 // TPROC CONTROL
    input  wire             c_cmd_i         ,
    input  wire  [4:0]      c_op_i          ,
@@ -28,52 +29,40 @@ module qick_net_duplex # (
    output reg              time_init_o     ,
    output reg              time_updt_o     ,
    output wire  [31:0]     time_off_dt_o   ,
-   output reg  [31:0]      tnet_dt1_o      ,
-   output reg  [31:0]      tnet_dt2_o      ,
+   output reg   [31:0]     tnet_dt1_o      ,
+   output reg   [31:0]     tnet_dt2_o      ,
 ///////////////// SIMULATION    
    input  wire             rxn_A_i        ,
    input  wire             rxp_A_i        ,
-   output wire             txn_A_o        ,
-   output  wire            txp_A_o        ,
-   input  wire             rxn_B_i        ,
-   input  wire             rxp_B_i        ,
    output wire             txn_B_o        ,
    output  wire            txp_B_o        ,
-////////////////   CHANNEL A LINK
-   input  wire             axi_rx_tvalid_A_RX_i  ,
-   input  wire  [63:0]     axi_rx_tdata_A_RX_i   ,
+////////////////   LINK CHANNEL A
+   input  wire             axi_rx_tvalid_A_RX_i   ,
+   input  wire  [63:0]     axi_rx_tdata_A_RX_i    ,
    input  wire             axi_rx_tlast_A_RX_i   ,
-   output reg   [63:0]     axi_tx_tdata_A_TX_o   ,
-   output reg              axi_tx_tvalid_A_TX_o  ,
-   output reg              axi_tx_tlast_A_TX_o   ,
-   input  wire             axi_tx_tready_A_TX_i  ,
-////////////////   CHANNEL B LINK
-   input  wire             axi_rx_tvalid_B_RX_i  ,
-   input  wire  [63:0]     axi_rx_tdata_B_RX_i   ,
-   input  wire             axi_rx_tlast_B_RX_i   ,
-   output reg   [63:0]     axi_tx_tdata_B_TX_o   ,
-   output reg              axi_tx_tvalid_B_TX_o  ,
+////////////////   LINK CHANNEL B
+   output reg              axi_tx_tvalid_B_TX_o   ,
+   output reg   [63:0]     axi_tx_tdata_B_TX_o    ,
    output reg              axi_tx_tlast_B_TX_o   ,
-   input  wire             axi_tx_tready_B_TX_i  ,
-
+   input  wire             axi_tx_tready_B_TX_i   ,
 // AXI-Lite DATA Slave I/F.   
-   input  wire [5:0]       s_axi_awaddr         ,
-   input  wire [2:0]       s_axi_awprot         ,
+   input  wire  [ 5:0]     s_axi_awaddr         ,
+   input  wire  [ 2:0]     s_axi_awprot         ,
    input  wire             s_axi_awvalid        ,
    output wire             s_axi_awready        ,
-   input  wire [31:0]      s_axi_wdata          ,
-   input  wire [3:0]       s_axi_wstrb          ,
+   input  wire  [31:0]     s_axi_wdata          ,
+   input  wire  [ 3:0]     s_axi_wstrb          ,
    input  wire             s_axi_wvalid         ,
    output wire             s_axi_wready         ,
-   output wire  [1:0]      s_axi_bresp          ,
+   output wire  [ 1:0]     s_axi_bresp          ,
    output wire             s_axi_bvalid         ,
    input  wire             s_axi_bready         ,
-   input  wire [5:0]       s_axi_araddr         ,
-   input  wire [2:0]       s_axi_arprot         ,
+   input  wire  [ 5:0]     s_axi_araddr         ,
+   input  wire  [ 2:0]     s_axi_arprot         ,
    input  wire             s_axi_arvalid        ,
    output wire             s_axi_arready        ,
    output wire  [31:0]     s_axi_rdata          ,
-   output wire  [1:0]      s_axi_rresp          ,
+   output wire  [ 1:0]     s_axi_rresp          ,
    output wire             s_axi_rvalid         ,
    input  wire             s_axi_rready         );
 
@@ -130,23 +119,17 @@ reg [2:0]  net_ctrl_id;
 reg div_start;
 reg proc_en;
 
-reg [47:0] net_ctrl_time_r;
-reg [2:0]  net_ctrl_id_r, net_ctrl_exec_r;
-reg net_ctrl_ack; // A command will be executed anytime....
-reg ctrl_sign_time_r;
-
-
 reg wt_rst, wt_init;
 reg [31:0] wt_init_dt;
 wire wt_inc;
 reg wt_ext_inc;
 
 
-wire  get_time_lcs, get_time_ncr, get_time_lcc, get_time_ltr;
+wire  get_time_lcs, get_time_ncr;
 
 
 
-assign get_time_ltr = t_ready_t01; 
+ 
 
 wire [63:0]  cmd_header_r ;
 wire [31:0]  cmd_dt_r [2] ;
@@ -182,22 +165,23 @@ qnet_cmd_cod CMD_COD (
 
 wire [63:0]  tx_cmd_header_s ;
 wire [31:0]  tx_cmd_dt_s [2] ;
-wire tx_req_s, tx_ch_s, tx_ack_s;
+wire tx_req_s, tx_ack_s;
+
+TYPE_CTRL_REQ      ctrl_cmd_req_s ;
+TYPE_CTRL_OP       ctrl_cmd_op_s  ;
+wire [47:0]        ctrl_cmd_dt_s  ;
 
 qnet_cmd_proc CMD_PROCESSING (
    .t_clk_i         ( t_clk_i         ) ,
    .t_rst_ni        ( t_rst_ni        ) ,
+   .ctrl_rst_i      ( 0      ) ,
    .aurora_ready_i  ( aurora_ready        ) ,
    .t_ready_t01     ( t_ready_t01        ) ,
+   .net_sync_t01     ( net_sync_t01        ) ,
    .param_i         ( param      ) ,
    .qnet_T_LINK     ( qnet_T_LINK      ) ,
-   .ctrl_rst_i      ( 0      ) ,
+   .qnet_dt_i       ( qnet_DT    ),
    .t_time_abs      ( t_time_abs      ) ,
-   .tx_req_set_o    ( get_time_lcs      ) ,
-   .param_we        ( param_we      ) ,
-   .param_64_dt     ( param_64_dt     ) ,
-   .param_32_dt     ( param_32_dt      ) ,
-   .param_10_dt     ( param_10_dt      ) ,
    .c_ready_o       ( c_ready_o      ) ,
    .loc_cmd_req_i   ( loc_cmd_req   ) ,
    .net_cmd_req_i   ( net_cmd_req   ) ,
@@ -205,20 +189,67 @@ qnet_cmd_proc CMD_PROCESSING (
    .cmd_dt_i        ( cmd_dt_r        ) ,
    .loc_cmd_ack_o   ( loc_cmd_ack_s   ) ,
    .net_cmd_ack_o   ( net_cmd_ack_s   ) ,
+   .tx_req_set_o    ( get_time_lcs      ) ,
+   .param_we        ( param_we      ) ,
+   .param_64_dt     ( param_64_dt     ) ,
+   .param_32_dt     ( param_32_dt      ) ,
+   .param_10_dt     ( param_10_dt      ) ,
    .tx_req_o        ( tx_req_s        ) ,
-   .tx_ch_o         ( tx_ch_s        ) ,
    .tx_cmd_header_o ( tx_cmd_header_s ) ,
    .tx_cmd_dt_o     ( tx_cmd_dt_s     ) ,
    .tx_ack_i        ( tx_ack_s        ) ,
-   .time_reset_o        ( time_reset        ) ,
-   .time_init_o        ( time_init        ) ,
-   .time_updt_o        ( time_updt        ) ,
+   .ctrl_cmd_req_o  ( ctrl_cmd_req_s        ) ,
+   .ctrl_cmd_op_o   ( ctrl_cmd_op_s        ) ,
+   .ctrl_cmd_dt_o   ( ctrl_cmd_dt_s        ) ,
    .cmd_st_do       ( cmd_st_do       ) );
+
+
+
+      
+qnet_qick_cmd TPROC_CTRL (
+   .c_clk_i        ( c_clk_i        ) ,
+   .c_rst_ni       ( c_rst_ni       ) ,
+   .t_clk_i        ( t_clk_i        ) ,
+   .t_rst_ni       ( t_rst_ni       ) ,
+   .net_sync_t01     ( net_sync_t01     ) ,
+   .RTD_i          ( param.RTD      ),
+   .t_time_abs     ( t_time_abs     ) ,
+   .ctrl_cmd_req_i ( ctrl_cmd_req_s ) ,
+   .ctrl_cmd_op_i  ( ctrl_cmd_op_s  ) ,
+   .ctrl_cmd_dt_i  ( ctrl_cmd_dt_s  ) ,
+   .core_start_o   ( core_start_o   ) ,
+   .core_stop_o    ( core_stop_o    ) ,
+   .time_reset_o   ( time_rst_o   ) ,
+   .time_init_o    ( time_init_o    ) ,
+   .time_updt_o    ( time_updt_o    ) ,    
+   .time_off_dt_o  ( time_off_dt_o  )
+);
+
+
+// Core Start and Core Stop are c_clk Sync
+// TIme commandas are t_clk Sync
+
+reg net_sync_r, net_sync_r2 ;
+(* ASYNC_REG = "TRUE" *) reg net_sync_cdc ;
+always_ff @(posedge t_clk_i)
+   if (!t_rst_ni) begin
+      net_sync_cdc   <= 0;
+      net_sync_r     <= 0;
+      net_sync_r2    <= 0;
+   end else begin
+      net_sync_cdc     <= net_sync_i;
+      net_sync_r       <= net_sync_cdc;
+      net_sync_r2      <= net_sync_r;
+   end
+
+wire net_sync_t01 ;
+assign net_sync_t01  = !net_sync_r2 & net_sync_r ;
+
 
 wire [31:0] qnet_T_LINK ;   
 wire        link_A_rdy_01, link_B_rdy_01, link_A_rdy_cc, link_B_rdy_cc ;
 
-aurora_ctrl_duplex # (
+aurora_ctrl_simplex # (
    .SIM_LEVEL ( SIM_LEVEL )
 ) QNET_LINK_INST (
    .gt_refclk1_p         ( gt_refclk1_p         ),      
@@ -230,46 +261,31 @@ aurora_ctrl_duplex # (
    .ID_i                 ( param.ID                ),
    .NN_i                 ( param.NN                ),
    .tx_req_i             ( tx_req_s             ),
-   .tx_ch_i              ( tx_ch_s             ),
    .tx_header_i          ( tx_cmd_header_s   ),
    .tx_data_i            ( tx_cmd_dt_s       ),
    .tx_ack_o             ( tx_ack_s          ),
-   .link_A_rdy_01        ( link_A_rdy_01     ),
-   .link_B_rdy_01        ( link_B_rdy_01     ),
-   .link_A_rdy_cc        ( link_A_rdy_cc     ),
-   .link_B_rdy_cc        ( link_B_rdy_cc     ),
+   .sync_tx          ( link_B_rdy_01     ),
+   .sync_cc          ( link_B_rdy_cc     ),
    .qnet_LINK_o          ( qnet_T_LINK       ),
    .cmd_net_o            ( net_cmd_hit           ),
-   .cmd_o                ( net_cmd                ),
+   .cmd_o                ( net_cmd               ),
    .ready_o              ( aurora_ready         ),
    .rxn_A_i              ( rxn_A_i              ),
    .rxp_A_i              ( rxp_A_i              ),
-   .txn_A_o              ( txn_A_o              ),
-   .txp_A_o              ( txp_A_o              ),
-   .rxn_B_i              ( rxn_B_i              ),
-   .rxp_B_i              ( rxp_B_i              ),
    .txn_B_o              ( txn_B_o              ),
    .txp_B_o              ( txp_B_o              ),
 // Channel A
    .axi_rx_tvalid_A_RX_i ( axi_rx_tvalid_A_RX_i ),
    .axi_rx_tdata_A_RX_i  ( axi_rx_tdata_A_RX_i  ),
    .axi_rx_tlast_A_RX_i  ( axi_rx_tlast_A_RX_i  ),
-   .axi_tx_tvalid_A_TX_o ( axi_tx_tvalid_A_TX_o ),
-   .axi_tx_tdata_A_TX_o  ( axi_tx_tdata_A_TX_o  ),
-   .axi_tx_tlast_A_TX_o  ( axi_tx_tlast_A_TX_o  ),
-   .axi_tx_tready_A_TX_i ( axi_tx_tready_A_TX_i ),
 // Channel B
-   .axi_rx_tvalid_B_RX_i ( axi_rx_tvalid_B_RX_i ),
-   .axi_rx_tdata_B_RX_i  ( axi_rx_tdata_B_RX_i  ),
-   .axi_rx_tlast_B_RX_i  ( axi_rx_tlast_B_RX_i  ),
    .axi_tx_tvalid_B_TX_o ( axi_tx_tvalid_B_TX_o ),
    .axi_tx_tdata_B_TX_o  ( axi_tx_tdata_B_TX_o  ),
    .axi_tx_tlast_B_TX_o  ( axi_tx_tlast_B_TX_o  ),
    .axi_tx_tready_B_TX_i ( axi_tx_tready_B_TX_i ),
-
    .aurora_do            ( aurora_do            ),
-   .channel_A_up       ( channelA_ok_do       ),
-   .channel_B_up       ( channelB_ok_do       ),
+   .channel_RX_up       ( channelA_ok_do       ),
+   .channel_TX_up       ( channelB_ok_do       ),
    .pack_cnt_do          ( aurora_cnt     ),
    .last_op_do           ( aurora_op      ),
    .state_do             ( aurora_st      ) 
@@ -283,7 +299,7 @@ aurora_ctrl_duplex # (
 
 
 
-assign t_ready_t01 = link_A_rdy_01 | link_A_rdy_01 ;
+assign t_ready_t01 = link_B_rdy_01 ;
 
 // TIMEOUT
 reg cmd_time_ok, task_time_ok;
@@ -357,7 +373,9 @@ assign TNET_STATUS[ 4 :  0]    = 5'b00000 ;
 
 */
    
-  
+
+
+/*  
 always_ff @(posedge t_clk_i)
    if (!t_rst_ni) begin
       time_rst_o  <= 1'b0;
@@ -368,93 +386,16 @@ always_ff @(posedge t_clk_i)
       time_init_o <=  time_init;
       time_updt_o <=  time_updt;
    end
+*/
 
 
-assign net_ctrl_req_set = |net_ctrl_id  ;
-assign net_ctrl_ack_set = |net_ctrl_id_r & ctrl_time[47]; // ACK if RTD time is OK 
-
-reg net_ctrl_req;
-
-always_ff @(posedge t_clk_i)
-   if (!t_rst_ni) begin
-      net_ctrl_req   <= 1'b0;
-      net_ctrl_ack   <= 1'b0;
-      net_ctrl_exec_r  <= 1'b0;
-      net_ctrl_id_r    <= 3'b0;
-      net_ctrl_time_r  <= 47'b0111111111111111_1111111111111111_111111111111111;
-   end else begin
-      ctrl_sign_time_r <= ctrl_left_time[47];
-
-      if ( net_ctrl_req_set )   net_ctrl_req   <= 1'b1;
-      else if (cmd_error)       net_ctrl_req   <= 1'b0;
-
-      if ( net_ctrl_ack_set ) begin
-         net_ctrl_ack   <= 1'b1;
-      end
-      if ( net_ctrl_req & ~net_ctrl_ack) begin
-         net_ctrl_id_r    <= net_ctrl_id ;
-         net_ctrl_time_r  <= net_ctrl_time;
-      end
-
-      if (ctrl_execute )   net_ctrl_exec_r  <= net_ctrl_id_r;
-      else                 net_ctrl_exec_r  <= 1'b0;
-
-      if (net_ctrl_ack & ctrl_left_time[47] ) begin
-         net_ctrl_id_r    <= 0;
-         if ( !net_ctrl_ack_set ) begin
-            net_ctrl_ack   <= 1'b0;
-            net_ctrl_req   <= 1'b0;
-         end
-      end
-      
-   end
-
-wire ctrl_execute;
-assign ctrl_execute = ~ctrl_sign_time_r & ctrl_left_time[47] ;
-
-wire [47:0] ctrl_left_time;
-
-ADDSUB_MACRO #(
-      .DEVICE     ("7SERIES"),        // Target Device: "7SERIES" 
-      .LATENCY    ( 1   ),            // Desired clock cycle latency, 0-2
-      .WIDTH      ( 48  )             // Input / output bus width, 1-48
-   ) TIME_CMP_inst (
-      .CARRYOUT   (                     ),  // 1-bit carry-out output signal
-      .RESULT     ( ctrl_left_time    ),  // A-B
-      .B          ( t_time_abs   ),  // Input A bus, width defined by WIDTH 
-      .ADD_SUB    ( 1'b0              ),  // 1-bit add/sub input, high selects add, low selects subtract
-      .A          ( net_ctrl_time_r   ),  // Input B bus, width defined by WIDTH 
-      .CARRYIN    ( 1'b0              ),    // 1-bit carry-in input
-      .CE         ( 1'b1              ),    // 1-bit clock enable input
-      .CLK        ( t_clk_i             ),    // 1-bit clock input
-      .RST        ( ~t_rst_ni        )     // 1-bit active high synchronous reset
-   );
-
-reg [47:0] ctrl_time;
-
-ADDSUB_MACRO #(
-      .DEVICE     ("7SERIES"),        // Target Device: "7SERIES" 
-      .LATENCY    ( 1   ),            // Desired clock cycle latency, 0-2
-      .WIDTH      ( 48  )             // Input / output bus width, 1-48
-   ) CMD_TIME (
-      .CARRYOUT   (               ),    // 1-bit carry-out output signal
-      .RESULT     ( ctrl_time     ), // Add/sub result output, width defined by WIDTH 
-      .B          ( ctrl_left_time     ),    // Input A bus, width defined by WIDTH 
-      .ADD_SUB    ( 1'b0          ),    // 1-bit add/sub input, high selects add, low selects subtract
-      .A          ( {16'd0, param.RTD}     ),   // Input B bus, width defined by WIDTH 
-      .CARRYIN    ( 1'b0          ),    // 1-bit carry-in input
-      .CE         ( net_ctrl_req  ),    // 1-bit clock enable input
-      .CLK        ( t_clk_i         ),    // 1-bit clock input
-      .RST        ( ~t_rst_ni    )     // 1-bit active high synchronous reset
-   );
 
 
+ 
 
 // Processing-Wait Time
 ///////////////////////////////////////////////////////////////////////////////
 
-assign get_time_lcc = link_A_rdy_cc ;
-assign get_time_ltr = link_A_rdy_01 ;
 assign get_time_ncr = net_cmd_hit ; //Single Pulse net_req
 
 
@@ -463,7 +404,8 @@ TYPE_QPARAM param ;
 // Parameters
 always_ff @(posedge t_clk_i)
    if (!t_rst_ni) begin
-      param <= '{default:'0};;
+      param    <= '{default:'0};
+      qnet_DT  <= '{default:'0};
    end else begin
       if ( param_we.DT  )  qnet_DT      <= param_64_dt; 
       if ( param_we.OFF )  param.OFF    <= param_32_dt;
@@ -472,8 +414,6 @@ always_ff @(posedge t_clk_i)
       if ( param_we.ID  )  param.ID     <= param_10_dt; 
       if ( get_time_ncr )  param.T_NCR  <= t_time_abs[31:0];
       if ( get_time_lcs )  param.T_LCS  <= t_time_abs[31:0];
-      if ( get_time_lcc )  param.T_LCC  <= t_time_abs[31:0];
-      if ( get_time_ltr )  param.T_LTR  <= t_time_abs[31:0];
    end
 
 
@@ -493,10 +433,10 @@ always_ff @(posedge t_clk_i)
    end
    
 
-assign core_start_o  = net_ctrl_exec_r[1];
-assign core_stop_o   = net_ctrl_exec_r[2];
+//assign core_start_o  = net_ctrl_exec_r[1];
+//assign core_stop_o   = net_ctrl_exec_r[2];
       
-// assign time_off_dt_o = param_OFF;
+assign time_off_dt_o = param.OFF;
 
 assign tnet_dt1_o = qnet_DT[0];
 assign tnet_dt2_o = qnet_DT[1];
