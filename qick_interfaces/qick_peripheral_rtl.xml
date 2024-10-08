@@ -131,8 +131,8 @@
       </spirit:wire>
     </spirit:port>
     <spirit:port>
-      <spirit:logicalName>dt_in</spirit:logicalName>
-      <spirit:description>Peripheral Data Input</spirit:description>
+      <spirit:logicalName>dt_in_1</spirit:logicalName>
+      <spirit:description>Peripheral Data Out</spirit:description>
       <spirit:wire>
         <spirit:qualifier>
           <spirit:isData>true</spirit:isData>
@@ -143,6 +143,57 @@
         </spirit:onMaster>
         <spirit:onSlave>
           <spirit:width>32</spirit:width>
+        </spirit:onSlave>
+        <spirit:defaultValue>0</spirit:defaultValue>
+      </spirit:wire>
+    </spirit:port>
+    <spirit:port>
+      <spirit:logicalName>dt_in_2</spirit:logicalName>
+      <spirit:description>Peripheral Data Out</spirit:description>
+      <spirit:wire>
+        <spirit:qualifier>
+          <spirit:isData>true</spirit:isData>
+        </spirit:qualifier>
+        <spirit:onMaster>
+          <spirit:width>32</spirit:width>
+          <spirit:direction>in</spirit:direction>
+        </spirit:onMaster>
+        <spirit:onSlave>
+          <spirit:width>32</spirit:width>
+        </spirit:onSlave>
+        <spirit:defaultValue>0</spirit:defaultValue>
+      </spirit:wire>
+    </spirit:port>
+    <spirit:port>
+      <spirit:logicalName>flag</spirit:logicalName>
+      <spirit:description>Flag</spirit:description>
+      <spirit:wire>
+        <spirit:qualifier>
+          <spirit:isData>true</spirit:isData>
+        </spirit:qualifier>
+        <spirit:onMaster>
+          <spirit:width>1</spirit:width>
+          <spirit:direction>in</spirit:direction>
+        </spirit:onMaster>
+        <spirit:onSlave>
+          <spirit:width>1</spirit:width>
+        </spirit:onSlave>
+        <spirit:defaultValue>0</spirit:defaultValue>
+      </spirit:wire>
+    </spirit:port>
+    <spirit:port>
+      <spirit:logicalName>dt_valid</spirit:logicalName>
+      <spirit:description>Data Valid</spirit:description>
+      <spirit:wire>
+        <spirit:qualifier>
+          <spirit:isData>true</spirit:isData>
+        </spirit:qualifier>
+        <spirit:onMaster>
+          <spirit:width>1</spirit:width>
+          <spirit:direction>in</spirit:direction>
+        </spirit:onMaster>
+        <spirit:onSlave>
+          <spirit:width>1</spirit:width>
         </spirit:onSlave>
         <spirit:defaultValue>0</spirit:defaultValue>
       </spirit:wire>
